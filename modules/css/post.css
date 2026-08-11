@@ -1,0 +1,83 @@
+{% import '../helpers.html' as helper %}
+
+{% set post       = theme.post_module %}
+{% set data_fonts = theme.post_module.data_fonts %}
+
+{{ helper.box_min(post.box, 'post') }}
+.post{
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+}
+
+.post__image-content{
+    padding: 0px;
+}
+.post__image-link{
+    display: block;
+    text-decoration: none;
+}
+.post__image{
+    display: block;
+    width: 100%;
+    height: {{post.image.height}}px;
+    object-fit: cover;
+    {{ 'border-radius:'+post.image.border_radius+'px;' if post.image.border_radius }}
+}
+
+{{ helper.box_min(post.data_box, 'post__data') }}
+.post__data>*{
+    margin: 0px 0px 15px 0px;
+    text-align: {{post.data_box.text_align}}; 
+}
+.post__data>*:last-child{
+    margin: 0px;
+}
+
+
+{{ helper.font_min(data_fonts.date, 'post__date') }}
+.post__date{
+    text-decoration: none;
+    text-align: left;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.post__tags{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    text-align: left;
+    display: inline-block;
+    vertical-align: middle;
+}
+.post__tags-item{
+    display: inline-block;
+}
+{{ helper.font_min(data_fonts.tags, 'post__tags-anchor') }}
+.post__tags-anchor{
+    text-decoration: none;
+    display: inline-block;
+}
+
+{% if data_fonts.margin_date_tags.margin_bottom %}
+    .post_date_and_tags{
+        margin: 0px 0px {{data_fonts.margin_date_tags.margin_bottom}}px 0px;
+    }
+{% endif %}
+
+{{ helper.font_min(data_fonts.author, 'post__author') }}
+.post__author{
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+{{ helper.font_min(data_fonts.title, 'post__title, .post__title>a') }}
+.post__title>a{ 
+    text-decoration: none;
+    margin:0px;
+}
+
+{{ helper.font_min(data_fonts.excerpt, 'post__description') }}

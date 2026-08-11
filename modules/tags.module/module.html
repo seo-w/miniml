@@ -1,0 +1,76 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# tags #}
+{% set tags = module.tags %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin             = module.styles.margin.css %}
+{% set visible            = module.styles.visible %}
+{% set box                = module.styles.box %}
+{% set tags_style         = module.styles.tags %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'tags') %}
+
+{% require_css %}
+  <style>
+      {{ helper.wrapper_min(margin, visible) }}
+      {% scope_css %}
+        {{ helper.box_min(box, 'tags') }}
+        {# button items #}
+          {{ helper.font_min(tags_style.text, 'tags__anchor') }}
+          {% if tags_style.padding.css or tags_style.margin %}
+            .tags__anchor{
+             {{ tags_style.padding.css if tags_style.padding.css  }}
+             {{ 'margin:'+tags_style.margin+'px;' if tags_style.margin }}
+            }
+          {% endif %}
+
+          {# default state #}
+          {{ helper.box_min(tags_style.default, 'tags__anchor') }}
+          {{ helper.font_min(tags_style.default, 'tags__anchor') }}
+          {# end - default state #}
+
+          {# hover state #}
+          {{ helper.box_min(tags_style.hover, 'tags__anchor:hover') }}
+          {{ helper.font_min(tags_style.hover, 'tags__anchor:hover') }}
+          {# end - hover state #}
+
+        {# end - button items #}
+      {% end_scope_css %}
+  </style>
+{% end_require_css %} 
+
+<nav {{ helper.advance_min(id_module, classes_module) }} >
+    {% set site_tags = blog_tags('default', 250) %}
+    {% if tags.see_all_position == "right" %}
+      {% for item in site_tags %}
+        <a class="tags__anchor" href="{{ blog_tag_url(group.id, item.slug) }}" {% if tags.open_in_new_tab %}target="_blank"{% endif %}>
+          {{ item }}
+        </a>
+      {% endfor %}
+      {% if tags.text_see_all %}
+        <a class="tags__anchor" href="{{content.parentBlog.absoluteUrl}}" {% if tags.open_in_new_tab %}target="_blank"{% endif %}>
+          {{ tags.text_see_all }}
+        </a>
+      {% endif %}
+    {% else %}
+      {% if tags.text_see_all %}
+        <a class="tags__anchor" href="{{content.parentBlog.absoluteUrl}}" {% if tags.open_in_new_tab %}target="_blank"{% endif %}>
+          {{ tags.text_see_all }}
+        </a>
+      {% endif %}
+      {% for item in site_tags %}
+        <a class="tags__anchor" href="{{ blog_tag_url(group.id, item.slug) }}" {% if tags.open_in_new_tab %}target="_blank"{% endif %}>
+          {{ item }}
+        </a>
+      {% endfor %}
+    {% endif %}
+</nav>
+

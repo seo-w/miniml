@@ -1,0 +1,21 @@
+[
+    {
+        "label": "ID form",
+        "name": "id_form",
+        "type": "text",
+        "required": true,
+        "locked": false,
+        "allow_new_line": false,
+        "show_emoji_picker": false,
+        "default": null 
+    },
+    {
+      "label": "File",
+      "name": "file",
+      "type": "file",
+      "picker": "file",
+      "required": true,
+      "locked": false,
+      "default": null 
+    }
+]

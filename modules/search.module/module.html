@@ -1,0 +1,63 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# field #}
+{% set text_label         = module.text_label %}
+{% set placeholder        = module.placeholder %}
+{# button #}
+{% set show_search_button = module.show_search_button %}
+{% set button             = module.button %}
+{# search type #}
+{% set content_types      = module.content_types %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'search') %}
+
+
+<div {{ helper.advance_min(id_module, classes_module) }}> 
+    <div class="search__bar"> 
+        <form action="/{{ site_settings.content_search_results_page_path }}">
+
+            {% if text_label %}
+                <label class="search__label" for="term">
+                    {{text_label}}
+                </label>
+            {% endif %}
+
+            <input type="text" class="search__input" name="term" autocomplete="off" aria-label="{{ text_label || "Search" }}" placeholder="{{placeholder}}">
+            
+            {% if content_types.website_pages %}
+                <input type="hidden" name="type" value="SITE_PAGE">
+            {% endif %}
+
+            {% if content_types.landing_pages %}
+                <input type="hidden" name="type" value="LANDING_PAGE">
+            {% endif %}
+
+            {% if content_types.blog_posts %}
+                <input type="hidden" name="type" value="BLOG_POST">
+                <input type="hidden" name="type" value="LISTING_PAGE">
+            {% endif %}
+
+            {% if content_types.knowledge_articles %}
+                <input type="hidden" name="type" value="KNOWLEDGE_ARTICLE">
+            {% endif %}
+
+            {% if show_search_button %}
+                <button class="search__button" aria-label="Search">
+                    {{ helper.image_min(button.icon, ['search__button-icon']) }}
+                    {{ button.text if button.text }}
+                </button>
+            {% endif %}
+        </form>
+    </div>
+    <ul class="search__suggestions"></ul>
+</div>
+
+{# IMPORTANTE #}
+{# Este modulo no esta completo - Le faltan las opciones de perzonalizacion #}
+{# revisar acsendo luego de su terminacion #}

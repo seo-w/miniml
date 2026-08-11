@@ -1,0 +1,1588 @@
+[
+    {
+        "label": "Menu",
+        "name": "menu",
+        "type": "menu",
+        "required": false,
+        "locked": false,
+        "default": null
+    },
+    {
+        "label": "Sub menu indicator",
+        "name": "sub_menu_indicator",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+                "label" : "Icon",
+                "name" : "icon",
+                "required" : false,
+                "locked" : false,
+                "icon_set":"fontawesome-5.0.10",
+                "type" : "icon",
+                "default" : {
+                  "name" : "angle-down",
+                  "unicode" : "f107",
+                  "type" : "SOLID"
+                }
+            },
+            {
+                "label" : "Size",
+                "name" : "size",
+                "type" : "number",
+                "required" : false,
+                "locked" : false,
+                "min" : 1,
+                "suffix":"px",
+                "default" : 12 
+            }
+        ]
+    },
+    {
+        "label": "Advance",
+        "inline_help_text": "Use esta opción para agregar clases o un id al modulo",
+        "name": "advance",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+              "label": "ID",
+              "name": "id_module",
+              "type": "text",
+              "help_text": "Utilice solo letras, numeros y guiones sin espacio",
+              "required": false,
+              "locked": false,
+              "allow_new_line": false,
+              "show_emoji_picker": false,
+              "placeholder": "id-module",
+              "default": null
+            },
+            {
+              "label" : "Classes",
+              "name" : "classes",
+              "type" : "text",
+              "required" : false,
+              "locked" : false,
+              "occurrence" : {
+                "min" : null,
+                "max" : null,
+                "sorting_label_field" : null,
+                "default" : null
+              },
+              "allow_new_line" : false,
+              "show_emoji_picker" : false,
+              "default" : null
+            }
+        ]
+    },
+    {
+        "label":"Estilos",
+        "name": "styles",
+        "type": "group",
+        "tab": "STYLE",
+        "children": [
+            {
+                "label": "Margin",
+                "name": "margin",
+                "type": "spacing",
+                "required": false,
+                "locked": false,
+                "visibility" : {
+                    "hidden_subfields" : {
+                        "padding": true
+                    }
+                },
+                "inherited_value": {
+                    "default_value_path": "theme.layout.margin"
+                }
+            },
+            {
+                "label": "z-index",
+                "name": "z_index",
+                "required": false,
+                "locked": false,
+                "type": "number",
+                "default": null
+            },
+            {
+                "label": "Visible",
+                "name": "visible",
+                "type": "group",
+                "inline_help_text": "Determine en que dispositivo se vera este modulo",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Desktop",
+                        "name": "desktop",
+                        "type": "boolean",
+                        "required": false,
+                        "locked": false,
+                        "default": true 
+                    },
+                    {
+                        "label": "Mobile",
+                        "name": "mobile",
+                        "type": "boolean",
+                        "required": false,
+                        "locked": false,
+                        "default": true 
+                    }
+                ]
+            },
+            {
+                "label": "Animation",
+                "name": "animation",
+                "type": "group",
+                "inline_help_text": "Para las animaciones se usa la libreria <a href='https://animate.style' target='_blank'>animate.css</a>",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Type",
+                        "name": "type",
+                        "type": "choice",
+                        "display": "select",
+                        "id" : "type-animation",
+                        "required": false,
+                        "locked": false,
+                        "choices": [
+                            [ "attention_seekers", "Attention seekers" ],
+                            [ "back_entrances", "Back entrances" ],
+                            [ "back_exits", "Back exits" ],
+                            [ "bouncing_entrances", "Bouncing entrances" ],
+                            [ "bouncing_exits", "Bouncing exits" ],
+                            [ "fading_entrances", "Fading entrances" ],
+                            [ "fading_exits", "Fading exits" ],
+                            [ "flippers", "Flippers" ],
+                            [ "light_speed", "Light speed" ],
+                            [ "rotating_entrances", "Rotating entrances" ],
+                            [ "rotating_exits", "Rotating exits" ],
+                            [ "specials", "Specials" ],
+                            [ "zooming_entrances", "Zooming entrances" ],
+                            [ "zooming_exits", "Zooming exits" ],
+                            [ "sliding_entrances", "Sliding entrances" ],
+                            [ "sliding_exits", "Sliding exits" ]
+                        ],
+                        "default": null 
+                    },
+                    {
+                      "label": "Transition",
+                      "name": "transition",
+                      "type": "group",
+                      "expanded": true,
+                      "required": false,
+                      "locked": false,
+                      "children": [
+                        {
+                            "label": "Attention seekers",
+                            "name": "attention_seekers",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "attention_seekers",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "bounce", "Bounce" ],
+                                [ "flash", "Flash" ],
+                                [ "pulse", "Pulse" ],
+                                [ "rubberBand", "Rubber Band" ],
+                                [ "shakeX", "Shake X" ],
+                                [ "shakeY", "Shake Y" ],
+                                [ "headShake", "Head Shake" ],
+                                [ "swing", "Swing" ],
+                                [ "tada", "Tada" ],
+                                [ "wobble", "Wobble" ],
+                                [ "jello", "Jello" ],
+                                [ "heartBeat", "Heart Beat" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Back entrances",
+                            "name": "back_entrances",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "back_entrances",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "backInDown", "Back In Down" ],
+                                [ "backInLeft", "Back In Left" ],
+                                [ "backInRight", "Back In Right" ],
+                                [ "backInUp", "Back In Up" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Back exits",
+                            "name": "back_exits",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "back_exits",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "backOutDown", "Back Out Down" ],
+                                [ "backOutLeft", "Back Out Left" ],
+                                [ "backOutRight", "Back Out Right" ],
+                                [ "backOutUp", "Back Out Up" ] 
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Bouncing entrances",
+                            "name": "bouncing_entrances",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "bouncing_entrances",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "bounceIn", "Bounce In" ],
+                                [ "bounceInDown", "Bounce In Down" ],
+                                [ "bounceInLeft", "Bounce In Left" ],
+                                [ "bounceInRight", "Bounce In Right" ],
+                                [ "bounceInUp", "Bounce In Up" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Bouncing exits",
+                            "name": "bouncing_exits",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "bouncing_exits",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "bounceOut", "Bounce Out" ],
+                                [ "bounceOutDown", "Bounce Out Down" ],
+                                [ "bounceOutLeft", "Bounce Out Left" ],
+                                [ "bounceOutRight", "Bounce Out Right" ],
+                                [ "bounceOutUp", "Bounce Out Up" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Fading entrances",
+                            "name": "fading_entrances",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "fading_entrances",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "fadeIn", "Fade In" ],
+                                [ "fadeInDown", "Fade In Down" ],
+                                [ "fadeInDownBig", "Fade In Down Big" ],
+                                [ "fadeInLeft", "Fade In Left" ],
+                                [ "fadeInLeftBig", "Fade In Left Big" ],
+                                [ "fadeInRight", "Fade In Right" ],
+                                [ "fadeInRightBig", "Fade In Right Big" ],
+                                [ "fadeInUp", "Fade In Up" ],
+                                [ "fadeInUpBig", "Fade In Up Big" ],
+                                [ "fadeInTopLeft", "Fade In Top Left" ],
+                                [ "fadeInTopRight", "Fade In Top Right" ],
+                                [ "fadeInBottomLeft", "Fade In Bottom Left" ],
+                                [ "fadeInBottomRight", "Fade In Bottom Right" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Fading exits",
+                            "name": "fading_exits",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "fading_exits",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "fadeOut", "Fade Out" ],
+                                [ "fadeOutDown", "Fade Out Down" ],
+                                [ "fadeOutDownBig", "Fade Out Down Big" ],
+                                [ "fadeOutLeft", "Fade Out Left" ],
+                                [ "fadeOutLeftBig", "Fade Out Left Big" ],
+                                [ "fadeOutRight", "Fade Out Right" ],
+                                [ "fadeOutRightBig", "Fade Out Right Big" ],
+                                [ "fadeOutUp", "Fade Out Up" ],
+                                [ "fadeOutUpBig", "Fade Out Up Big" ],
+                                [ "fadeOutTopLeft", "Fade Out Top Left" ],
+                                [ "fadeOutTopRight", "Fade Out Top Right" ],
+                                [ "fadeOutBottomRight", "Fade Out Bottom Right" ],
+                                [ "fadeOutBottomLeft", "Fade Out Bottom Left" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Flippers",
+                            "name": "flippers",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "flippers",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "flip", "Flip" ],
+                                [ "flipInX", "Flip In X" ],
+                                [ "flipInY", "Flip In Y" ],
+                                [ "flipOutX", "Flip Out X" ],
+                                [ "flipOutY", "Flip Out Y" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Light speed",
+                            "name": "light_speed",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "light_speed",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "lightSpeedInRight", "Light Speed In Right" ],
+                                [ "lightSpeedInLeft", "Light Speed In Left" ],
+                                [ "lightSpeedOutRight", "Light Speed Out Right" ],
+                                [ "lightSpeedOutLeft", "Light Speed Out Left" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Rotating entrances",
+                            "name": "rotating_entrances",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "rotating_entrances",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "rotateIn", "Rotate In" ],
+                                [ "rotateInDownLeft", "Rotate In Down Left" ],
+                                [ "rotateInDownRight", "Rotate In Down Right" ],
+                                [ "rotateInUpLeft", "Rotate In Up Left" ],
+                                [ "rotateInUpRight", "Rotate In Up Right" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Rotating exits",
+                            "name": "rotating_exits",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "rotating_exits",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "rotateOut", "Rotate Out" ],
+                                [ "rotateOutDownLeft", "Rotate Out Down Left" ],
+                                [ "rotateOutDownRight", "Rotate Out Down Right" ],
+                                [ "rotateOutUpLeft", "Rotate Out Up Left" ],
+                                [ "rotateOutUpRight", "Rotate Out Up Right" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Specials",
+                            "name": "specials",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "specials",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "hinge", "Hinge" ],
+                                [ "jackInTheBox", "Jack In The Box" ],
+                                [ "rollIn", "Roll In" ],
+                                [ "rollOut", "Roll Out" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Zooming entrances",
+                            "name": "zooming_entrances",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "zooming_entrances",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "zoomIn", "Zoom In" ],
+                                [ "zoomInDown", "Zoom In Down" ],
+                                [ "zoomInLeft", "Zoom In Left" ],
+                                [ "zoomInRight", "Zoom In Right" ],
+                                [ "zoomInUp", "Zoom In Up" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Zooming exits",
+                            "name": "zooming_exits",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "zooming_exits",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "zoomOut", "Zoom Out" ],
+                                [ "zoomOutDown", "Zoom Out Down" ],
+                                [ "zoomOutLeft", "Zoom Out Left" ],
+                                [ "zoomOutRight", "Zoom Out Right" ],
+                                [ "zoomOutUp", "Zoom Out Up" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Sliding entrances",
+                            "name": "sliding_entrances",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "sliding_entrances",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "slideInDown", "Slide In Down" ],
+                                [ "slideInLeft", "Slide In Left" ],
+                                [ "slideInRight", "Slide In Right" ],
+                                [ "slideInUp", "Slide In Up" ]
+                            ],
+                            "default": null 
+                        },
+                        {
+                            "label": "Sliding exits",
+                            "name": "sliding_exits",
+                            "type": "choice",
+                            "display": "select",
+                            "required": false,
+                            "locked": false,
+                            "visibility" : {
+                                "controlling_field" : "type-animation",
+                                "controlling_value_regex" : "sliding_exits",
+                                "operator" : "EQUAL",
+                                "access" : null,
+                                "hidden_subfields" : null
+                            },
+                            "choices": [
+                                [ "slideOutDown", "Slide Out Down" ],
+                                [ "slideOutLeft", "Slide Out Left" ],
+                                [ "slideOutRight", "Slide Out Right" ],
+                                [ "slideOutUp", "Slide Out Up" ]
+                            ],
+                            "default": null 
+                        }
+                      ]
+                    },
+                    {
+                        "label": "Time",
+                        "name": "time",
+                        "type": "group",
+                        "expanded": true,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label" : "Duration",
+                                "name" : "duration",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Delay",
+                                "name" : "delay",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "default" : null 
+                            }
+                        ]
+                    }
+                ]
+            }, 
+            {
+                "label": "Sticky",
+                "name": "sticky",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Desktop",
+                        "name": "desktop",
+                        "type": "boolean",
+                        "required": false,
+                        "locked": false,
+                        "default": false 
+                    },
+                    {
+                        "label": "Mobile",
+                        "name": "mobile",
+                        "type": "boolean",
+                        "required": false,
+                        "locked": false,
+                        "default": false 
+                    },
+                    {
+                        "label": "Offset",
+                        "name": "offset",
+                        "type": "number",
+                        "required": false,
+                        "locked": false,
+                        "suffix": "px",
+                        "default": 0
+                    }
+                ]
+            },
+            {
+                "label": "Container level one",
+                "name": "container_level_one",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label" : "Background color",
+                        "name" : "background_color",
+                        "type" : "color",
+                        "required" : false,
+                        "locked" : false,
+                        "default": null
+                    },
+                    {
+                        "label": "Padding",
+                        "name": "padding",
+                        "type": "spacing",
+                        "required": false,
+                        "default": null,
+                        "visibility" : {
+                            "hidden_subfields" : {
+                                "margin": true
+                            }
+                        }
+                    },
+                    {
+                        "label" : "Border",
+                        "name" : "border",
+                        "type" : "border",
+                        "required" : false,
+                        "locked" : false,
+                        "allow_custom_border_sides" : false,
+                        "default" : null
+                    },
+                    {
+                        "label" : "Border radius",
+                        "name" : "border_radius",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "suffix" : "px",
+                        "default" : null
+                    },
+                    {
+                        "label":"Shadow",
+                        "name": "shadow",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label" : "Color",
+                                "name" : "color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Blur",
+                                "name" : "blur",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Position y",
+                                "name" : "position_y",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Position x",
+                                "name" : "position_x",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label": "Items level one",
+                "name": "items_level_one",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Text",
+                        "name": "text",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label" : "Font",
+                                "name" : "font",
+                                "type" : "font",
+                                "required" : false,
+                                "locked" : false,
+                                "load_external_fonts" : true,
+                                "default" : null,
+                                "visibility" : {
+                                    "hidden_subfields" : {
+                                        "color": true
+                                    }
+                                }
+                            },
+                            {
+                                "label" : "line height",
+                                "name" : "line_height",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "%",
+                                "default" : null
+                            },
+                            {
+                                "label" : "letter spacing",
+                                "name" : "letter_spacing",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Padding",
+                        "name": "padding",
+                        "type": "spacing",
+                        "required": false,
+                        "locked": false,
+                        "default":null,
+                        "visibility" : {
+                            "hidden_subfields" : {
+                                "margin": true
+                            }
+                        }
+                    },
+                    {
+                        "label": "Default",
+                        "name": "default",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label": "Text color",
+                                "name": "text_color",
+                                "type": "color",
+                                "required": false,
+                                "locked": false,
+                                "default":null
+                            },
+                            {
+                                "label": "Font weight",
+                                "name": "font_weight",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "100", "100" ],
+                                    [ "200", "200" ],
+                                    [ "300", "300" ],
+                                    [ "400", "400" ],
+                                    [ "500", "500" ],
+                                    [ "600", "600" ],
+                                    [ "700", "700" ],
+                                    [ "800", "800" ],
+                                    [ "900", "900" ]
+                                ],
+                                "type": "choice",
+                                "placeholder": "",
+                                "default": null
+                            },
+                            {
+                                "label" : "Background color",
+                                "name" : "background_color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Border",
+                                "name" : "border",
+                                "type" : "border",
+                                "required" : false,
+                                "locked" : false,
+                                "allow_custom_border_sides" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border radius",
+                                "name" : "border_radius",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            },
+                            {
+                                "label":"Shadow",
+                                "name": "shadow",
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Color",
+                                        "name" : "color",
+                                        "type" : "color",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "default": null
+                                    },
+                                    {
+                                        "label" : "Blur",
+                                        "name" : "blur",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position y",
+                                        "name" : "position_y",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position x",
+                                        "name" : "position_x",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    }
+                                ]
+                            }
+
+                        ]
+                    },
+                    {
+                        "label": "Hover",
+                        "name": "hover",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label": "Text color",
+                                "name": "text_color",
+                                "type": "color",
+                                "required": false,
+                                "locked": false,
+                                "default":null
+                            },
+                            {
+                                "label": "Font weight",
+                                "name": "font_weight",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "100", "100" ],
+                                    [ "200", "200" ],
+                                    [ "300", "300" ],
+                                    [ "400", "400" ],
+                                    [ "500", "500" ],
+                                    [ "600", "600" ],
+                                    [ "700", "700" ],
+                                    [ "800", "800" ],
+                                    [ "900", "900" ]
+                                ],
+                                "type": "choice",
+                                "placeholder": "",
+                                "default": null
+                            },
+                            {
+                                "label" : "Background color",
+                                "name" : "background_color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Border",
+                                "name" : "border",
+                                "type" : "border",
+                                "required" : false,
+                                "locked" : false,
+                                "allow_custom_border_sides" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border radius",
+                                "name" : "border_radius",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            },
+                            {
+                                "label":"Shadow",
+                                "name": "shadow",
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Color",
+                                        "name" : "color",
+                                        "type" : "color",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "default": null
+                                    },
+                                    {
+                                        "label" : "Blur",
+                                        "name" : "blur",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position y",
+                                        "name" : "position_y",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position x",
+                                        "name" : "position_x",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    }
+                                ]
+                            }
+
+                        ]
+                    },
+                    {
+                        "label": "Active",
+                        "name": "active",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label": "Text color",
+                                "name": "text_color",
+                                "type": "color",
+                                "required": false,
+                                "locked": false,
+                                "default":null
+                            },
+                            {
+                                "label": "Font weight",
+                                "name": "font_weight",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "100", "100" ],
+                                    [ "200", "200" ],
+                                    [ "300", "300" ],
+                                    [ "400", "400" ],
+                                    [ "500", "500" ],
+                                    [ "600", "600" ],
+                                    [ "700", "700" ],
+                                    [ "800", "800" ],
+                                    [ "900", "900" ]
+                                ],
+                                "type": "choice",
+                                "placeholder": "",
+                                "default": null
+                            },
+                            {
+                                "label" : "Background color",
+                                "name" : "background_color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Border",
+                                "name" : "border",
+                                "type" : "border",
+                                "required" : false,
+                                "locked" : false,
+                                "allow_custom_border_sides" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border radius",
+                                "name" : "border_radius",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            },
+                            {
+                                "label":"Shadow",
+                                "name": "shadow",
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Color",
+                                        "name" : "color",
+                                        "type" : "color",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "default": null
+                                    },
+                                    {
+                                        "label" : "Blur",
+                                        "name" : "blur",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position y",
+                                        "name" : "position_y",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position x",
+                                        "name" : "position_x",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    }
+                                ]
+                            }
+
+                        ]
+                    }
+                ]
+            },
+            {
+                "label": "Container level two",
+                "name": "container_level_two",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label" : "Background color",
+                        "name" : "background_color",
+                        "type" : "color",
+                        "required" : false,
+                        "locked" : false,
+                        "default": null
+                    },
+                    {
+                        "label": "Padding",
+                        "name": "padding",
+                        "type": "spacing",
+                        "required": false,
+                        "default": null,
+                        "visibility" : {
+                            "hidden_subfields" : {
+                                "margin": true
+                            }
+                        }
+                    },
+                    {
+                        "label" : "Border",
+                        "name" : "border",
+                        "type" : "border",
+                        "required" : false,
+                        "locked" : false,
+                        "allow_custom_border_sides" : false,
+                        "default" : null
+                    },
+                    {
+                        "label" : "Border radius",
+                        "name" : "border_radius",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "suffix" : "px",
+                        "default" : null
+                    },
+                    {
+                        "label":"Shadow",
+                        "name": "shadow",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label" : "Color",
+                                "name" : "color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Blur",
+                                "name" : "blur",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Position y",
+                                "name" : "position_y",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Position x",
+                                "name" : "position_x",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label": "Items level two",
+                "name": "items_level_two",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Text",
+                        "name": "text",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label" : "Font",
+                                "name" : "font",
+                                "type" : "font",
+                                "required" : false,
+                                "locked" : false,
+                                "load_external_fonts" : true,
+                                "default" : null,
+                                "visibility" : {
+                                    "hidden_subfields" : {
+                                        "color": true
+                                    }
+                                }
+                            },
+                            {
+                                "label" : "line height",
+                                "name" : "line_height",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "%",
+                                "default" : null
+                            },
+                            {
+                                "label" : "letter spacing",
+                                "name" : "letter_spacing",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Spacing",
+                        "name": "spacing",
+                        "type": "spacing",
+                        "required": false,
+                        "locked": false,
+                        "default":null
+                    },
+                    {
+                        "label": "Default",
+                        "name": "default",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label": "Text color",
+                                "name": "text_color",
+                                "type": "color",
+                                "required": false,
+                                "locked": false,
+                                "default":null
+                            },
+                            {
+                                "label": "Font weight",
+                                "name": "font_weight",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "100", "100" ],
+                                    [ "200", "200" ],
+                                    [ "300", "300" ],
+                                    [ "400", "400" ],
+                                    [ "500", "500" ],
+                                    [ "600", "600" ],
+                                    [ "700", "700" ],
+                                    [ "800", "800" ],
+                                    [ "900", "900" ]
+                                ],
+                                "type": "choice",
+                                "placeholder": "",
+                                "default": null
+                            },
+                            {
+                                "label" : "Background color",
+                                "name" : "background_color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Border",
+                                "name" : "border",
+                                "type" : "border",
+                                "required" : false,
+                                "locked" : false,
+                                "allow_custom_border_sides" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border radius",
+                                "name" : "border_radius",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            },
+                            {
+                                "label":"Shadow",
+                                "name": "shadow",
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Color",
+                                        "name" : "color",
+                                        "type" : "color",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "default": null
+                                    },
+                                    {
+                                        "label" : "Blur",
+                                        "name" : "blur",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position y",
+                                        "name" : "position_y",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position x",
+                                        "name" : "position_x",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    }
+                                ]
+                            }
+
+                        ]
+                    },
+                    {
+                        "label": "Hover",
+                        "name": "hover",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label": "Text color",
+                                "name": "text_color",
+                                "type": "color",
+                                "required": false,
+                                "locked": false,
+                                "default":null
+                            },
+                            {
+                                "label": "Font weight",
+                                "name": "font_weight",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "100", "100" ],
+                                    [ "200", "200" ],
+                                    [ "300", "300" ],
+                                    [ "400", "400" ],
+                                    [ "500", "500" ],
+                                    [ "600", "600" ],
+                                    [ "700", "700" ],
+                                    [ "800", "800" ],
+                                    [ "900", "900" ]
+                                ],
+                                "type": "choice",
+                                "placeholder": "",
+                                "default": null
+                            },
+                            {
+                                "label" : "Background color",
+                                "name" : "background_color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Border",
+                                "name" : "border",
+                                "type" : "border",
+                                "required" : false,
+                                "locked" : false,
+                                "allow_custom_border_sides" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border radius",
+                                "name" : "border_radius",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            },
+                            {
+                                "label":"Shadow",
+                                "name": "shadow",
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Color",
+                                        "name" : "color",
+                                        "type" : "color",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "default": null
+                                    },
+                                    {
+                                        "label" : "Blur",
+                                        "name" : "blur",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position y",
+                                        "name" : "position_y",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position x",
+                                        "name" : "position_x",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    }
+                                ]
+                            }
+
+                        ]
+                    },
+                    {
+                        "label": "Active",
+                        "name": "active",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label": "Text color",
+                                "name": "text_color",
+                                "type": "color",
+                                "required": false,
+                                "locked": false,
+                                "default":null
+                            },
+                            {
+                                "label": "Font weight",
+                                "name": "font_weight",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "100", "100" ],
+                                    [ "200", "200" ],
+                                    [ "300", "300" ],
+                                    [ "400", "400" ],
+                                    [ "500", "500" ],
+                                    [ "600", "600" ],
+                                    [ "700", "700" ],
+                                    [ "800", "800" ],
+                                    [ "900", "900" ]
+                                ],
+                                "type": "choice",
+                                "placeholder": "",
+                                "default": null
+                            },
+                            {
+                                "label" : "Background color",
+                                "name" : "background_color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Border",
+                                "name" : "border",
+                                "type" : "border",
+                                "required" : false,
+                                "locked" : false,
+                                "allow_custom_border_sides" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border radius",
+                                "name" : "border_radius",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            },
+                            {
+                                "label":"Shadow",
+                                "name": "shadow",
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Color",
+                                        "name" : "color",
+                                        "type" : "color",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "default": null
+                                    },
+                                    {
+                                        "label" : "Blur",
+                                        "name" : "blur",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position y",
+                                        "name" : "position_y",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position x",
+                                        "name" : "position_x",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    }
+                                ]
+                            }
+
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

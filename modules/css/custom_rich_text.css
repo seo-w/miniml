@@ -1,0 +1,44 @@
+{% import '../helpers.html' as helper %}
+
+{% set font           = theme.rich_text_module.font.css %}
+{% set line_height    = theme.rich_text_module.line_height %}
+{% set letter_spacing = theme.rich_text_module.letter_spacing %}
+{% set margin_bottom  = theme.rich_text_module.margin_bottom %}
+{% set headers        = theme.title_module %}
+
+.custom-rich-text{
+    display: block;
+    width: 100%;
+}
+.custom-rich-text>*,
+.custom-rich-text{
+    margin: 0px 0px {{margin_bottom}}px 0px;
+    {{font}}
+    {% if letter_spacing %}
+        letter-spacing:{{letter_spacing}}px;
+    {% endif %}
+}
+.custom-rich-text *,
+.custom-rich-text{
+    line-height:{{line_height}}%;
+}
+
+
+.custom-rich-text h1, 
+.custom-rich-text h2, 
+.custom-rich-text h3, 
+.custom-rich-text h4, 
+.custom-rich-text h5{
+    display: block;
+    font-size: 30px;
+    font-weight: 300;
+    margin: 0px;
+    text-decoration: none;
+    color: #292929;
+}
+{{ helper.font_min(headers.h1,'custom-rich-text h1') }}
+{{ helper.font_min(headers.h2,'custom-rich-text h2') }}
+{{ helper.font_min(headers.h3,'custom-rich-text h3') }}
+{{ helper.font_min(headers.h4,'custom-rich-text h4') }}
+{{ helper.font_min(headers.h5,'custom-rich-text h5') }}
+{{ helper.font_min(headers.h6,'custom-rich-text h6') }}

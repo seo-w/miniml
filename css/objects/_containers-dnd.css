@@ -1,0 +1,37 @@
+{#------------------- section desktop css -------------------#}
+{% set section_desktop = theme.layout.desktop.section %}
+{# default width #}
+.dnd-section>.row-fluid {
+  max-width: {{section_desktop.container}}px;
+  margin-left: auto;
+  margin-right: auto;
+}
+{# default margin and padding #}
+.dnd-section{
+  {{section_desktop.spacing.css}}
+}
+{#---------------- end - section desktop css ----------------#}
+
+{#---------------------- column desktop ---------------------#}
+{% set column_desktop = theme.layout.desktop.column %}
+{# default margin and padding #}
+.dnd-column{
+  {{column_desktop.spacing.css}}
+}
+{#------------------- end - column desktop ------------------#}
+
+
+{#------------------------- mobile --------------------------#}
+{% set mobile = theme.layout.mobile %}
+
+@media(max-width:{{mobile.break_point}}px){
+  {# default margin and padding #}
+  .dnd-section{
+    {{mobile.section.spacing.css}}
+  }
+  {# default margin and padding #}
+  .dnd-column{
+    {{mobile.column.spacing.css}}
+  }
+}
+{#--------------------- end - mobile ------------------------#}

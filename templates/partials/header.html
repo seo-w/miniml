@@ -1,0 +1,175 @@
+<!--
+  templateType: global_partial
+  label: Website header
+-->
+
+{{ require_css(get_asset_url('../../css/templates/header.css') ) }}
+{{ require_js(get_asset_url('../../js/header.js') ) }}
+
+{% set break_point = theme.layout.mobile.break_point %}
+
+{% set header_desktop = theme.header.desktop %}
+{% set header_mobile  = theme.header.mobile  %}
+
+<header class="header-desktop {{ 'header-desktop--fixed' if header_desktop.fixed }}">
+    {% dnd_area 'header_desktop'%}
+      {% dnd_section vertical_alignment='MIDDLE', padding={'top':0, 'right':0, 'bottom':0, 'left':0}%}
+        {% dnd_column width=3, offset=0 %}
+            {% dnd_row %}
+              {% dnd_module 'logo' path='@hubspot/logo' src='{{brand_settings.primaryLogo}}' %}{% end_dnd_module %}
+            {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=6, offset=3 %}
+        {% end_dnd_column %}
+        {% dnd_column width=3, offset=9 %}
+          {% dnd_row %}
+            {% dnd_module   path='../../modules/button',
+                            button={
+                                'text':'¿Hablamos?',
+                                'anchor':{
+                                    'url':{'href':'#hablamos'}
+                                }
+                            },
+                            styles={
+                                'margin':{
+                                    'margin':{
+                                        'top':{
+                                            'value':0
+                                        },
+                                        'bottom':{
+                                            'value':0
+                                        }
+                                    }
+                                },
+                                'button':{
+                                    'align':{
+                                        'text_align':'LEFT'
+                                    }
+                                }
+                            }
+            %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+      {% end_dnd_section %}
+    {% end_dnd_area %}
+</header>
+
+<header class="header-mobile {{ 'header-mobile--fixed' if header_mobile.fixed }}">
+  {% dnd_area 'header_mobile'%}
+    {% dnd_section max_width={{break_point}}, vertical_alignment='MIDDLE', padding={'top':0, 'right':0, 'bottom':0, 'left':0}%}
+      {% dnd_column width=8, offset=0 %}
+          {% dnd_row %}
+            {% dnd_module 'logo_mobile' path='@hubspot/logo' src='{{brand_settings.primaryLogo}}' %}{% end_dnd_module %}
+          {% end_dnd_row %}
+      {% end_dnd_column %}
+      {% dnd_column width=4, offset=8 %}
+        {% dnd_row %}
+          {% dnd_module 'open_menu' path='../../modules/icons', advance={ 'classes':['open-header-popup'] } %}
+            {% module_attribute 'items' is_json=True %}
+              [
+                {
+                  "icon":{
+                    "name":"bars",
+                    "unicode":"f0c9",
+                    "type":"SOLID"
+                  },
+                  "is_button": true,
+                  "aria_label": "Abrir menú",
+                  "aria_controls": "header-popup"
+                }
+              ]
+            {% end_module_attribute %}
+          {% end_dnd_module %}
+        {% end_dnd_row %}
+      {% end_dnd_column %}
+    {% end_dnd_section %}
+  {% end_dnd_area %}
+</header>
+
+<div class="header-popup" id="header-popup">
+  {% dnd_area 'header_poup'%}
+    
+    {% dnd_section  background_color='#e9e9e9', 
+                    max_width={{break_point}}, 
+                    vertical_alignment='MIDDLE', 
+                    padding={'top':50, 'right':30, 'bottom':50, 'left':30}
+    %}
+      {% dnd_column width=12 %}
+        {% dnd_row %}
+          {% dnd_module 'close_menu' path='../../modules/icons', advance={ 'classes':['close-header-popup'] } %}
+            {% module_attribute 'items' is_json=True %}
+              [
+                {
+                  "icon":{
+                    "name":"times",
+                    "unicode":"f00d",
+                    "type":"SOLID"
+                  },
+                  "is_button": true,
+                  "aria_label": "Cerrar menú",
+                  "aria_controls": "header-popup"
+                }
+              ]
+            {% end_module_attribute %}
+          {% end_dnd_module %}
+        {% end_dnd_row %}
+        {% dnd_row %}
+          {% dnd_module   path='../../modules/button',
+                          button={
+                              'text':'¿Hablamos?',
+                              'anchor':{
+                                  'url':{'href':'#hablamos'}
+                              }
+                          },
+                          styles={
+                              'margin':{
+                                  'margin':{
+                                      'top':{
+                                          'value':0
+                                      },
+                                      'bottom':{
+                                          'value':0
+                                      }
+                                  }
+                              },
+                              'button':{
+                                  'align':{
+                                      'text_align':'CENTER'
+                                  }
+                              }
+                          }
+          %}{% end_dnd_module %}
+        {% end_dnd_row %}
+        {% dnd_row %}
+          {% dnd_module path='../../modules/simple_menu',
+                        styles={
+                          'margin':{
+                            'margin':{
+                              'top':{
+                                'value':30,
+                                'units':'px'
+                              },
+                              'bottom':{
+                                'value':40,
+                                'units':'px'
+                              }
+                            }
+                          },
+                          'box':{
+                            'align':{
+                              'text_align':'CENTER'
+                            }
+                          }
+                        }
+          %}
+          {% end_dnd_module %}
+        {% end_dnd_row %}
+        {% dnd_row %}
+          {% dnd_module 'open_menu' path='../../modules/icons'%}{% end_dnd_module %}
+        {% end_dnd_row %}
+      {% end_dnd_column %}
+    {% end_dnd_section %}
+
+  {% end_dnd_area %}
+</div>
+

@@ -1,0 +1,172 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# menu #}
+{% set menu_selected      = module.menu %}
+{% set menu               = menu(menu_selected) %}
+{% set sub_menu_indicator = module.sub_menu_indicator %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin              = module.styles.margin.css %}
+{% set z_index             = module.styles.z_index %}
+{% set visible             = module.styles.visible %}
+{% set animation           = module.styles.animation %}
+{% set sticky              = module.styles.sticky %}
+{% set container_level_one = module.styles.container_level_one %}
+{% set items_level_one     = module.styles.items_level_one %}
+{% set container_level_two = module.styles.container_level_two %}
+{% set items_level_two     = module.styles.items_level_two %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'horizontal-menu') %}
+
+{# Custom styles #}
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+        
+            {# container level one #}
+                {{ helper.box_min(container_level_one, 'horizontal-menu') }}
+            {# end - container level one #}
+
+            {# items level one #}
+                {{ helper.font_min(items_level_one.text, 'horizontal-menu__anchor') }}
+
+                {% if items_level_one.padding.css %}
+                    .horizontal-menu__anchor{ {{items_level_one.padding.css}} }
+                {% endif %}
+                {# Default #}
+                {{ helper.box_min(items_level_one.default, 'horizontal-menu__anchor') }}
+                {{ helper.font_min(items_level_one.default, 'horizontal-menu__anchor') }}
+                {% if items_level_one.default.text_color.color %}
+                    .horizontal-menu__sub-icon>svg{ fill: {{helper.color_min(items_level_one.default.text_color)}}; }
+                {% endif %}
+                {# end - Default #}
+                {# Hover #}
+                {{ helper.box_min(items_level_one.hover, 'horizontal-menu__anchor:hover') }}
+                {{ helper.font_min(items_level_one.hover, 'horizontal-menu__anchor:hover') }}
+                {% if items_level_one.hover.text_color.color %}
+                    .horizontal-menu__anchor:hover .horizontal-menu__sub-icon>svg{
+                        fill: {{items_level_one.hover.text_color.color}};
+                    }
+                {% endif %}
+                {# end - Hover #}
+                {# Active #}
+                {{ helper.box_min(items_level_one.active, 'horizontal-menu__anchor--active') }}
+                {{ helper.font_min(items_level_one.active, 'horizontal-menu__anchor--active') }}
+                {% if items_level_one.active.text_color.color %}
+                    .horizontal-menu__sub-icon--active>svg{
+                        fill: {{helper.color_min(items_level_one.active.text_color)}};
+                    }
+                {% endif %}
+                {# end - Active #}
+            {# end - items level one #}
+
+
+            {# container level two #}
+                {{ helper.box_min(container_level_two, 'horizontal-menu__two-level') }}
+            {# end - container level two #}
+
+            {# items level two #}
+                {{ helper.font_min(items_level_two.text, 'horizontal-menu__two-level-anchor') }}
+                {% if items_level_two.spacing.css %}
+                    .horizontal-menu__two-level-anchor{ {{items_level_two.spacing.css}} }
+                {% endif %}
+                {# Default #}
+                {{ helper.box_min(items_level_two.default, 'horizontal-menu__two-level-anchor') }}
+                {{ helper.font_min(items_level_two.default, 'horizontal-menu__two-level-anchor') }}
+                {# end - Default #}
+                {# Hover #}
+                {{ helper.box_min(items_level_two.hover, 'horizontal-menu__two-level-anchor:hover') }}
+                {{ helper.font_min(items_level_two.hover, 'horizontal-menu__two-level-anchor:hover') }}
+                {# end - Hover #}
+                {# Active #}
+                {{ helper.box_min(items_level_two.active, 'horizontal-menu__two-level-anchor--active') }}
+                {{ helper.font_min(items_level_two.active, 'horizontal-menu__two-level-anchor--active') }}
+                {# end - Active #}
+            {# end - items level two #}
+
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %}
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+{% if menu_selected %}
+    <nav {{ helper.advance_min(id_module, classes_module) }}>
+        <ul class="horizontal-menu__menu">
+            {% for node_menu in menu.children %}
+                {% set menu_label  = node_menu.label %}
+                {% set menu_anchor = node_menu.url %}
+                {% set menu_target = node_menu.linkTarget %}
+
+                {% set menu_active_node   = node_menu.activeNode %}
+                {% set menu_active_branch = node_menu.activeBranch %}
+                    
+                {% set menu_children = node_menu.children %}
+
+                {% set menu_page_id = node_menu.pageId %}
+
+                <li class="horizontal-menu__item">
+                    <a  class="horizontal-menu__anchor {% if menu_active_node or menu_active_branch %}horizontal-menu__anchor--active{% endif %}" 
+                        {% if menu_anchor %}
+                            href="{{menu_anchor}}" 
+                        {% endif %}
+                        {% if menu_target %}
+                            target="{{menu_target}}" 
+                        {% endif %}
+                        {% if menu_page_id %}
+                            id="horizontal-menu__{{name}}-{{menu_page_id}}"
+                        {% endif %}
+                    >
+                        {{menu_label}}
+                        {% if menu_children and sub_menu_indicator.icon %}
+                            <span class="horizontal-menu__sub-icon">
+                                {{ helper.icon_min(sub_menu_indicator.icon, sub_menu_indicator.size, true)}}
+                            </span>
+                        {% endif %}
+                    </a>
+                    {% if menu_children %}
+                        <ul class="horizontal-menu__two-level">
+                            {% for node_menu_two in menu_children %}
+                                {% set menu_label  = node_menu_two.label %}
+                                {% set menu_anchor = node_menu_two.url %}
+                                {% set menu_target = node_menu_two.linkTarget %}
+
+                                {% set menu_active_node   = node_menu_two.activeNode %}
+                                {% set menu_active_branch = node_menu_two.activeBranch %}
+
+                                {% set menu_page_id = node_menu_two.pageId %}
+
+                                <li class="horizontal-menu__two-level-item">
+                                    <a  class="horizontal-menu__two-level-anchor {% if menu_active_node %}horizontal-menu__two-level-anchor--active{% endif %}"
+                                        {% if menu_anchor %}
+                                            href="{{menu_anchor}}" 
+                                        {% endif %}
+                                        {% if menu_target %}
+                                            target="{{menu_target}}" 
+                                        {% endif %}
+                                        {% if menu_page_id %}
+                                            id="horizontal-menu__sub-{{name}}-{{menu_page_id}}"
+                                        {% endif %}
+                                    >
+                                        {{menu_label}}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+
+            {% endfor %}
+        </ul>
+    </nav>
+{% endif %}

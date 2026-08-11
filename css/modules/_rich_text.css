@@ -1,0 +1,42 @@
+{% import '../../modules/helpers.html' as helper %}
+
+{% set font           = theme.rich_text_module.font.css %}
+{% set line_height    = theme.rich_text_module.line_height %}
+{% set letter_spacing = theme.rich_text_module.letter_spacing %}
+{% set margin_bottom  = theme.rich_text_module.margin_bottom %}
+{% set headers        = theme.title_module %}
+
+.hs_cos_wrapper_type_rich_text{
+    display: block;
+    width: 100%;
+}
+.hs_cos_wrapper_type_rich_text>*,
+.hs_cos_wrapper_type_rich_text{
+    margin: 0px 0px {{margin_bottom}}px 0px;
+    {{font}}
+    {{ 'letter-spacing:'+letter_spacing+'px;' if letter_spacing }}
+}
+.hs_cos_wrapper_type_rich_text *,
+.hs_cos_wrapper_type_rich_text{
+    line-height:{{line_height}}%;
+}
+
+
+.hs_cos_wrapper_type_rich_text h1, 
+.hs_cos_wrapper_type_rich_text h2, 
+.hs_cos_wrapper_type_rich_text h3, 
+.hs_cos_wrapper_type_rich_text h4, 
+.hs_cos_wrapper_type_rich_text h5{
+    display: block;
+    margin: 0px;
+    text-decoration: none;
+    color: #292929;
+    padding:0px;
+}
+{{ helper.font_min(headers.h1,'hs_cos_wrapper_type_rich_text h1') }}
+{{ helper.font_min(headers.h2,'hs_cos_wrapper_type_rich_text h2') }}
+{{ helper.font_min(headers.h3,'hs_cos_wrapper_type_rich_text h3') }}
+{{ helper.font_min(headers.h4,'hs_cos_wrapper_type_rich_text h4') }}
+{{ helper.font_min(headers.h5,'hs_cos_wrapper_type_rich_text h5') }}
+
+

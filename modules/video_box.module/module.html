@@ -1,0 +1,225 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# grid #}
+{% set grid         = module.grid %}
+{% set spacing_grid = module.grid.spacing_grid %}
+{# content #}
+{% set close_button = module.close_button %}
+{% set items        = module.items %}
+{# slider #}
+{% set show_as_slider = module.show_as_slider %}
+{% set slider_options = module.slider_options %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin       = module.styles.margin.css %}
+{% set z_index      = module.styles.z_index %}
+{% set visible      = module.styles.visible %}
+{% set animation    = module.styles.animation %}
+{% set sticky       = module.styles.sticky %}
+{% set modal        = module.styles.modal %}
+{% set box          = module.styles.box %}
+{% set data_box     = module.styles.data_box %}
+{% set image        = module.styles.image %}
+{% set icon         = module.styles.icon %}
+{% set title        = module.styles.title %}
+{% set description  = module.styles.description %}
+{% set button       = module.styles.button %}
+{% set slider_style = module.styles.slider %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% set class_module = 'videoBox--'+name %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {{ helper.box_min(box, 'video-box') }}
+            {{ helper.box_min(data_box, 'video-box__data-box') }}
+            {{ helper.font_min(title, 'video-box__title') }}
+            {{ helper.font_min(description, 'video-box__description') }}
+            {% if image.height %}
+                .video-box__feature-image{ height: {{image.height}}px; }
+            {% endif %}
+            {% if icon.height %}
+                .video-box__icon{
+                    height: {{icon.height}}px;
+                    width: auto;
+                }
+            {% endif %}
+
+            {% if modal.close_button.font.css or modal.close_button.margin_bottom %}
+                .modal__close-button{
+                    {{ modal.close_button.font.css if modal.close_button.font.css }}
+                    {{ 'margin-bottom: '+modal.close_button.margin_bottom+'px;' if modal.close_button.margin_bottom }}
+                }
+            {% endif %}
+
+            {% if modal.close_button.font.color %}
+                .modal__close-button>svg{
+                    fill: {{modal.close_button.font.color}};
+                }
+            {% endif %}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+{% if show_as_slider %}
+    {% call helper.slider_min(slider_options, slider_style, classes_module, id_module) %}
+        {% for item in items %}
+            <div>
+                <div class="p-{{spacing_grid}}">
+
+                    {% set custom_feature_image = item.custom_feature_image %}
+                    {% set image_feature        = item.image_feature %}
+                    {# tope nativo de HubSpot (manejador de recorte en el selector de imagen), no un campo custom #}
+                    {% set feature_width  = image_feature.max_width|int if (image_feature.size_type == 'auto_custom_max' and image_feature.max_width) else image_feature.width %}
+                    {% set feature_height = image_feature.max_height|int if (image_feature.size_type == 'auto_custom_max' and image_feature.max_height) else image_feature.height %}
+                    {% set video       = item.video %}
+                    {% set title       = item.title %}
+                    {% set description = item.description %}
+    
+                    {% set button_text = item.button_text %}
+
+                    <div class="video-box">
+                        <div class="video-box__feature-image {{class_module}}" data-video-box='{{video.oembed_response.html}}'>
+                            {% if custom_feature_image and image_feature.src %}
+                                <img class="video-box__feature-image-img" src="{{ resize_image_url(image_feature.src, feature_width) if feature_width else image_feature.src }}" alt="{{image_feature.alt|default(video.oembed_response.title, true)|default('', true)}}" {{ 'width="'+feature_width|string+'"' if feature_width }} {{ 'height="'+feature_height|string+'"' if feature_height }} loading="lazy">
+                            {% elif video.oembed_response.thumbnail_url %}
+                                <img class="video-box__feature-image-img" src="{{video.oembed_response.thumbnail_url}}" alt="{{video.oembed_response.title|default('', true)}}" {{ 'width="'+video.oembed_response.thumbnail_width|string+'"' if video.oembed_response.thumbnail_width is defined }} {{ 'height="'+video.oembed_response.thumbnail_height|string+'"' if video.oembed_response.thumbnail_height is defined }} loading="lazy">
+                            {% endif %}
+
+                            {{ helper.image_min(icon.icon, ['video-box__icon']) }}
+                        </div>
+                        <div class="video-box__data-box">
+                            {% if title.custom_title %}
+                                {% if title.text %}
+                                    <{{title.tag}} class="video-box__title">
+                                        {{title.text}}
+                                    </{{title.tag}}>
+                                {% endif %}
+                            {% else %}
+                                <{{title.tag}} class="video-box__title">
+                                    {{video.oembed_response.title}}
+                                </{{title.tag}}>
+                            {% endif %}
+    
+                            {% if description %}
+                                <p class="video-box__description">
+                                    {{description}}
+                                </p>
+                            {% endif %}
+                            {% if button_text %}
+                                <span class="button button--{{button.style_button}} button--{{button.size_button}} {{class_module}}" data-video-box='{{video.oembed_response.html}}'>
+                                    {{button_text}}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}
+    {% endcall %}
+{% else %}
+    {% call helper.grid_min(grid, classes_module, id_module) %}
+        {% for item in items %}
+            <div class="col p-{{spacing_grid}}">
+                
+                {% set custom_feature_image = item.custom_feature_image %}
+                {% set image_feature        = item.image_feature %}
+                {# tope nativo de HubSpot (manejador de recorte en el selector de imagen), no un campo custom #}
+                {% set feature_width  = image_feature.max_width|int if (image_feature.size_type == 'auto_custom_max' and image_feature.max_width) else image_feature.width %}
+                {% set feature_height = image_feature.max_height|int if (image_feature.size_type == 'auto_custom_max' and image_feature.max_height) else image_feature.height %}
+
+                {% set video       = item.video %}
+                {% set title       = item.title %}
+                {% set description = item.description %}
+
+                {% set button_text = item.button_text %}
+
+                <div class="video-box">
+                    <div class="video-box__feature-image {{class_module}}" data-video-box='{{video.oembed_response.html}}'>
+                        {% if custom_feature_image and image_feature.src %}
+                            <img class="video-box__feature-image-img" src="{{ resize_image_url(image_feature.src, feature_width) if feature_width else image_feature.src }}" alt="{{image_feature.alt|default(video.oembed_response.title, true)|default('', true)}}" {{ 'width="'+feature_width|string+'"' if feature_width }} {{ 'height="'+feature_height|string+'"' if feature_height }} loading="lazy">
+                        {% elif video.oembed_response.thumbnail_url %}
+                            <img class="video-box__feature-image-img" src="{{video.oembed_response.thumbnail_url}}" alt="{{video.oembed_response.title|default('', true)}}" {{ 'width="'+video.oembed_response.thumbnail_width|string+'"' if video.oembed_response.thumbnail_width is defined }} {{ 'height="'+video.oembed_response.thumbnail_height|string+'"' if video.oembed_response.thumbnail_height is defined }} loading="lazy">
+                        {% endif %}
+
+                        {{ helper.image_min(icon.icon, ['video-box__icon']) }}
+                    </div>
+                    <div class="video-box__data-box">
+                        {% if title.custom_title %}
+                            {% if title.text %}
+                                <{{title.tag}} class="video-box__title">
+                                    {{title.text}}
+                                </{{title.tag}}>
+                            {% endif %}
+                        {% else %}
+                            <{{title.tag}} class="video-box__title">
+                                {{video.oembed_response.title}}
+                            </{{title.tag}}>
+                        {% endif %}
+                        {% if description %}
+                            <p class="video-box__description">
+                                {{description}}
+                            </p>
+                        {% endif %}
+                        <span class="button button--{{button.style_button}} button--{{button.size_button}} {{class_module}}" data-video-box='{{video.oembed_response.html}}'>
+                            {{button_text}}
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+    {% endcall %}
+{% endif %}
+
+
+<div class="modal" id="{{class_module}}">
+    <div class="modal__content">
+        <div class="modal__content-button">
+            <span class="modal__close-button">
+                {{close_button.text}} {{ helper.icon_min(close_button.icon, modal.close_button.size_icon is truthy? modal.close_button.size_icon:12, true) }}
+            </span>
+        </div>
+        <div class="video-box__container-iframe">
+            
+        </div>
+    </div>
+</div>
+
+{% require_js %}
+    <script>
+        (function(){
+            var modal{{name}} = document.getElementById('{{class_module}}');
+            var iframeBox{{name}} = modal{{name}}.querySelector('.modal__content>.video-box__container-iframe');
+            var closeButton{{name}} = modal{{name}}.querySelector('.modal__close-button');
+
+            document.querySelectorAll('.{{class_module}}').forEach(function(trigger){
+                trigger.addEventListener('click', function(){
+                    iframeBox{{name}}.innerHTML = this.getAttribute('data-video-box');
+                    modal{{name}}.classList.add('modal--active');
+                    document.body.classList.add('modal--body');
+                });
+            });
+
+            if (closeButton{{name}}) {
+                closeButton{{name}}.addEventListener('click', function(){
+                    iframeBox{{name}}.innerHTML = '';
+                    modal{{name}}.classList.remove('modal--active');
+                    document.body.classList.remove('modal--body');
+                });
+            }
+        })();
+    </script>
+{% end_require_js %}

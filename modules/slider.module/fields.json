@@ -1,0 +1,1196 @@
+[
+    {
+        "label": "Items",
+        "name": "items",
+        "type": "group",
+        "expanded": true,
+        "occurrence" : {
+            "max" : null,
+            "default" : 3
+        },
+        "children": [
+            {
+                "label": "Image",
+                "name": "image",
+                "type": "group",
+                "expanded": false,
+                "children": [
+                    {
+                        "label": "Default",
+                        "name": "default",
+                        "type": "group",
+                        "expanded": false,
+                        "children": [
+                            {
+                                "label": "Overlay",
+                                "name": "overlay",
+                                "id" : "overlay",
+                                "required": false,
+                                "locked": false,
+                                "type": "boolean",
+                                "default": false 
+                            },
+                            {
+                                "label": "Background blend mode",
+                                "name": "blend_mode",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "normal", "normal" ],
+                                    [ "multiply", "multiply" ],
+                                    [ "screen", "screen" ],
+                                    [ "overlay", "overlay" ],
+                                    [ "darken", "darken" ],
+                                    [ "lighten", "lighten" ],
+                                    [ "color-dodge", "color-dodge" ],
+                                    [ "saturation", "saturation" ],
+                                    [ "color", "color" ],
+                                    [ "luminosity", "luminosity" ]
+                                ],
+                                "type": "choice",
+                                "default": null,
+                                "visibility" : {
+                                    "controlling_field" : "overlay",
+                                    "controlling_value_regex" : "true",
+                                    "operator" : "EQUAL",
+                                    "access" : null,
+                                    "hidden_subfields" : null
+                                }
+                            },
+                            {
+                                "label": "Gradient",
+                                "name": "gradient",
+                                "type": "group",
+                                "expanded": true,
+                                "visibility" : {
+                                    "controlling_field" : "overlay",
+                                    "controlling_value_regex" : "true",
+                                    "operator" : "EQUAL",
+                                    "access" : null,
+                                    "hidden_subfields" : null
+                                },
+                                "children": [
+                                    {
+                                        "label": "Direction",
+                                        "name": "direction",
+                                        "type": "choice",
+                                        "required": true,
+                                        "locked": false,
+                                        "display": "select",
+                                        "choices": [
+                                            [ "to bottom", "Top to bottom" ],
+                                            [ "to right", "Left to right" ]
+                                        ],
+                                        "default": "to right"
+                                    },
+                                    {
+                                        "label": "Color 1",
+                                        "name": "color_1",
+                                        "required": true,
+                                        "locked": false,
+                                        "type": "color",
+                                        "default": {
+                                            "color":"#000",
+                                            "opacity":50
+                                        }
+                                    },
+                                    {
+                                        "label": "Color 2",
+                                        "name": "color_2",
+                                        "required": true,
+                                        "locked": false,
+                                        "type": "color",
+                                        "default": {
+                                            "color":"#fff",
+                                            "opacity":0
+                                        }                                    }
+                                ]
+                            },
+                            {
+                                "label": "Image",
+                                "name": "image",
+                                "type": "image",
+                                "required": false,
+                                "locked": false,
+                                "responsive": false ,
+                                "resizable": false,
+                                "show_loading" : true,
+                                "default": {
+                                    "size_type" : "auto",
+                                    "src": "",
+                                    "alt": null,
+                                    "loading": "disabled"
+                                }
+                            },
+                            {
+                                "label": "Image size",
+                                "name": "image_size",
+                                "type": "choice",
+                                "required": true,
+                                "locked": false,
+                                "display": "radio",
+                                "choices": [
+                                    [ "contain", "full picture" ],
+                                    [ "cover", "fill container" ],
+                                    [ "auto", "full size" ]
+                                ],
+                                "default": "cover"
+                            },
+                            {
+                                "label": "Image alignment",
+                                "name": "image_alignment",
+                                "type": "choice",
+                                "required": true,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "top left", "Top left" ],
+                                    [ "top center", "Top center" ],
+                                    [ "top right", "Top right" ],
+                                    [ "center left", "Center left" ],
+                                    [ "center center", "Center center" ],
+                                    [ "bottom left", "Bottom left" ],
+                                    [ "bottom center", "Bottom center" ],
+                                    [ "bottom right", "Bottom right" ]
+                                ],
+                                "default": "center center"
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Mobile",
+                        "name": "mobile",
+                        "type": "group",
+                        "expanded": false,
+                        "children": [
+                            {
+                                "label": "Overlay",
+                                "name": "overlay",
+                                "id" : "overlay-mobile",
+                                "required": false,
+                                "locked": false,
+                                "type": "boolean",
+                                "default": false 
+                            },
+                            {
+                                "label": "Background blend mode",
+                                "name": "blend_mode",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "normal", "normal" ],
+                                    [ "multiply", "multiply" ],
+                                    [ "screen", "screen" ],
+                                    [ "overlay", "overlay" ],
+                                    [ "darken", "darken" ],
+                                    [ "lighten", "lighten" ],
+                                    [ "color-dodge", "color-dodge" ],
+                                    [ "saturation", "saturation" ],
+                                    [ "color", "color" ],
+                                    [ "luminosity", "luminosity" ]
+                                ],
+                                "type": "choice",
+                                "default": null,
+                                "visibility" : {
+                                    "controlling_field" : "overlay-mobile",
+                                    "controlling_value_regex" : "true",
+                                    "operator" : "EQUAL",
+                                    "access" : null,
+                                    "hidden_subfields" : null
+                                }
+                            },
+                            {
+                                "label": "Gradient",
+                                "name": "gradient",
+                                "type": "group",
+                                "expanded": true,
+                                "visibility" : {
+                                    "controlling_field" : "overlay-mobile",
+                                    "controlling_value_regex" : "true",
+                                    "operator" : "EQUAL",
+                                    "access" : null,
+                                    "hidden_subfields" : null
+                                },
+                                "children": [
+                                    {
+                                        "label": "Direction",
+                                        "name": "direction",
+                                        "type": "choice",
+                                        "required": true,
+                                        "locked": false,
+                                        "display": "select",
+                                        "choices": [
+                                            [ "to bottom", "Top to bottom" ],
+                                            [ "to right", "Left to right" ]
+                                        ],
+                                        "default": "to right"
+                                    },
+                                    {
+                                        "label": "Color 1",
+                                        "name": "color_1",
+                                        "required": true,
+                                        "locked": false,
+                                        "type": "color",
+                                        "default": {
+                                            "color":"#000",
+                                            "opacity":50
+                                        }
+                                    },
+                                    {
+                                        "label": "Color 2",
+                                        "name": "color_2",
+                                        "required": true,
+                                        "locked": false,
+                                        "type": "color",
+                                        "default": {
+                                            "color":"#fff",
+                                            "opacity":0
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Image",
+                                "name": "image",
+                                "type": "image",
+                                "required": false,
+                                "locked": false,
+                                "responsive": false ,
+                                "resizable": false,
+                                "show_loading" : true,
+                                "default": {
+                                    "size_type" : "auto",
+                                    "src": "",
+                                    "alt": null,
+                                    "loading": "disabled"
+                                }
+                            },
+                            {
+                                "label": "Image size",
+                                "name": "image_size",
+                                "type": "choice",
+                                "required": false,
+                                "locked": false,
+                                "display": "radio",
+                                "choices": [
+                                    [ "contain", "full picture" ],
+                                    [ "cover", "fill container" ],
+                                    [ "auto", "full size" ]
+                                ],
+                                "default": null
+                            },
+                            {
+                                "label": "Image alignment",
+                                "name": "image_alignment",
+                                "type": "choice",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "top left", "Top left" ],
+                                    [ "top center", "Top center" ],
+                                    [ "top right", "Top right" ],
+                                    [ "center left", "Center left" ],
+                                    [ "center center", "Center center" ],
+                                    [ "bottom left", "Bottom left" ],
+                                    [ "bottom center", "Bottom center" ],
+                                    [ "bottom right", "Bottom right" ]
+                                ],
+                                "default": null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label": "Slide content",
+                "name": "slide_content",
+                "type": "group",
+                "expanded": false,
+                "children": [
+                    {
+                        "label" : "Width",
+                        "name" : "width",
+                        "display" : "text",
+                        "suffix" : "px",
+                        "type" : "number",
+                        "default" : null
+                    },
+                    {
+                        "label": "Align",
+                        "name": "align",
+                        "type": "group",
+                        "expanded": false,
+                        "children": [
+                            {
+                                "label": "Default",
+                                "name": "default",
+                                "type": "group",
+                                "expanded": false,
+                                "children": [
+                                    {
+                                        "label": "Horizontal",
+                                        "name": "horizontal",
+                                        "type": "choice",
+                                        "required": false,
+                                        "locked": false,
+                                        "display": "select",
+                                        "display_width":"half_width",
+                                        "choices": [
+                                            [ "baseline", "Left" ],
+                                            [ "center", "Center" ],
+                                            [ "end", "Right" ]
+        
+                                        ],
+                                        "default": null
+                                    },
+                                    {
+                                        "label": "Vertical",
+                                        "name": "vertical",
+                                        "type": "choice",
+                                        "required": false,
+                                        "locked": false,
+                                        "display": "select",
+                                        "display_width":"half_width",
+                                        "choices": [
+                                            [ "start", "Top" ],
+                                            [ "center", "Center" ],
+                                            [ "end", "Bottom" ],
+                                            ["space-evenly", "Justify" ]
+                                        ],
+                                        "default": null
+                                    },
+                                    {
+                                        "label": "Text align",
+                                        "name": "text_align",
+                                        "type": "choice",
+                                        "required": false,
+                                        "locked": false,
+                                        "display": "select",
+                                        "choices": [
+                                            [ "left", "Left" ],
+                                            [ "center", "Center" ],
+                                            [ "right", "Right" ]
+        
+                                        ],
+                                        "default": null
+                                    }
+                                ]
+                            },
+                            {
+                                "label": "Mobile",
+                                "name": "mobile",
+                                "type": "group",
+                                "expanded": false,
+                                "children": [
+                                    {
+                                        "label": "Horizontal",
+                                        "name": "horizontal",
+                                        "type": "choice",
+                                        "required": false,
+                                        "locked": false,
+                                        "display": "select",
+                                        "display_width":"half_width",
+                                        "choices": [
+                                            [ "baseline", "Left" ],
+                                            [ "center", "Center" ],
+                                            [ "end", "Right" ]
+        
+                                        ],
+                                        "default": null
+                                    },
+                                    {
+                                        "label": "Vertical",
+                                        "name": "vertical",
+                                        "type": "choice",
+                                        "required": false,
+                                        "locked": false,
+                                        "display": "select",
+                                        "display_width":"half_width",
+                                        "choices": [
+                                            [ "start", "Top" ],
+                                            [ "center", "Center" ],
+                                            [ "end", "Bottom" ],
+                                            ["space-evenly", "Justify" ]
+                                        ],
+                                        "default": null
+                                    },
+                                    {
+                                        "label": "Text align",
+                                        "name": "text_align",
+                                        "type": "choice",
+                                        "required": false,
+                                        "locked": false,
+                                        "display": "select",
+                                        "choices": [
+                                            [ "left", "Left" ],
+                                            [ "center", "Center" ],
+                                            [ "right", "Right" ]
+        
+                                        ],
+                                        "default": null
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label": "Title",
+                "name": "title",
+                "type": "group",
+                "expanded": true,
+                "children": [
+                    {
+                        "label" : "Text",
+                        "name" : "text",
+                        "type" : "text",
+                        "required" : false,
+                        "locked" : false,
+                        "validation_regex" : "",
+                        "allow_new_line" : false,
+                        "show_emoji_picker" : false,
+                        "default" : "Triario"
+                    },
+                    {
+                        "label" : "Tag",
+                        "name" : "tag",
+                        "type" : "choice",
+                        "display" : "select",
+                        "required" : true,
+                        "locked" : false,
+                        "choices" : [ 
+                            [ "h1", "h1" ],
+                            [ "h2", "h2" ],
+                            [ "h3", "h3" ],
+                            [ "h4", "h4" ],
+                            [ "h5", "h5" ],
+                            [ "h6", "h6" ],
+                            [ "div", "div" ]
+                        ],
+                        "default" : "h3"
+                    },
+                    {
+                        "label":"Style",
+                        "name": "style",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label" : "Font",
+                                "name" : "font",
+                                "type" : "font",
+                                "required" : false,
+                                "locked" : false,
+                                "load_external_fonts" : true,
+                                "default" : null
+                            },
+                            {
+                                "label" : "line height",
+                                "name" : "line_height",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "%",
+                                "display_width":"half_width",
+                                "default" : null
+                            },
+                            {
+                                "label" : "letter spacing",
+                                "name" : "letter_spacing",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "display_width":"half_width",
+                                "default" : null
+                            },
+                            {
+                                "label" : "Font size mobile",
+                                "name" : "font_size_mobile",
+                                "type" : "number",
+                                "display" : "text",
+                                "suffix": "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Margin bottom",
+                                "name" : "margin_bottom",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label":"Description",
+                "name": "description",
+                "type": "group",
+                "children": [
+                    {
+                        "label": "Text",
+                        "name": "text",
+                        "type": "text",
+                        "allow_new_line": true,
+                        "default": "Somos una agencia de Inbound Marketing en Colombia fundada desde enero de 2011, el contenido ha estado en nuestro ADN y ahora la data es nuestra obsesión." 
+                    },
+                    {
+                        "label":"Style",
+                        "name": "style",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label" : "Font",
+                                "name" : "font",
+                                "type" : "font",
+                                "required" : false,
+                                "locked" : false,
+                                "load_external_fonts" : true,
+                                "default" : null
+                            },
+                            {
+                                "label" : "line height",
+                                "name" : "line_height",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "%",
+                                "display_width":"half_width",
+                                "default" : null
+                            },
+                            {
+                                "label" : "letter spacing",
+                                "name" : "letter_spacing",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "display_width":"half_width",
+                                "default" : null
+                            },
+                            {
+                                "label" : "Font size mobile",
+                                "name" : "font_size_mobile",
+                                "type" : "number",
+                                "display" : "text",
+                                "suffix": "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Margin bottom",
+                                "name" : "margin_bottom",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label" : "Space buttons",
+                "name" : "space_buttons",
+                "type" : "number",
+                "display" : "text",
+                "suffix":"px",
+                "display_width":"half_width",
+                "default" : null 
+            },
+            {
+                "label" : "Margin buttons",
+                "name" : "margin_buttons",
+                "type" : "number",
+                "display" : "text",
+                "suffix":"px",
+                "display_width":"half_width",
+                "default" : null 
+            },
+            {
+                "label": "Buttons",
+                "name": "buttons",
+                "type": "group",
+                "expanded": false,
+                "occurrence" : {
+                    "max" : null,
+                    "default" : 1
+                },
+                "children": [
+                    {
+                        "label" : "Text",
+                        "name" : "text",
+                        "type" : "text",
+                        "required" : false,
+                        "locked" : false,
+                        "validation_regex" : "",
+                        "allow_new_line" : false,
+                        "show_emoji_picker" : false,
+                        "default" : "Explore"
+                    },
+                    {
+                        "label" : "Anchor",
+                        "name" : "anchor",
+                        "type" : "link",
+                        "required" : false,
+                        "locked" : false,
+                        "supported_types" : [ "EXTERNAL", "CONTENT", "FILE", "EMAIL_ADDRESS", "BLOG" ],
+                        "default" : {
+                          "url" : {
+                            "content_id" : null,
+                            "type" : "EXTERNAL",
+                            "href" : "#explore"
+                          },
+                          "open_in_new_tab" : false,
+                          "no_follow" : false
+                        }
+                    },
+                    {
+                        "label": "Style",
+                        "name": "style",
+                        "type": "group",
+                        "expanded": false,
+                        "children": [
+                            {
+                                "label" : "Style",
+                                "name" : "style",
+                                "type" : "choice",
+                                "required" : true,
+                                "locked" : false,
+                                "display" : "select",
+                                "choices" : [ 
+                                  [ "primary", "Primay" ], 
+                                  [ "secondary", "Secondary" ],
+                                  [ "primary-link", "Primary anchor" ], 
+                                  [ "secondary-link", "Secondary anchor" ],
+                                  [ "light", "Light" ], 
+                                  [ "dark", "Dark" ],
+                                  [ "one", "One" ], 
+                                  [ "two", "Two" ],
+                                  [ "three", "Three" ],
+                                  [ "four", "Four" ],
+                                  [ "five", "Five" ],
+                                  [ "six", "Six" ],
+                                  [ "seven", "Seven" ],
+                                  [ "eight", "eight" ],
+                                  [ "nine", "Nine" ],
+                                  [ "ten", "Ten" ]
+                                ],
+                                "default":"primary"
+                            },
+                            {
+                                "label" : "Size",
+                                "name" : "size",
+                                "type" : "choice",
+                                "required" : true,
+                                "locked" : false,
+                                "display" : "select",
+                                "choices" : [ 
+                                  [ "large", "Large" ],
+                                  [ "medium", "Medium" ],
+                                  [ "normal", "Normal" ],
+                                  [ "small", "Small" ],
+                                  [ "tiny", "tiny" ]
+                                ],
+                                "default":"normal"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label":"Order",
+                "name": "order",
+                "type": "group",
+                "children": [
+                    {
+                        "label": "Title",
+                        "name": "title",
+                        "required": true,
+                        "type": "choice",
+                        "display": "select",
+                        "choices": [
+                            [ "1", "1" ],
+                            [ "2", "2" ],
+                            [ "3", "3" ]
+                        ],
+                        "default": "1" 
+                    },
+                    {
+                        "label": "Description",
+                        "name": "description",
+                        "required": true,
+                        "type": "choice",
+                        "display": "select",
+                        "choices": [
+                            [ "1", "1" ],
+                            [ "2", "2" ],
+                            [ "3", "3" ]
+                        ],
+                        "default": "2" 
+                    },
+                    {
+                        "label": "Buttons",
+                        "name": "buttons",
+                        "required": true,
+                        "type": "choice",
+                        "display": "select",
+                        "choices": [
+                            [ "1", "1" ],
+                            [ "2", "2" ],
+                            [ "3", "3" ]
+                        ],
+                        "default": "3" 
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "label": "Slider options",
+        "name": "slider_options",
+        "type": "group",
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+                "label": "Infinite",
+                "name": "infinite",
+                "type": "boolean",
+                "help_text": "Al llegar a la altima diapositiva continua con la primera",
+                "required": false,
+                "locked": false,
+                "default": true 
+            },
+            {
+                "label": "Show dots",
+                "name": "show_dots",
+                "type": "boolean",
+                "help_text": "Muestra los puntos de navegacion inferior",
+                "required": false,
+                "locked": false,
+                "default": true 
+            },
+            {
+                "label": "Autoplay",
+                "name": "autoplay",
+                "type": "boolean",
+                "help_text": "Se mueve de manera independiente",
+                "required": false,
+                "locked": false,
+                "default": true 
+            },
+            {
+                "label" : "Transition speed",
+                "name" : "transition_spedd",
+                "type" : "number",
+                "help_text": "Velocidad de la transición",
+                "required" : true,
+                "locked" : false,
+                "min" : 50,
+                "suffix" : "ms",
+                "default" : 300 
+            },
+            {
+                "label" : "Speed slide",
+                "name" : "speed_slide",
+                "type" : "number",
+                "help_text": "Tiempo que se muestra entre transicion de slides",
+                "required" : false,
+                "locked" : false,
+                "min" : 50,
+                "suffix" : "ms",
+                "default" : 3000 
+            }
+        ]
+    },
+    {
+        "label": "Advance",
+        "inline_help_text": "Use esta opción para agregar clases o un id al modulo",
+        "name": "advance",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+              "label": "ID",
+              "name": "id_module",
+              "type": "text",
+              "help_text": "Utilice solo letras, numeros y guiones sin espacio",
+              "required": false,
+              "locked": false,
+              "allow_new_line": false,
+              "show_emoji_picker": false,
+              "placeholder": "id-module",
+              "default": null
+            },
+            {
+              "label" : "Classes",
+              "name" : "classes",
+              "type" : "text",
+              "required" : false,
+              "locked" : false,
+              "occurrence" : {
+                "min" : null,
+                "max" : null,
+                "sorting_label_field" : null,
+                "default" : null
+              },
+              "allow_new_line" : false,
+              "show_emoji_picker" : false,
+              "default" : null
+            }
+        ]
+    },
+    {
+        "label":"Estilos",
+        "name": "styles",
+        "type": "group",
+        "tab": "STYLE",
+        "children": [
+            {
+                "label": "Margin",
+                "name": "margin",
+                "type": "spacing",
+                "required": false,
+                "locked": false,
+                "visibility" : {
+                    "hidden_subfields" : {
+                        "padding": true
+                    }
+                },
+                "inherited_value": {
+                    "default_value_path": "theme.layout.margin"
+                }
+            },
+            {
+                "label": "z-index",
+                "name": "z_index",
+                "required": false,
+                "locked": false,
+                "type": "number",
+                "default": null
+            },
+            {
+                "label": "Visible",
+                "name": "visible",
+                "type": "group",
+                "inline_help_text": "Determine en que dispositivo se vera este modulo",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Desktop",
+                        "name": "desktop",
+                        "type": "boolean",
+                        "required": false,
+                        "locked": false,
+                        "default": true 
+                    },
+                    {
+                        "label": "Mobile",
+                        "name": "mobile",
+                        "type": "boolean",
+                        "required": false,
+                        "locked": false,
+                        "default": true 
+                    }
+                ]
+            },
+            {
+                "label": "Box",
+                "name": "box",
+                "type": "group",
+                "inline_help_text": "Use esta opción para dar estilos al contenedor del bloque",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label" : "Background color",
+                        "name" : "background_color",
+                        "type" : "color",
+                        "required" : false,
+                        "locked" : false,
+                        "default": null
+                    },
+                    {
+                        "label": "Padding",
+                        "name": "padding",
+                        "type": "spacing",
+                        "required": false,
+                        "default": null,
+                        "visibility" : {
+                            "hidden_subfields" : {
+                                "margin": true
+                            }
+                        }
+                    },
+                    {
+                        "label" : "Border",
+                        "name" : "border",
+                        "type" : "border",
+                        "required" : false,
+                        "locked" : false,
+                        "allow_custom_border_sides" : false,
+                        "default" : null
+                    },
+                    {
+                        "label" : "Border radius",
+                        "name" : "border_radius",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "suffix" : "px",
+                        "default" : null
+                    },
+                    {
+                        "label":"Shadow",
+                        "name": "shadow",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label" : "Color",
+                                "name" : "color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default": null
+                            },
+                            {
+                                "label" : "Blur",
+                                "name" : "blur",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Position y",
+                                "name" : "position_y",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Position x",
+                                "name" : "position_x",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label": "Slider",
+                "name": "slider",
+                "type": "group",
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Container",
+                        "name": "container",
+                        "required": false,
+                        "locked": false,
+                        "type": "group",
+                        "children": [
+                            {
+                                "label": "Default",
+                                "name": "default",
+                                "required": false,
+                                "locked": false,
+                                "type": "group",
+                                "children": [
+
+                                    {
+                                        "label" : "Width",
+                                        "name" : "width",
+                                        "type" : "number",
+                                        "display" : "text",
+                                        "display_width":"half_width",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label": "Units",
+                                        "name": "units_width",
+                                        "type": "choice",
+                                        "display": "select",
+                                        "display_width":"half_width",
+                                        "required": true,
+                                        "choices": [
+                                            [ "px", "px" ],
+                                            [ "%", "%" ],
+                                            [ "vw", "vw" ],
+                                            [ "vh", "vh" ]
+                                        ],
+                                        "default": "px" 
+                                    },
+                                    {
+                                        "label" : "Height",
+                                        "name" : "height",
+                                        "type" : "number",
+                                        "display" : "text",
+                                        "display_width":"half_width",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label": "Units",
+                                        "name": "units_height",
+                                        "type": "choice",
+                                        "display": "select",
+                                        "display_width":"half_width",
+                                        "required": true,
+                                        "choices": [
+                                            [ "px", "px" ],
+                                            [ "%", "%" ],
+                                            [ "vh", "vh" ],
+                                            [ "vw", "vw" ]
+                                        ],
+                                        "default": "px" 
+                                    },
+                                    {
+                                        "label": "Padding",
+                                        "name": "padding",
+                                        "type": "spacing",
+                                        "visibility": {
+                                            "hidden_subfields": {
+                                              "margin": true
+                                            }
+                                        }
+                                    }
+
+                                ]
+                            },
+                            {
+                                "label": "Mobile",
+                                "name": "mobile",
+                                "required": false,
+                                "locked": false,
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Height",
+                                        "name" : "height",
+                                        "type" : "number",
+                                        "display" : "text",
+                                        "display_width":"half_width",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label": "Units",
+                                        "name": "units_height",
+                                        "type": "choice",
+                                        "display": "select",
+                                        "display_width":"half_width",
+                                        "required": true,
+                                        "choices": [
+                                            [ "px", "px" ],
+                                            [ "%", "%" ],
+                                            [ "vh", "vh" ],
+                                            [ "vw", "vw" ]
+                                        ],
+                                        "default": "px" 
+                                    },
+                                    {
+                                        "label": "Padding",
+                                        "name": "padding",
+                                        "type": "spacing",
+                                        "visibility": {
+                                            "hidden_subfields": {
+                                              "margin": true
+                                            }
+                                        }
+                                    }
+
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Arrows",
+                        "name": "arrows",
+                        "type": "group",
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label": "Type",
+                                "name": "type",
+                                "type": "choice",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "one", "One" ],
+                                    [ "two", "Two" ],
+                                    [ "three", "Three" ],
+                                    [ "four", "Four" ],
+                                    [ "five", "Five" ],
+                                    [ "six", "Six" ],
+                                    [ "seven", "Seven" ],
+                                    [ "eight", "Eight" ],
+                                    [ "nine", "Nine" ],
+                                    [ "ten", "Ten" ]
+                                ],
+                                "default": null 
+                            },
+                            {
+                                "label" : "Size",
+                                "name" : "size",
+                                "type" : "number",
+                                "suffix" : "px",
+                                "display_width":"half_width",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Size mobile",
+                                "name" : "size_mobile",
+                                "type" : "number",
+                                "suffix" : "px",
+                                "display_width":"half_width",
+                                "default" : null 
+                            },
+                            {
+                                "label": "Color",
+                                "name": "color",
+                                "type": "color",
+                                "default": null
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Dots",
+                        "name": "dots",
+                        "type": "group",
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label": "Color",
+                                "name": "color",
+                                "type": "color",
+                                "default": null
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,0 +1,63 @@
+{% import '../helpers.html' as helper %}
+
+{# ----------------------------- content ----------------------------- #}
+{# button #}
+{% set text   = module.button.text %}
+{% set anchor = module.button.anchor %}
+{# icon #}
+{% set custom_icon = module.icon.custom_icon  %}
+{% set image       = module.icon.image  %}
+{% set icon        = module.icon.icon  %}
+{% set icon_align  = module.icon.align %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# --------------------------- end content --------------------------- #}
+
+{# ----------------------------- styles ------------------------------ #}
+{# visible #}
+{% set margin    = module.styles.margin.css %}
+{% set z_index   = module.styles.z_index %}
+{% set visible   = module.styles.visible %}
+{% set animation   = module.styles.animation %}
+{% set sticky    = module.styles.sticky %}
+{# button #}
+{% set button_style = module.styles.button.style %}
+{% set button_size  = module.styles.button.size %}
+{% set button_align = module.styles.button.align.text_align %}
+{% set button_block = module.styles.button.block %}
+{# icon #}
+{% set icon_size = module.styles.icon.size %}
+{# --------------------------- end styles ---------------------------- #}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+    </style>
+{% end_require_css %} 
+        
+{# add class in array #}
+{% do classes_module.insert(0, 'button') %}
+{% do classes_module.insert(1, 'button--'+button_style) %}
+{% do classes_module.insert(2, 'button--'+button_size) %}
+
+{% if button_block %}
+    {% do classes_module.insert(3, 'button--block') %}
+{% endif %}
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<div class="button-group button-group--{{button_align|lower}}">
+    {% if icon.name %}
+            {% call helper.anchor_min(anchor, '', classes_module, id_module) %}
+                {% if icon_align == 'right' %}
+                        {{text}} {{helper.icon_min(icon, 15 if icon_size == null, false)}}
+                {% else %}
+                        {{helper.icon_min(icon,  15 if icon_size == null, false)}} {{text}}
+                {% endif %}
+            {% endcall %}
+    {% else %}
+        {% call helper.anchor_min(anchor, text, classes_module, id_module) %}{% endcall %}
+    {% endif %}
+</div>

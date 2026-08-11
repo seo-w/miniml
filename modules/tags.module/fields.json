@@ -1,0 +1,510 @@
+[
+    {
+        "label": "Tags",
+        "name": "tags",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+                "label": "Open in new tab",
+                "name": "open_in_new_tab",
+                "type": "boolean",
+                "required": false,
+                "locked": false,
+                "default": false 
+            },
+            {
+                "label": "Text see all",
+                "name": "text_see_all",
+                "type": "text",
+                "required": false,
+                "locked": false,
+                "allow_new_line": false,
+                "show_emoji_picker": false,
+                "default": "See all" 
+            },
+            {
+                "label": "See all position",
+                "name": "see_all_position",
+                "display": "select",
+                "required": true,
+                "locked": false,
+                "choices": [
+                    ["left", "left"],
+                    ["right", "right"]
+                ],
+                "type": "choice",
+                "default": "left" 
+            }
+        ]
+    },
+    {
+        "label": "Advance",
+        "inline_help_text": "Use esta opción para agregar clases o un id al modulo",
+        "name": "advance",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+              "label": "ID",
+              "name": "id_module",
+              "type": "text",
+              "help_text": "Utilice solo letras, numeros y guiones sin espacio",
+              "required": false,
+              "locked": false,
+              "allow_new_line": false,
+              "show_emoji_picker": false,
+              "placeholder": "id-module",
+              "default": null
+            },
+            {
+              "label" : "Classes",
+              "name" : "classes",
+              "type" : "text",
+              "required" : false,
+              "locked" : false,
+              "occurrence" : {
+                "min" : null,
+                "max" : null,
+                "sorting_label_field" : null,
+                "default" : null
+              },
+              "allow_new_line" : false,
+              "show_emoji_picker" : false,
+              "default" : null
+            }
+        ]
+    },
+    {
+        "label":"Estilos",
+        "name": "styles",
+        "type": "group",
+        "tab": "STYLE",
+        "children": [
+            {
+                "label": "Margin",
+                "name": "margin",
+                "type": "spacing",
+                "required": false,
+                "locked": false,
+                "visibility" : {
+                    "hidden_subfields" : {
+                        "padding": true
+                    }
+                },
+                "inherited_value": {
+                    "default_value_path": "theme.layout.margin"
+                }
+            },
+            {
+                "label": "Visible",
+                "name": "visible",
+                "type": "group",
+                "inline_help_text": "Determine en que dispositivo se vera este modulo",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Desktop",
+                        "name": "desktop",
+                        "type": "boolean",
+                        "required": false,
+                        "locked": false,
+                        "default": true 
+                    },
+                    {
+                        "label": "Mobile",
+                        "name": "mobile",
+                        "type": "boolean",
+                        "required": false,
+                        "locked": false,
+                        "default": true 
+                    }
+                ]
+            },
+            {
+                "label": "Box",
+                "name": "box",
+                "type": "group",
+                "inline_help_text": "Use esta opción para dar estilos al contenedor del bloque",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "Items align",
+                        "name": "align",
+                        "type": "textalignment",
+                        "required": false,
+                        "default" : null,
+                        "default": {
+                            "text_align": null
+                        }
+                    },
+                    {
+                        "label" : "Background color",
+                        "name" : "background_color",
+                        "type" : "color",
+                        "required" : false,
+                        "locked" : false,
+                        "default" : null
+                    },
+                    {
+                        "label": "Padding",
+                        "name": "padding",
+                        "type": "spacing",
+                        "required": false,
+                        "default" : null,
+                        "visibility" : {
+                            "hidden_subfields" : {
+                                "margin": true
+                            }
+                        }
+                    },
+                    {
+                        "label" : "Border",
+                        "name" : "border",
+                        "type" : "border",
+                        "required" : false,
+                        "locked" : false,
+                        "allow_custom_border_sides" : false,
+                        "default" : null
+                    },
+                    {
+                        "label" : "Border radius",
+                        "name" : "border_radius",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "suffix" : "px",
+                        "default" : null
+                    },
+                    {
+                        "label":"Shadow",
+                        "name": "shadow",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label" : "Color",
+                                "name" : "color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Blur",
+                                "name" : "blur",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Position y",
+                                "name" : "position_y",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Position x",
+                                "name" : "position_x",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null 
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "label": "Tags",
+                "name": "tags",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label":"Text",
+                        "name": "text",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label" : "Font",
+                                "name" : "font",
+                                "type" : "font",
+                                "required" : false,
+                                "locked" : false,
+                                "load_external_fonts" : true,
+                                "default" : null,
+                                "visibility" : {
+                                    "hidden_subfields" : {
+                                        "color": true
+                                    }
+                                }
+                            },
+                            {
+                                "label" : "line height",
+                                "name" : "line_height",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "%",
+                                "default" : null
+                            },
+                            {
+                                "label" : "letter spacing",
+                                "name" : "letter_spacing",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            }
+                        ]
+                    },
+                    {
+                        "label": "Paddind",
+                        "name": "padding",
+                        "type": "spacing",
+                        "required": false,
+                        "default": null,
+                        "visibility" : {
+                            "hidden_subfields" : {
+                                "margin": true
+                            }
+                        }
+                    },
+                    {
+                        "label" : "Margin",
+                        "name" : "margin",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "default" : null
+                    },
+                    {
+                        "label":"Default",
+                        "name": "default",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label": "Text color",
+                                "name": "text_color",
+                                "type": "color",
+                                "required": false,
+                                "locked": false,
+                                "default":null
+                            },
+                            {
+                                "label": "Font weight",
+                                "name": "font_weight",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "100", "100" ],
+                                    [ "200", "200" ],
+                                    [ "300", "300" ],
+                                    [ "400", "400" ],
+                                    [ "500", "500" ],
+                                    [ "600", "600" ],
+                                    [ "700", "700" ],
+                                    [ "800", "800" ],
+                                    [ "900", "900" ]
+                                ],
+                                "type": "choice",
+                                "placeholder": "",
+                                "default": null
+                            },
+                            {
+                                "label" : "Background color",
+                                "name" : "background_color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border",
+                                "name" : "border",
+                                "type" : "border",
+                                "required" : false,
+                                "locked" : false,
+                                "allow_custom_border_sides" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border radius",
+                                "name" : "border_radius",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            },
+                            {
+                                "label":"Shadow",
+                                "name": "shadow",
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Color",
+                                        "name" : "color",
+                                        "type" : "color",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "default" : null
+                                    },
+                                    {
+                                        "label" : "Blur",
+                                        "name" : "blur",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position y",
+                                        "name" : "position_y",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position x",
+                                        "name" : "position_x",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "label":"Hover",
+                        "name": "hover",
+                        "type": "group",
+                        "children": [
+                            {
+                                "label": "Text color",
+                                "name": "text_color",
+                                "type": "color",
+                                "required": false,
+                                "locked": false,
+                                "default":null
+                            },
+                            {
+                                "label": "Font weight",
+                                "name": "font_weight",
+                                "required": false,
+                                "locked": false,
+                                "display": "select",
+                                "choices": [
+                                    [ "100", "100" ],
+                                    [ "200", "200" ],
+                                    [ "300", "300" ],
+                                    [ "400", "400" ],
+                                    [ "500", "500" ],
+                                    [ "600", "600" ],
+                                    [ "700", "700" ],
+                                    [ "800", "800" ],
+                                    [ "900", "900" ]
+                                ],
+                                "type": "choice",
+                                "placeholder": "",
+                                "default": null
+                            },
+                            {
+                                "label" : "Background color",
+                                "name" : "background_color",
+                                "type" : "color",
+                                "required" : false,
+                                "locked" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border",
+                                "name" : "border",
+                                "type" : "border",
+                                "required" : false,
+                                "locked" : false,
+                                "allow_custom_border_sides" : false,
+                                "default" : null
+                            },
+                            {
+                                "label" : "Border radius",
+                                "name" : "border_radius",
+                                "type" : "number",
+                                "required" : false,
+                                "locked" : false,
+                                "suffix" : "px",
+                                "default" : null
+                            },
+                            {
+                                "label":"Shadow",
+                                "name": "shadow",
+                                "type": "group",
+                                "children": [
+                                    {
+                                        "label" : "Color",
+                                        "name" : "color",
+                                        "type" : "color",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "default" : null
+                                    },
+                                    {
+                                        "label" : "Blur",
+                                        "name" : "blur",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position y",
+                                        "name" : "position_y",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    },
+                                    {
+                                        "label" : "Position x",
+                                        "name" : "position_x",
+                                        "type" : "number",
+                                        "required" : false,
+                                        "locked" : false,
+                                        "suffix" : "px",
+                                        "default" : null 
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

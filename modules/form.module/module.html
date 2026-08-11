@@ -1,0 +1,176 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set form = module.form %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin     = module.styles.margin.css %}
+{% set z_index    = module.styles.z_index %}
+{% set visible    = module.styles.visible %}
+{% set animation  = module.styles.animation %}
+{% set sticky     = module.styles.sticky %}
+{% set box        = module.styles.box %}
+{% set form_style = module.styles.form %}
+{% set button     = module.styles.button %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'custom-form') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {{ helper.box_min(box, 'custom-form') }}
+
+            {# Accent color #}
+            {% if form_style.accent_color.color %}
+                .hs-form input{ 
+                    accent-color: {{helper.color_min(form_style.accent_color)}}; 
+                }
+            {% endif %}
+
+            {# Title #}
+            {{helper.font_min(form_style.title, 'form-title')}}
+            {% if form_style.title.align.css %}
+                .form-title{ {{form_style.title.align.css}} }
+            {% endif %}
+
+            {# Labels #}
+            {{helper.font_min(form_style.labels.text, 'hs-form fieldset label *, .hs-form .field>label>*')}}
+            {% if form_style.labels.require_color.color %}
+                .hs-form fieldset label .hs-form-required{
+                    color: {{helper.color_min(form_style.labels.require_color)}} ;
+                }
+            {% endif %}
+            {% if form_style.labels.margin_bottom %}
+                .hs-form fieldset label{
+                    margin-bottom: {{form_style.labels.margin_bottom}}px;
+                }
+            {% endif %}
+
+            {# fields default #}
+            {% if form_style.fields.default.font.css or form_style.fields.default.padding.css or form_style.fields.default.border.css or form_style.fields.default.border_radius or form_style.fields.default.background_color.color %}
+                .hs-form input[type='text'],
+                .hs-form input[type='email'],
+                .hs-form input[type='number'],
+                .hs-form input[type='tel'],
+                .hs-form select,
+                .hs-form textarea,
+                .hs-form input[type="file"]
+                {
+                    {{ form_style.fields.default.font.css if form_style.fields.default.font.css }}
+                    {{ form_style.fields.default.padding.css if form_style.fields.default.padding.css }}
+                    {{ form_style.fields.default.border.css if form_style.fields.default.border.css }}
+                    {{ 'border-radius:'+form_style.fields.default.border_radius+'px;' if form_style.fields.default.border_radius }}
+                    {{ 'background-color:'+helper.color_min(form_style.fields.default.background_color)+';' if form_style.fields.default.background_color.color }}
+                }
+            {% endif %}
+
+            {# fields focus #}
+            {% if form_style.fields.focus.background_color.color or form_style.fields.focus.border.css  %}
+                .hs-form input[type='text']:focus,
+                .hs-form input[type='email']:focus,
+                .hs-form input[type='number']:focus,
+                .hs-form input[type='tel']:focus,
+                .hs-form select:focus,
+                .hs-form textarea:focus{
+                    {{ 'background-color:'+helper.color_min(form_style.fields.focus.background_color)+';' if form_style.fields.focus.background_color.color }}
+                    {{ form_style.fields.focus.border.css if form_style.fields.focus.border.css }}
+                }
+            {% endif %}
+
+            {# Fields placeholder #}
+            {% if form_style.fields.default.place_holder.css %}
+                .hs-form input::placeholder{ {{form_style.fields.default.place_holder.css}} }
+            {% endif %}
+
+            {# Choice and checkbox #}
+            {{helper.font_min(form_style.choice_and_select.font, 'hs-form .inputs-list>li>label>span')}}
+            {% if form_style.choice_and_select.spacing.css %}
+                .hs-form .inputs-list>li{ {{form_style.choice_and_select.spacing.css}} }
+                .hs-form .inputs-list>li>*{ margin:0px; }
+            {% endif %}
+
+            {# Legal and help text #}
+            {{helper.font_min(form_style.legal, 'hs-form .legal-consent-container .hs-richtext>*')}}
+            {{helper.font_min(form_style.legal, 'hs-form legend.hs-field-desc')}}
+            {{helper.font_min(form_style.legal, 'hs-form legend.hs-field-desc *')}}
+            {% if form_style.legal.link_color.color %}
+                .hs-form .legal-consent-container .hs-richtext a{ color: {{helper.color_min(form_style.legal.link_color)}} }
+            {% endif %}
+
+            {# Errors #}
+            {% if form_style.errors.spacing.css %}
+                .hs-form .hs-error-msgs>li{ {{form_style.errors.spacing.css}} }
+            {% endif %}
+            {{helper.font_min(form_style.errors.font, 'hs-form .hs-error-msg')}}
+            {{helper.font_min(form_style.errors.font, 'hs-form .hs-main-font-element')}}
+
+            {# Button #}
+            {% if button.align.css %}
+                .hs-form .actions{
+                    {{button.align.css}}
+                }
+            {% endif %}
+            {{helper.box_min(button.default, 'hs-form .actions .hs-button')}}
+            {{helper.font_min(button.default.font, 'hs-form .actions .hs-button')}}
+            {{helper.box_min(button.hover, 'hs-form .actions .hs-button:hover')}}
+            {{helper.font_min(button.hover.font, 'hs-form .actions .hs-button:hover')}}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<div {{ helper.advance_min(id_module, classes_module) }}>
+    {% if form.title is truthy %}
+        {% set no_title = False %}
+    {% else %}
+        {% set no_title = True %}
+    {% endif %}
+
+    {% if form.form.form_id %}
+        {% form
+        form_key='{{ name }}',
+        form_to_use='{{ form.form.form_id }}',
+        title='{{ form.title }}',
+        no_title='{{ no_title }}',
+        follow_up_type_simple='{{ form.follow_up_type_simple }}',
+        simple_email_for_live_id='{{ form.simple_email_for_live_id }}',
+        follow_up_type_automation='{{ form.follow_up_type_automation }}',
+        form_follow_ups_workflow_id='{{ form.form_follow_ups_workflow_id }}',
+        response_response_type='{{ form.form.response_type }}',
+        response_redirect_id='{{ form.form.redirect_id }}',
+        response_redirect_url='{{ form.form.redirect_url }}',
+        response_message='{{ form.form.message }}',
+        notifications_are_overridden='{{ form.notifications_are_overridden }}',
+        notifications_override_email_addresses='{{ form.notifications_override_email_addresses }}'
+        gotowebinar_webinar_key='{{ form.form.gotowebinar_webinar_key }}'
+        sfdc_campaign='{{ form.sfdc_campaign }}'
+        %}
+    {% else %}
+        {% form
+        title='{{ form.title }}',
+        no_title='{{ no_title }}',
+    %}
+    {% endif %}
+</div>
+
+
+
+
+
+
+
+
+
+
+

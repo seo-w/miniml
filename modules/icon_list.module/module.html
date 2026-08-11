@@ -1,0 +1,125 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set items = module.items %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin      = module.styles.margin.css %}
+{% set z_index     = module.styles.z_index %}
+{% set visible     = module.styles.visible %}
+{% set animation   = module.styles.animation %}
+{% set sticky      = module.styles.sticky %}
+{% set box         = module.styles.box %}
+{% set items_style = module.styles.item %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'icon-list') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+
+            {{ helper.box_min(box, 'icon-list') }}
+            {{ helper.box_min(items_style.item_box, 'icon-list__item') }}
+
+            {% if items_style.item_box.alignment.horizontal_align or items_style.item_box.alignment.vertical_align %}
+                .icon-list__item{
+                    {% if items_style.item_box.alignment.horizontal_align %}
+                        justify-content:
+                        {{ 'flex-start' if items_style.item_box.alignment.horizontal_align == 'LEFT'}}
+                        {{ 'center' if items_style.item_box.alignment.horizontal_align == 'CENTER'}}
+                        {{ 'flex-end' if items_style.item_box.alignment.horizontal_align == 'RIGHT'}};
+                    {% endif %}
+                    {% if items_style.item_box.alignment.vertical_align %}
+                        align-items: 
+                        {{ 'flex-end' if items_style.item_box.alignment.vertical_align == 'BOTTOM'}}
+                        {{ 'center' if items_style.item_box.alignment.vertical_align == 'MIDDLE'}}
+                        {{ 'flex-start' if items_style.item_box.alignment.vertical_align == 'TOP'}};
+                    {% endif %}
+                }
+            {% endif %}
+
+            {# icon color #}
+            {% if items_style.icon.color.color %}
+                .icon-list__icon svg{
+                    fill: {{helper.color_min(items_style.icon.color)}}
+                }
+            {% endif %}
+
+            {# icon size and spacing — gap cubre las 4 posiciones de texto #}
+            {% if items_style.icon.margin_right %}
+                .icon-list__item{ gap: {{items_style.icon.margin_right}}px; }
+            {% endif %}
+            {% if items_style.icon.size %}
+                .icon-list__image{ min-width: {{items_style.icon.size}}px; }
+            {% endif %}
+
+            {# posicion del texto respecto al icono.
+               'right' es el default historico, asi que no emite nada — las
+               instancias ya publicadas tienen este campo vacio y deben seguir
+               viendose igual.
+               Se mueve el icono con 'order' en vez de 'flex-direction:
+               row-reverse' para no tener que tocar justify-content, que ya lo
+               controla el campo Alignment del item_box. #}
+            {% if items_style.icon.text_position == 'left' %}
+                .icon-list__icon, .icon-list__image{ order: 1; }
+            {% elif items_style.icon.text_position == 'bottom' %}
+                .icon-list__item{ flex-direction: column; }
+            {% elif items_style.icon.text_position == 'top' %}
+                .icon-list__item{ flex-direction: column; }
+                .icon-list__icon, .icon-list__image{ order: 1; }
+            {% endif %}
+
+            {# title #}
+            {{helper.font_min(items_style.title, 'icon-list__anchor')}}
+            {{helper.font_min(items_style.title.default, 'icon-list__anchor')}}
+            {{helper.font_min(items_style.title.hover, 'icon-list__anchor:hover')}}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<ul {{helper.advance_min(id_module, classes_module)}}>
+    {% for item in items %}
+        {% set title        = item.title %}
+        {% set custom_icon  = item.custom_icon %}
+        {% set icon         = item.icon %}
+        {% set image        = item.image %}
+        {% set anchor       = item.anchor %}
+        <li class="icon-list__item">
+            {% if !custom_icon %}
+                {% if icon.name %}
+                    <span class="icon-list__icon">
+                        {{helper.icon_min(icon, items_style.icon.size  is truthy? items_style.icon.size:theme.icon_list.icon.size )}}
+                    </span>
+                {% endif %}
+            {% else %}
+                {% if image.src %}
+                    <span class="icon-list__image">
+                        {{helper.image_min(image)}}
+                    </span>
+                {% endif %}
+            {% endif %}
+
+            {% if anchor.url.href %}
+                {% call helper.anchor_min(anchor, title, ['icon-list__anchor'] ) %}{% endcall %}
+            {% else %}
+                {% if title %}
+                    <span class="icon-list__anchor">
+                        {{title}}
+                    </span>
+                {% endif %}
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

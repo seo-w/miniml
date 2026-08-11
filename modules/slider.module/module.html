@@ -1,0 +1,256 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set items = module.items %}
+{# slider #}
+{% set slider_options = module.slider_options %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin           = module.styles.margin.css %}
+{% set z_index          = module.styles.z_index %}
+{% set visible          = module.styles.visible %}
+{% set box              = module.styles.box %}
+{% set slider_container = module.styles.slider.container %}
+{% set slider_arrows    = module.styles.slider.arrows %}
+{% set slider_dots    = module.styles.slider.dots %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% do classes_module.insert(0, 'carousel') %}
+{% do classes_module.insert(1, 'slider') %}
+{% do classes_module.insert(2, 'slider--'+name) %}
+{% if slider_arrows.type %}
+    {% do classes_module.insert(3, 'slick-arrow-'+slider_arrows.type) %}
+{% endif %}
+
+
+{% require_css %}
+    <style>
+
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {{ helper.box_min(box, 'slider__general-container') }}
+
+            {% if slider_container.default.width or slider_container.default.height or slider_container.default.padding.css  %}
+                .slider__content{
+                    {{ 'max-width: '+slider_container.default.width+slider_container.default.units_width+';' if slider_container.default.width }}
+                    {{ 'min-height: '+slider_container.default.height+slider_container.default.units_height+';' if slider_container.default.height }}
+                    {{ slider_container.default.padding.css if slider_container.default.padding.css }}
+                }
+            {% endif %}
+
+            {% if slider_container.mobile.height or slider_container.mobile.padding.css  %}
+                {% call helper.media_min() %}
+                    .slider__content{
+                        {{ 'min-height: '+slider_container.mobile.height+slider_container.mobile.units_height+';' if slider_container.mobile.height }}
+                        {{ slider_container.mobile.padding.css if slider_container.mobile.padding.css }}
+                        max-width:100%;
+                    }
+                {% endcall %}
+            {% endif %}
+
+            {% if slider_arrows.size or slider_arrows.color %}
+                .slider .carousel__arrow{
+                    {{ 'font-size: '+slider_arrows.size+'px;' if slider_arrows.size }}
+                    {{ 'color: '+helper.color_min(slider_arrows.color)+';' if slider_arrows.color.color }}
+                }
+            {% endif %}
+
+            {% if slider_arrows.size_mobile %}
+                {% call helper.media_min() %}
+                    .slider .carousel__arrow{
+                        font-size: {{slider_arrows.size_mobile}}px ;
+                    }
+                {% endcall %}
+            {% endif %}
+
+            {% if slider_dots.color.color %}
+                .slider .carousel__dot--active{
+                    background: {{ helper.color_min(slider_dots.color) }};
+                }
+            {% endif %}
+
+
+
+
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ require_css(get_asset_url('../../modules/css/carousel.css')) }}
+{{ require_js(get_asset_url('../../js/carousel.js'), "footer") }}
+
+{% require_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            initCarousel(document.querySelector('.slider--{{name}}'), {
+                infinite: {{slider_options.infinite}},
+                showDots: {{slider_options.show_dots}},
+                autoplay: {{slider_options.autoplay}},
+                autoplaySpeed: {{slider_options.speed_slide}},
+                scrollByDesktop: 1,
+                scrollByTablet: 1,
+                scrollByPhone: 1
+            });
+        });
+    </script>
+{% end_require_js %}
+
+
+
+<div class="slider__general-container">
+    <div {{ helper.advance_min(id_module, classes_module) }} >
+      <div class="carousel__track">
+        {% for item in items %}
+            {% set image_default       = item.image.default %}
+            {% set image_mobile        = item.image.mobile %}
+            {# tope nativo de HubSpot (manejador de recorte en el selector de imagen), no un campo custom #}
+            {% set image_default_max_width = image_default.image.max_width|int if (image_default.image.size_type == 'auto_custom_max' and image_default.image.max_width) else null %}
+            {% set image_mobile_max_width  = image_mobile.image.max_width|int if (image_mobile.image.size_type == 'auto_custom_max' and image_mobile.image.max_width) else null %}
+            {% set image_default_src   = resize_image_url(image_default.image.src, image_default_max_width) if (image_default.image.src and image_default_max_width) else image_default.image.src %}
+            {% set image_mobile_src    = resize_image_url(image_mobile.image.src, image_mobile_max_width) if (image_mobile.image.src and image_mobile_max_width) else image_mobile.image.src %}
+            {% set slide_content_width = item.slide_content.width %}
+            {% set slide_content_align = item.slide_content.align %}
+            {% set title               = item.title %}
+            {% set description         = item.description %}
+            {% set buttons             = item.buttons %}
+            {% set order               = item.order %}
+
+            {% require_css %}
+                <style>
+                
+                    {# background default #}
+                        {% if !image_default.overlay and image_default.image.src %}
+                            .slider__slide--{{name + loop.index}}{
+                                background-image: url({{image_default_src}});
+                                background-size: {{image_default.image_size}};
+                                background-position: {{image_default.image_alignment}};
+                            }
+                        {% elif image_default.overlay and image_default.image.src %}
+                            .slider__slide--{{name + loop.index}}{
+                                background-image: linear-gradient({{image_default.gradient.direction}}, {{helper.color_min(image_default.gradient.color_1)}}, {{helper.color_min(image_default.gradient.color_2)}}), url({{image_default_src}});
+                                background-size: {{image_default.image_size}};
+                                background-position: {{image_default.image_alignment}};
+                                {{ 'background-blend-mode:'+image_default.blend_mode+';' if image_default.blend_mode }}
+                            }
+                        {% endif %}
+                    {# end - background default #}
+                    
+                    {# background mobile #}
+                        {% if image_mobile.image_size or image_mobile.image_alignment or image_mobile.blend_mode %}
+                            {% call helper.media_min() %}
+                                .slider__slide--{{name + loop.index}}{
+                                    {{ 'background-size: '+image_mobile.image_size+';' if image_mobile.image_size }}
+                                    {{ 'background-position: '+image_mobile.image_alignment+';' if image_mobile.image_alignment }}
+                                    {{ 'background-blend-mode:'+image_mobile.blend_mode+';' if image_mobile.blend_mode }}
+                                    {% if !image_mobile.overlay and image_mobile.image.src %}
+                                        background-image: url({{image_mobile_src}});
+                                    {% elif image_mobile.overlay and image_mobile.image.src %}
+                                        background-image: linear-gradient({{image_mobile.gradient.direction}}, {{helper.color_min(image_mobile.gradient.color_1)}}, {{helper.color_min(image_mobile.gradient.color_2)}}), url({{image_mobile_src}});
+                                    {% endif %}
+                                }
+                            {% endcall %}
+                        {% endif  %}
+                    {# end - background mobile #}
+
+                    {# width content #}
+                        {% if slide_content_width %}
+                            .slider__content-content--{{name + loop.index}}{
+                                max-width: {{slide_content_width}}px;
+                            }
+                        {% endif %}
+                    {# end - width content #}
+
+                    {# slide align content default #}
+                        {% if slide_content_align.default.horizontal or slide_content_align.default.vertical %}
+                            .slider__content--{{name + loop.index}}{
+                                {{ 'justify-content: '+slide_content_align.default.vertical+';' if slide_content_align.default.vertical }}
+                                {{ 'align-items: '+slide_content_align.default.horizontal+';' if slide_content_align.default.horizontal }}
+                            }
+                        {% endif %}
+                        {% if slide_content_align.default.text_align %}
+                            .slider__content-content--{{name + loop.index}}>*{ text-align: {{slide_content_align.default.text_align}}; }
+                        {% endif %}
+                    {# end - slide align content default #}
+
+                    {# slide align content mobile #}
+                        {% if slide_content_align.mobile.horizontal or slide_content_align.mobile.vertical %}
+                            {% call helper.media_min() %}
+                                .slider__content--{{name + loop.index}}{
+                                    {{ 'justify-content: '+slide_content_align.mobile.vertical+';' if slide_content_align.mobile.vertical }}
+                                    {{ 'align-items: '+slide_content_align.mobile.horizontal+';' if slide_content_align.mobile.horizontal }}
+                                }
+                            {% endcall %}
+                        {% endif %}
+                        {% if slide_content_align.mobile.text_align %}
+                            {% call helper.media_min() %}
+                                .slider__content-content--{{name + loop.index}}>*{ text-align: {{slide_content_align.mobile.text_align}}; }
+                            {% endcall %}
+                        {% endif %}
+                    {# end - slide align content mobile #}
+
+                    {# title #}
+                        {{ helper.font_min(title.style, 'slider__title--'+name+loop.index) }}
+                    {# end - title #}
+
+                    {# description #}
+                        {{ helper.font_min(description.style, 'slider__description--'+name+loop.index) }}
+                    {# end - description #}
+
+                    {# buttons #}
+                        {% if item.margin_buttons %}
+                            .slider__buttons--{{name + loop.index}}{ margin-bottom: {{item.margin_buttons}}px; }
+                        {% endif %}
+
+                        {% if item.space_buttons %}
+                            .slider__buttons--{{name + loop.index}}>.button{ margin-right: {{item.space_buttons}}px; }
+                            .slider__buttons--{{name + loop.index}}>.button:last-child{ margin-right: 0px; }
+                        {% endif %}
+
+                    {# end buttons #}
+
+                </style>
+            {% end_require_css %} 
+
+
+            <div class="slider__slide slider__slide--{{name + loop.index}}">
+                <div class="slider__content slider__content--{{name + loop.index}}">
+                    <div class="slider__content-content slider__content-content--{{name + loop.index}}">
+                        {% if title.text %}
+                            <{{title.tag}} class="slider__title slider__title--{{name + loop.index}}  order-{{order.title}}" >
+                                {{title.text}}
+                            </{{title.tag}}>
+                        {% endif %}
+                        {% if description.text %}
+                            <p class="slider__description slider__description--{{name + loop.index}} order-{{order.description}}">
+                                {{description.text}}
+                            </p>
+                        {% endif %}
+                        <div class="slider__buttons slider__buttons--{{name + loop.index}} order-{{order.buttons}}">
+                            {% for button in buttons %}
+                                {% set button_text   = button.text %}
+                                {% set button_anchor = button.anchor %}
+                                {% set button_style = button.style %}
+
+                                {% call helper.anchor_min(button_anchor, button_text, ['button', 'button--'+button_style.style, 'button--'+button_style.size]) %}{% endcall %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+      </div>
+      {# Slick mostraba flechas siempre por defecto (arrows:true) — no hay toggle explícito en fields.json #}
+      <button type="button" class="carousel__arrow carousel__arrow--prev" aria-label="Anterior">‹</button>
+      <button type="button" class="carousel__arrow carousel__arrow--next" aria-label="Siguiente">›</button>
+      {% if slider_options.show_dots %}
+          <div class="carousel__dots"></div>
+      {% endif %}
+    </div>
+</div>

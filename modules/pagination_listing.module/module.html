@@ -1,0 +1,152 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set navigation_index_buttons = module.navigation.index_buttons %}
+{% set navigation_previous      = module.navigation.previous %}
+{% set navigation_next          = module.navigation.next %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']  %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin            = module.styles.margin.css %}
+{% set visible           = module.styles.visible %}
+{% set box               = module.styles.box %}
+{% set index_buttons     = module.styles.index_buttons %}
+{% set previous_and_next = module.styles.previous_and_next %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'pagination') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible) }}
+        {% scope_css %}
+
+            {# BOX #}
+            {{helper.box_min(box, 'pagination')}}
+            {% if box.align %}
+              .pagination{
+                {{ 'justify-content: flex-start;' if box.align.text_align == 'LEFT' }}
+                {{ 'justify-content: center;' if box.align.text_align == 'CENTER' }}
+                {{ 'justify-content: flex-end;' if box.align.text_align == 'RIGHT' }}
+                {{ 'justify-content: space-around;' if box.align.text_align == 'JUSTIFY' }}
+              }
+            {% endif %}
+            
+            {# General pagination link and default #}
+            {{helper.font_min(index_buttons.font, 'pagination__link')}}
+            {{helper.box_min(index_buttons.default, 'pagination__link')}}
+            {% if index_buttons.content_size or index_buttons.default.text_color %}
+              .pagination__link{
+                {% if index_buttons.content_size %}
+                  width: {{index_buttons.content_size}}px;
+                  height: {{index_buttons.content_size}}px;
+                {% endif %}
+                {% if index_buttons.default.text_color %}
+                  color: {{helper.color_min(index_buttons.default.text_color)}};
+                {% endif %}
+              }
+            {% endif %}
+
+            {# Pagination link - hover #}
+            {{helper.box_min(index_buttons.hover, 'pagination__link:hover')}}
+            {% if index_buttons.hover.text_color %}
+              .pagination__link:hover{
+                color: {{helper.color_min(index_buttons.hover.text_color)}};
+              }
+            {% endif %}
+
+            {# Pagination link - active #}
+            {{helper.box_min(index_buttons.active, 'pagination__link--active')}}
+            {% if index_buttons.active.text_color %}
+              .pagination__link--active{
+                color: {{helper.color_min(index_buttons.active.text_color)}};
+              }
+            {% endif %}
+
+            {# Arrow space #}
+            {% if previous_and_next.space %}
+              .pagination__next-link>svg{
+                margin: 0px 0px 0px {{previous_and_next.space}}px;
+              }
+              .pagination__prev-link>svg{
+                margin: 0px {{previous_and_next.space}}px 0px 0px;
+              }
+            {% endif %}
+
+            {# Arrow text #}
+            {{helper.font_min(previous_and_next.default, 'pagination_navigation-text')}}
+            {{helper.font_min(previous_and_next.hover, 'pagination__next-link:hover>.pagination_navigation-text, .pagination__prev-link:hover>.pagination_navigation-text')}}
+            
+            {# Arrow icons - default #}
+            {% if previous_and_next.default.font.color %}
+              .pagination__next-link>svg,
+              .pagination__prev-link>svg{
+                fill:{{previous_and_next.default.font.color}};
+              }
+            {% endif %}
+
+            {# Arrow icons - hover #}
+            {% if previous_and_next.hover.font.color %}
+              .pagination__next-link:hover>svg,
+              .pagination__prev-link:hover>svg{
+                fill:{{previous_and_next.hover.font.color}};
+              }
+            {% endif %}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %}
+
+{% if contents.total_page_count > 1 %}
+  <nav aria-label="Pagination" role="navigation" {{ helper.advance_min(id_module, classes_module) }}>
+    {% set page_list = [-2, -1, 0, 1, 2] %}
+    {% if contents.total_page_count - current_page_num == 1 %}
+      {% set offset = -1 %}
+    {% elif contents.total_page_count - current_page_num == 0 %}
+      {% set offset = -2 %}
+    {% elif current_page_num == 2 %}
+      {% set offset = 1 %}
+    {% elif current_page_num == 1 %}
+      {% set offset = 2 %}
+    {% else %}
+      {% set offset = 0 %}
+    {% endif %}
+    {% if last_page_num %}
+      <a class="pagination__prev-link {{ 'blog-pagination__prev-link--disabled' if !last_page_num }}" rel="prev"{% if last_page_num %} href="{% if current_page_num == 2 %}{{ group.absolute_url }}{% else %}{{ blog_page_link(last_page_num) }}{% endif %}"{% endif %}>
+        {% if navigation_previous.icon.name %}
+          {{helper.icon_min(navigation_previous.icon, previous_and_next.icon_size, True) }}
+        {% endif %}
+        {% if navigation_previous.text %}
+          <span class="pagination_navigation-text">
+            {{navigation_previous.text}}
+          </span>
+        {% endif %}
+      </a>
+    {% endif %}
+    {% if navigation_index_buttons.show %}
+      {% for page in page_list %}
+        {% set this_page = current_page_num + page + offset %}
+        {% if this_page > 0 and this_page <= contents.total_page_count %}
+          <a class="pagination__link pagination__number-link {{ 'pagination__link--active' if this_page == current_page_num }}" aria-label="Go to Page {{ this_page }}" {{ 'aria-current="true"' if this_page == current_page_num }} href="{% if this_page == 1 %}{{ group.absolute_url }}{% else %}{{ blog_page_link(this_page) }}{% endif %}">{{ this_page }}</a>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% if next_page_num and (navigation_next.text or navigation_next.icon) %}
+      <a class="pagination__next-link" rel="next" {% if next_page_num %} href="{{ blog_page_link(current_page_num + 1) }}"{% endif %}>
+        {% if navigation_next.text %}
+          <span class="pagination_navigation-text">
+            {{navigation_next.text}}
+          </span>
+        {% endif %}
+        {% if navigation_next.icon.name %}
+          {{helper.icon_min(navigation_next.icon, previous_and_next.icon_size, True) }}
+        {% endif %}
+      </a>
+    {% endif %}
+  </nav>
+{% endif %}

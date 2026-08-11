@@ -1,0 +1,20 @@
+.custom-image{
+    display: block;
+    width: 100%;
+    line-height: 0px;
+}
+.custom-image__anchor{
+    overflow: hidden;
+    line-height: 0px;
+}
+.custom-image__anchor,
+.custom-image__image{
+    display: inline-block;
+    width: 100%;
+    height: auto;
+    line-height: 0px;
+}
+.custom-image__figure{
+    display: inline-block;
+    margin: 0 0 0 0;
+}

@@ -1,0 +1,72 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{% set id_module    = module.id_module %}
+{% set open_on_load = module.open_on_load %}
+{% set icon         = helper.icon_min(module.icon, module.styles.icon.width is truthy?  module.styles.icon.width:15, true  ) %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set icon_style =  module.styles.icon %}
+{# ------------------------------ end styles ------------------------------- #}
+
+
+{% if icon_style.color.color or icon_style.margin_top or icon_style.margin_right %}
+    {% require_css %}
+        <style>
+            {% if icon_style.margin_top or icon_style.margin_right %}
+                #{{id_module}} .custom-popup__colose{
+                    {{ 'top:'+icon_style.margin_top+'px;' if icon_style.margin_top }}
+                    {{ 'right:'+icon_style.margin_right+'px;' if icon_style.margin_right }}
+                }
+            {% endif %}
+
+            {% if icon_style.color.color %}
+                #{{id_module}} .custom-popup__colose>svg{
+                    fill: {{helper.color_min(icon_style.color)}};
+                }
+            {% endif %}
+        </style>
+    {% end_require_css %}
+{% endif %}
+
+
+
+<span class="reference-module reference-module--custom-popup reference-module-{{name}}"></span>
+
+
+{% require_js %}
+    <script>
+        (function(){
+            var section{{name}} = document.querySelector('.reference-module-{{name}}').closest('.dnd-section');
+            section{{name}}.classList.add('custom-popup');
+            section{{name}}.id = '{{id_module}}';
+            section{{name}}.insertAdjacentHTML('beforeend', '<span class="custom-popup__colose">{{icon}}</span>');
+
+            var closeIcon{{name}} = section{{name}}.querySelector('.custom-popup__colose');
+
+            document.querySelectorAll('a[href="#{{id_module}}"]').forEach(function(trigger){
+                trigger.addEventListener('click', function(evt){
+                    evt.preventDefault();
+                    var isActive = section{{name}}.classList.contains('custom-popup--active');
+                    section{{name}}.classList.toggle('custom-popup--active', !isActive);
+                    document.body.classList.toggle('custom-popup--active-body', !isActive);
+                });
+            });
+
+            if (closeIcon{{name}}) {
+                closeIcon{{name}}.addEventListener('click', function(){
+                    section{{name}}.classList.remove('custom-popup--active');
+                    document.body.classList.remove('custom-popup--active-body');
+                });
+            }
+
+            {% if open_on_load %}
+                setTimeout(function(){
+                    section{{name}}.classList.add('custom-popup--active');
+                    document.body.classList.add('custom-popup--active-body');
+                }, 500);
+            {% endif %}
+        })();
+    </script>
+{% end_require_js %}

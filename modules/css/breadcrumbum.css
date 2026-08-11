@@ -1,0 +1,47 @@
+{% import '../helpers.html' as helper %}
+
+{% set links       = theme.breadcrumb.links %}
+{% set separator   = theme.breadcrumb.separator %}
+{% set active_page = theme.breadcrumb.active_page %}
+
+.breadcrumb,
+.breadcrumb .hs-breadcrumb-menu{
+    display: block;
+    width: 100%;
+}
+
+/*item*/
+.breadcrumb .hs-breadcrumb-menu-item{
+    padding: 0px;
+    margin: 0px;
+    display: inline-block;
+    float: none;
+}
+
+/*item container*/
+.breadcrumb .hs-breadcrumb-label{
+    display: inline-block;
+    vertical-align: middle;
+    text-decoration: none;
+}
+
+/*linked*/
+.breadcrumb a.hs-breadcrumb-label{
+    cursor:pointer;
+}
+{{ helper.font_min(links, 'breadcrumb a.hs-breadcrumb-label') }}
+
+/*undlinked*/
+{{ helper.font_min(active_page, 'breadcrumb span.hs-breadcrumb-label') }}
+
+/* divider */
+.breadcrumb .hs-breadcrumb-menu-divider{
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 0px;
+}
+.breadcrumb .hs-breadcrumb-menu-divider::before{
+    line-height: 0px;
+    {{ separator.font.css if separator.font.css }}
+    {{ 'padding: 0px '+separator.space+'px;' if separator.space }}
+}

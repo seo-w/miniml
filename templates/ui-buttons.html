@@ -1,0 +1,218 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  label: UI buttons
+-->
+{% extends "./layouts/base.html" %}
+
+{% set theme_container = theme.layout.desktop.container %}
+{% set theme_padding   = theme.layout.desktop.padding %}
+{% set theme_mobile    = theme.layout.mobile.padding %}
+
+{% block body %}
+  <main id="main-content" class="body-container-wrapper">
+    {% dnd_area 'main_drop_area'%}
+
+      {# Module button - Main #}
+      {% dnd_section max_width={{theme_container}}, margin={'top':80} %}
+        {% dnd_module 'main_buttons' path='../modules/title', title={'text':'Main buttons', 'tag':'h3'}, styles={'title':{'style':'h3'}}  %}{% end_dnd_module %}
+      {% end_dnd_section %}
+      {% dnd_section max_width={{theme_container}}, margin={'top':20} %}
+        {% dnd_column width=3, offset=0 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'primary' path='../modules/title', title={'text':'Primary', 'tag':'h4'}, styles={'title':{'style':'h4'}}  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_large' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary', 'size':'large' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_medium' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary', 'size':'medium' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_normal' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_small' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary', 'size':'small' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_tiny' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary', 'size':'tiny' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=3, offset=3 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'secondary' path='../modules/title', title={'text':'Secondary', 'tag':'h4'}, styles={'title':{'style':'h4'}}  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_large' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary', 'size':'large' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_medium' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary', 'size':'medium' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_normal' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_small' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary', 'size':'small' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_tiny' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary', 'size':'tiny' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+      {% end_dnd_section %}
+
+
+      {# Module button - complementary #}
+      {% dnd_section max_width={{theme_container}}, margin={'top':30} %}
+        {% dnd_module 'complementary_buttons' path='../modules/title', title={'text':'Complementary buttons', 'tag':'h3'}, styles={'title':{'style':'h3'}}  %}{% end_dnd_module %}
+      {% end_dnd_section %}
+      {% dnd_section max_width={{theme_container}}, margin={'top':20} %}
+        {% dnd_column width=3, offset=0 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'light' path='../modules/title', title={'text':'Light', 'tag':'h4'}, styles={'title':{'style':'h4'}}  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_light_large' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'light', 'size':'large' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_light_medium' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'light', 'size':'medium' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_light_normal' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'light', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_light_small' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'light', 'size':'small' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_light_tiny' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'light', 'size':'tiny' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=3, offset=3 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'dark' path='../modules/title', title={'text':'Dark', 'tag':'h4'}, styles={'title':{'style':'h4'}}  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_dark_large' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'dark', 'size':'large' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_dark_medium' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'dark', 'size':'medium' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_dark_normal' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'dark', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_dark_small' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'dark', 'size':'small' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_dark_tiny' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'dark', 'size':'tiny' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=3, offset=6 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'primary_link' path='../modules/title', title={'text':'Primary link', 'tag':'h4'}, styles={'title':{'style':'h4'}}  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_link_large' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary-link', 'size':'large' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_link_medium' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary-link', 'size':'medium' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_link_normal' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary-link', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_link_small' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary-link', 'size':'small' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_primary_link_tiny' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'primary-link', 'size':'tiny' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=3, offset=9 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'primary_link' path='../modules/title', title={'text':'Secondary link', 'tag':'h4'}, styles={'title':{'style':'h4'}}  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_link_large' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary-link', 'size':'large' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_link_medium' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary-link', 'size':'medium' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_link_normal' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary-link', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_link_small' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary-link', 'size':'small' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_secondary_link_tiny' path='../modules/button', button={'text':'Button'}, styles={'button':{'style':'secondary-link', 'size':'tiny' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+      {% end_dnd_section %}
+
+
+      {% dnd_section max_width={{theme_container}}, margin={'top':30} %}
+        {% dnd_module 'auxiliary_buttons' path='../modules/title', title={'text':'Auxiliary buttons', 'tag':'h3'}, styles={'title':{'style':'h3'}}  %}{% end_dnd_module %}
+      {% end_dnd_section %}
+
+      {% dnd_section max_width={{theme_container}}, margin={'top':20} %}
+        {% dnd_column width=2, offset=0 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_one' path='../modules/button', button={'text':'one'}, styles={'button':{'style':'one', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=2, offset=2 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_two' path='../modules/button', button={'text':'two'}, styles={'button':{'style':'two', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=2, offset=4 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_three' path='../modules/button', button={'text':'three'}, styles={'button':{'style':'three', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=2, offset=6 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_four' path='../modules/button', button={'text':'four'}, styles={'button':{'style':'four', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=2, offset=8 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_five' path='../modules/button', button={'text':'five'}, styles={'button':{'style':'five', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=2, offset=10 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_six' path='../modules/button', button={'text':'six'}, styles={'button':{'style':'six', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+      {% end_dnd_section %}
+
+      {% dnd_section max_width={{theme_container}}, margin={'top':20} %}
+        {% dnd_column width=2, offset=0 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_seven' path='../modules/button', button={'text':'seven'}, styles={'button':{'style':'seven', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=2, offset=2 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_eight' path='../modules/button', button={'text':'eight'}, styles={'button':{'style':'eight', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=2, offset=4 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_nine' path='../modules/button', button={'text':'nine'}, styles={'button':{'style':'nine', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}
+        {% dnd_column width=2, offset=6 %}
+          {% dnd_row margin={'bottom':20} %}
+            {% dnd_module 'button_ten' path='../modules/button', button={'text':'ten'}, styles={'button':{'style':'ten', 'size':'normal' } }  %}{% end_dnd_module %}
+          {% end_dnd_row %}
+        {% end_dnd_column %}}
+      {% end_dnd_section %}
+
+
+
+
+
+    {% end_dnd_area %}
+  </main>
+{% endblock body %}

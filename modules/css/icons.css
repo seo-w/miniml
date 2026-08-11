@@ -1,0 +1,61 @@
+{% import '../helpers.html' as helper %}
+
+{% set icons = theme.icons_module %}
+
+.icons{
+    display: block;
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+    text-align:{{icons.align}};
+}
+.icons__item{
+    display: inline-block;
+}
+.icons__item{
+    margin: 0px {{icons.spacing}}px 0px 0px ;
+}
+.icons__item:last-child{
+    margin: 0px;
+}
+{{ helper.box_min(icons.default, 'icons__anchor') }}
+.icons__anchor{
+    width: {{icons.icon_size_content}}px;
+    height: {{icons.icon_size_content}}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+{# reset del <button> nativo cuando icons__anchor se renderiza como botón (toggle de menú, etc.) — inerte para <a>/<span>, no los afecta #}
+button.icons__anchor{
+    background: none;
+    border: none;
+    padding: 0px;
+    font: inherit;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+}
+{{ helper.box_min(icons.hover, 'icons__anchor:hover') }}
+.icons__anchor>span{
+    display: block;
+    padding: 0px;
+    margin:0px;
+    line-height: 0px;
+}
+.icons__anchor>span>svg{
+    height: {{icons.icon_size}}px;
+    max-height: {{icons.icon_size}}px;
+    width: auto;
+    display: inline-block;
+    line-height: 0px;
+    {% if icons.default.icon_color.color %}
+        fill: {{ helper.color_min(icons.default.icon_color) }};
+    {% endif %}
+}
+{% if icons.hover.icon_color.color %}
+    .icons__anchor:hover>span>svg{
+        fill: {{ helper.color_min(icons.hover.icon_color) }};
+    }
+{% endif %}

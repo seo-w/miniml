@@ -1,0 +1,41 @@
+{% import '../helpers.html' as helper %}
+
+{% set box         = theme.icon_box.box %}
+{% set icon        = theme.icon_box.icon %}
+{% set title       = theme.icon_box.title %}
+{% set description = theme.icon_box.description %}
+
+{# box #}
+.icon-box{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+{{ helper.box_min(box, 'icon-box') }}
+
+{# icon #}
+.icon-box__content-icon{ 
+    display: block;
+    margin: 0px 0px {{icon.margin_bottom}}px 0px; 
+}
+.icon-box__icon{
+    width: auto !important;
+    display: inline-block !important;
+    max-height:{{icon.height}}px;
+}
+
+{# title #}
+{{helper.font_min(title,'icon-box__title')}}
+
+{# description #}
+{{helper.font_min(description,'icon-box__description')}}
+
+.icon-box>*:last-child{
+    margin: 0px;
+}
+.icon-box>*{
+    text-align:{{box.text_align}};
+}
+.icon-box__actions{
+    display: block;
+}

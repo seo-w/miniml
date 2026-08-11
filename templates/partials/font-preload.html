@@ -1,0 +1,116 @@
+{#
+  ============================================================================
+  PRECARGA DE FUENTES (rel="preload") — CONFIGURAR POR CLIENTE
+  ============================================================================
+
+  Por qué esto es un archivo y no un campo del theme:
+  HubSpot solo admite estos tipos en el fields.json de un theme — Boolean,
+  Border, Choice, Color, Font, Image, Number, Spacing. No hay campo de texto
+  ni de URL ni de archivo (verificado subiendo: "'text' fields are not
+  supported in theme fields.json" / idem 'url'). Mismo motivo por el que
+  templates/partials/structured-data.html tiene el nombre de empresa
+  hardcodeado. Así que la lista se edita acá.
+
+  --------------------------------------------------------------------------
+  CÓMO USARLO: agregá las URLs a la lista `fonts` de abajo. Vacía = este
+  archivo no emite absolutamente nada (es el estado por defecto y es seguro).
+  --------------------------------------------------------------------------
+
+  Sirve para los tres casos, y la URL se consigue distinto en cada uno:
+
+  1) GOOGLE FONTS — HubSpot las auto-hospeda en tu propio dominio, no salen de
+     fonts.gstatic.com. El patrón es:
+         /_hcms/googlefonts/<Familia_Con_Guion_Bajo>/<peso>.woff2
+     Ejemplos reales de este portal:
+         /_hcms/googlefonts/Spartan/700.woff2
+         /_hcms/googlefonts/Roboto/regular.woff2
+     Para saber cuáles usa un sitio: abrí la página, buscá "@font-face" en el
+     HTML (HubSpot los emite inline en el <head>) y copiá el url() de ahí.
+     OJO: acá el preload gana poco, porque al estar el @font-face inline el
+     navegador ya descubre la fuente temprano. Vale para la fuente del H1
+     above-the-fold y poco más.
+
+  2) FUENTE SUBIDA AL FILE MANAGER de HubSpot — subí el .woff2, copiá su URL
+     y pegala. Puede ser la URL completa o la ruta.
+
+  3) FUENTE DE UN TERCERO (Adobe Fonts, foundry, CDN propio) — pegá la URL
+     completa con https://. Este archivo le agrega el <link rel="preconnect">
+     al origen automáticamente, que en ese caso sí importa bastante.
+     ACÁ ES DONDE EL PRELOAD MÁS RINDE: si la fuente se declara con @font-face
+     en css/_custom.css (hoja externa), el navegador no puede descubrirla hasta
+     descargar y parsear ese CSS. El preload rompe esa cadena en serie.
+
+  --------------------------------------------------------------------------
+  REGLAS PARA NO EMPEORAR EL RENDIMIENTO (importante):
+  - Precargá SOLO las fuentes visibles above-the-fold, normalmente 1 o 2. Cada
+    preload le compite ancho de banda al LCP. Precargar de más es peor que no
+    precargar nada.
+  - Precargá el archivo que el navegador de verdad va a usar (woff2). Si
+    precargás una fuente que no se usa, la consola avisa
+    ("was preloaded using link preload but not used") y desperdiciaste la
+    descarga.
+  - No precargues fuentes websafe (Arial, Georgia): no tienen archivo.
+  ============================================================================
+#}
+
+{% set fonts = [] %}
+
+{#
+  Ejemplo (descomentar y ajustar):
+  {% set fonts = [
+      '/_hcms/googlefonts/Spartan/700.woff2',
+      'https://cdn.midominio.com/fonts/MiFuente-Bold.woff2'
+  ] %}
+#}
+
+{% if fonts %}
+    {#
+      preconnect solo para origenes externos. Se acumulan en una lista mutada
+      con `do append` porque un {% set %} dentro de un {% for %} no se ve fuera
+      del loop (scoping de Jinja, HubL lo hereda) — mismo workaround que usa el
+      resto del theme con classes_module.insert().
+    #}
+    {% set external_origins = [] %}
+    {% for font_url in fonts %}
+        {# '://' distingue URL absoluta de ruta relativa. Ojo: HubL corre sobre
+           Java y NO tiene .startswith() — da "Cannot find method startswith". #}
+        {% if font_url and '://' in font_url %}
+            {#
+              Se parte por '://' y no por '/' porque el split de HubL DESCARTA
+              los tokens vacíos: 'https://host/f.woff2'|split('/') devuelve
+              ['https:','host','f.woff2'] (sin el vacío del '//'), así que el
+              host queda en el índice 1 y no en el 2 como sería en Python.
+              Partir por '://' no depende de ese comportamiento.
+            #}
+            {% set url_halves = font_url|split('://') %}
+            {% if url_halves|length > 1 %}
+                {% set font_host   = url_halves[1]|split('/')|first %}
+                {% set font_origin = url_halves[0] ~ '://' ~ font_host %}
+                {% if font_host != request.domain and font_origin not in external_origins %}
+                    {% do external_origins.append(font_origin) %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    {% for origin in external_origins %}
+        <link rel="preconnect" href="{{ origin }}" crossorigin>
+    {% endfor %}
+
+    {#
+      crossorigin es OBLIGATORIO en un preload de fuente, incluso si el archivo
+      está en el mismo dominio: las fuentes siempre se piden en modo CORS, y si
+      el preload no coincide en ese modo el navegador descarga el archivo DOS
+      veces y el preload termina siendo contraproducente. Es el error clásico.
+
+      El type solo se emite para .woff2, que es lo que sirve HubSpot y lo único
+      que vale la pena precargar hoy. Un type que no coincida hace que el
+      navegador ignore el preload, así que para cualquier otra extensión se
+      omite el atributo en vez de arriesgar un valor equivocado.
+    #}
+    {% for font_url in fonts %}
+        {% if font_url %}
+            <link rel="preload" as="font" href="{{ font_url }}"{{ ' type="font/woff2"' if '.woff2' in font_url }} crossorigin>
+        {% endif %}
+    {% endfor %}
+{% endif %}

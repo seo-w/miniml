@@ -1,0 +1,159 @@
+<!--
+ templateType: section
+ label: Left Hero
+ isAvailableForNewContent: true
+-->
+
+
+{% dnd_section  max_width=850,
+                background_color='#f5f8fa',
+                vertical_alignment='MIDDLE',
+                padding={
+                    'default':{
+                        'top':100,
+                        'bottom':100,
+                    },
+                    'mobile':{
+                        'top':20,
+                        'bottom':20,
+                    }
+                }
+%}
+
+    {% dnd_column width=12, offset=0 %}
+        {% dnd_row %}
+            {% dnd_module   path='../../modules/icons',
+                            styles={
+                                'margin':{
+                                    'margin':{
+                                        'bottom':{
+                                            'value':20
+                                        }
+                                    }
+                                },
+                                'box':{
+                                    'align':{
+                                        'text_align':'CENTER'
+                                    }
+                                },
+                                'icons':{
+                                    'icon_size':30,
+                                    'icon_size_content':30,
+                                    'spacing':5,
+                                    'default':{
+                                        'icon_color':{
+                                            'color':'#F7C419'
+                                        },
+                                        'background_color':{
+                                            'color':'#fff',
+                                            'opacity':0
+                                        }
+                                    }
+                                }
+                            } 
+            %}
+                {% module_attribute 'items' %}
+                    [
+                        {
+                            "icon":{
+                                "name":"star",
+                                "unicode":"f005",
+                                "type":"REGULAR",
+                                "icon_set":"icon_set=fontawesome-5.0.10"
+                            }
+                        },
+                        {
+                            "icon":{
+                                "name":"star",
+                                "unicode":"f005",
+                                "type":"REGULAR",
+                                "icon_set":"icon_set=fontawesome-5.0.10"
+                            }
+                        },
+                        {
+                            "icon":{
+                                "name":"star",
+                                "unicode":"f005",
+                                "type":"REGULAR",
+                                "icon_set":"icon_set=fontawesome-5.0.10"
+                            }
+                        },
+                        {
+                            "icon":{
+                                "name":"star",
+                                "unicode":"f005",
+                                "type":"REGULAR",
+                                "icon_set":"icon_set=fontawesome-5.0.10"
+                            }
+                        },
+                        {
+                            "icon":{
+                                "name":"star",
+                                "unicode":"f005",
+                                "type":"REGULAR",
+                                "icon_set":"icon_set=fontawesome-5.0.10"
+                            }
+                        }
+                    ]
+                {% end_module_attribute %}
+            {% end_dnd_module %}
+        {% end_dnd_row %}
+        {% dnd_row %}
+            {% dnd_module   path='../modules/title', 
+                            title={
+                                'text':'Somos una agencia de Inbound marketing comprometida con tu crecimiento',
+                                'tag':'h1'
+                            },
+                            styles={
+                                'margin':{
+                                    'margin':{
+                                        'bottom':{
+                                            'value':30
+                                        }
+                                    }
+                                },
+                                'title':{
+                                    'style':'h1',
+                                    'align':{
+                                        'text_align':'CENTER'
+                                    }
+                                }
+                            }
+            %}{% end_dnd_module %}
+        {% end_dnd_row %}
+        {% dnd_row %}
+            {% dnd_module path='@hubspot/rich_text' %}
+                {% module_attribute 'html' %}
+                    <p style="text-align:center;">
+                        Ayudamos a las empresas que están dispuestas a invertir en estrategias digitales de largo plazo, a generar resultados sostenibles de negocio a través de metodologías inbound marketing, ventas y servicio, porque esa es la forma más inteligente de crecer.
+                    </p>
+                {% end_module_attribute %}
+            {% end_dnd_module %}
+        {% end_dnd_row %}
+        {% dnd_row %}
+            {% dnd_module   path='../modules/button',
+                            button={
+                                'text':'¿Hablamos?',
+                                'anchor':{
+                                    'url':{'href':'#hablamos'}
+                                }
+                            },
+                            styles={
+                                'margin':{
+                                    'margin':{
+                                        'top':{
+                                            'value':30
+                                        }
+                                    }
+                                },
+                                'button':{
+                                    'align':{
+                                        'text_align':'CENTER'
+                                    }
+                                }
+                            }
+            %}{% end_dnd_module %}
+        {% end_dnd_row %}
+    {% end_dnd_column %}
+
+{% end_dnd_section %}

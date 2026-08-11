@@ -1,0 +1,153 @@
+{% import '../helpers.html' as helper %}
+
+{% macro buttonStyle_min(field, class) %}
+    {% set background     = field.background %}
+    {% set color         = field.color %}
+    {% set border        = field.border.css %}
+    {% set border_radius = field.border_radius %}
+    {% set shadow        = field.shadow %}
+    .{{class}}{
+        {{ 'background-color:'+helper.color_min(background)+';' if background.color }}
+        {{ 'color:'+helper.color_min(color)+';' if color.color }}
+        {{ border if border}}
+        {{ 'border-radius:'+border_radius+'px;' if border_radius }}
+        {{ helper.shadow_min(shadow) }}
+    }
+    .{{class}} .hs_cos_wrapper_type_icon svg{
+        {{ 'fill:'+helper.color_min(color)+';' if color.color }}
+    }
+{% endmacro %}
+
+{% macro buttonSize_min(field, class) %}
+    {% set font           = field.font %}
+    {% set padding        = field.padding %}
+    {% set letter_spacing = field.letter_spacing %}
+    .{{class}}{
+        {% if letter_spacing %}
+            letter-spacing: {{letter_spacing}}px;
+        {% endif %}
+        {{font.css}}
+        {{padding.css}}
+    }
+{% endmacro %}
+
+.button{
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: all ease 0.2s;
+    text-align: center;
+}
+
+.button--block{ width:100%; }
+
+/* Button icon */
+.button .hs_cos_wrapper_type_icon{
+    display: inline-block;
+    width: 30px;
+    vertical-align: middle;
+}
+
+/* Buttons sizes */
+{% set button_large = theme.button_module.sizes.large %}
+{{buttonSize_min(button_large, 'button--large')}}
+
+{% set button_medium = theme.button_module.sizes.medium %}
+{{buttonSize_min(button_medium, 'button--medium')}}
+
+{% set button_normal = theme.button_module.sizes.normal %}
+{{buttonSize_min(button_normal, 'button--normal')}}
+
+{% set button_small = theme.button_module.sizes.small %}
+{{buttonSize_min(button_small, 'button--small')}}
+
+{% set button_tiny = theme.button_module.sizes.tiny %}
+{{buttonSize_min(button_tiny, 'button--tiny')}}
+
+/* Buttons styles */
+{% set button_primary = theme.button_module.primary %}
+{{buttonStyle_min(button_primary.default,'button--primary')}}
+{{buttonStyle_min(button_primary.hover,'button--primary:hover')}}
+
+{% set button_secondary = theme.button_module.secondary %}
+{{buttonStyle_min(button_secondary.default,'button--secondary')}}
+{{buttonStyle_min(button_secondary.hover,'button--secondary:hover')}}
+
+{% set button_primary_link = theme.button_module.primary_link %}
+{{buttonStyle_min(button_primary_link.default,'button--primary-link')}}
+{{buttonStyle_min(button_primary_link.hover,'button--primary-link:hover')}}
+
+{% set button_secondary_link = theme.button_module.secondary_link %}
+{{buttonStyle_min(button_secondary_link.default,'button--secondary-link')}}
+{{buttonStyle_min(button_secondary_link.hover,'button--secondary-link:hover')}}
+
+{% set button_light = theme.button_module.light %}
+{{buttonStyle_min(button_light.default,'button--light')}}
+{{buttonStyle_min(button_light.hover,'button--light:hover')}}
+
+{% set button_dark = theme.button_module.dark %}
+{{buttonStyle_min(button_dark.default,'button--dark')}}
+{{buttonStyle_min(button_dark.hover,'button--dark:hover')}}
+
+{% set button_one = theme.button_module.one %}
+{{buttonStyle_min(button_one.default,'button--one')}}
+{{buttonStyle_min(button_one.hover,'button--one:hover')}}
+
+{% set button_two = theme.button_module.two %}
+{{buttonStyle_min(button_two.default,'button--two')}}
+{{buttonStyle_min(button_two.hover,'button--two:hover')}}
+
+{% set button_three = theme.button_module.three %}
+{{buttonStyle_min(button_three.default,'button--three')}}
+{{buttonStyle_min(button_three.hover,'button--three:hover')}}
+
+{% set button_four = theme.button_module.four %}
+{{buttonStyle_min(button_four.default,'button--four')}}
+{{buttonStyle_min(button_four.hover,'button--four:hover')}}
+
+{% set button_five = theme.button_module.five %}
+{{buttonStyle_min(button_five.default,'button--five')}}
+{{buttonStyle_min(button_five.hover,'button--five:hover')}}
+
+
+
+
+
+
+
+{% set button_six = theme.button_module.six %}
+{{buttonStyle_min(button_six.default,'button--six')}}
+{{buttonStyle_min(button_six.hover,'button--six:hover')}}
+
+{% set button_seven = theme.button_module.seven %}
+{{buttonStyle_min(button_seven.default,'button--seven')}}
+{{buttonStyle_min(button_seven.hover,'button--seven:hover')}}
+
+{% set button_eight = theme.button_module.eight %}
+{{buttonStyle_min(button_eight.default,'button--eight')}}
+{{buttonStyle_min(button_eight.hover,'button--eight:hover')}}
+
+{% set button_nine = theme.button_module.nine %}
+{{buttonStyle_min(button_nine.default,'button--nine')}}
+{{buttonStyle_min(button_nine.hover,'button--nine:hover')}}
+
+{% set button_ten = theme.button_module.ten %}
+{{buttonStyle_min(button_ten.default,'button--ten')}}
+{{buttonStyle_min(button_ten.hover,'button--ten:hover')}}
+
+
+
+
+
+
+
+
+/* container button */
+.button-group{
+    display: block;
+    padding: 0px;
+    margin: 0px;
+}
+.button-group--left{ text-align: left; }
+.button-group--center{ text-align: center; }
+.button-group--right{ text-align: right; }

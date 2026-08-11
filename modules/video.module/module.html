@@ -1,0 +1,56 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set video = module.video%}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin       = module.styles.margin.css %}
+{% set z_index      = module.styles.z_index %}
+{% set visible      = module.styles.visible %}
+{% set animation    = module.styles.animation %}
+{% set sticky       = module.styles.sticky %}
+{% set box          = module.styles.box %}
+{% set video_height = module.styles.video_height %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'video') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {{ helper.box_min(box, 'video') }}
+
+            {% if video_height.desktop %}
+                .video,
+                .video>iframe{
+                    height:{{video_height.desktop}}px;
+                }
+            {% endif %}
+            {% if video_height.mobile %}
+                {% call helper.media_min() %}
+                    .video,
+                    .video>iframe{
+                        height:{{video_height.mobile}}px;
+                    }
+                {% endcall %}
+            {% endif %}
+
+        {% end_scope_css %}
+
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<div {{ helper.advance_min(id_module, classes_module) }}>
+    {{video.oembed_response.html}}
+</div>
+

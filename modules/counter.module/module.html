@@ -1,0 +1,161 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# grid #}
+{% set grid         = module.grid %}
+{% set spacing_grid = module.grid.spacing_grid %}
+{# content #}
+{% set items = module.items %}
+{# slider #}
+{% set show_as_slider = module.show_as_slider %}
+{% set slider_options = module.slider_options %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin       = module.styles.margin.css %}
+{% set z_index      = module.styles.z_index %}
+{% set visible      = module.styles.visible %}
+{% set animation    = module.styles.animation %}
+{% set sticky       = module.styles.sticky %}
+{% set box          = module.styles.box %}
+{% set number       = module.styles.number %}
+{% set title        = module.styles.title %}
+{% set description  = module.styles.description %}
+{% set button       = ['button', 'button--' + module.styles.button.style_button, 'button--' + module.styles.button.size_button] %}
+{% set slider_style = module.styles.slider %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+
+            {{ helper.box_min(box, 'counter') }}
+
+            {{ helper.font_min(number.value, 'counter__value') }}
+            {{ helper.font_min(number.prefix, 'counter__prefix') }}
+            {{ helper.font_min(number.suffix, 'counter__suffix') }}
+
+            {{ '.counter__number{ margin:0px 0px '+number.margin_bottom+'px 0px; }' if number.margin_bottom }}
+
+            {% if number.space %}
+                .counter__number>*{ margin: 0px {{number.space}}px 0px 0px; }
+                .counter__number>*:last-child{ margin: 0px; }
+            {% endif %}
+
+            {{ '.counter__number>*{vertical-align:'+number.vertical_align+';}' if number.vertical_align }}
+
+            {{ helper.font_min(title, 'counter__title') }}
+            {{ helper.font_min(description, 'counter__description') }}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+{% if show_as_slider %}
+    {% call helper.slider_min(slider_options, slider_style, classes_module, id_module) %}
+        {% for item in items %}
+            {% set value         = item.number.value %}
+            {% set prefix        = item.number.prefix %}
+            {% set suffix        = item.number.suffix %}
+            {% set title         = item.title %}
+            {% set description   = item.description %}
+            {% set button_data   = item.button %}
+            <div>
+                <div class="p-{{spacing_grid}}">
+                    <div class="counter">
+                        {% if value or prefix or suffix %}
+                            <div class="counter__number">
+                                {% if prefix %}
+                                    <span class="counter__prefix">
+                                        {{prefix}}
+                                    </span>
+                                {% endif %}
+                                {% if value %}
+                                    <span class="counter__value">
+                                        {{value}}
+                                    </span>
+                                {% endif %}
+                                {% if suffix %}
+                                    <span class="counter__suffix">
+                                        {{suffix}}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        {% if title.text %}
+                            <{{title.tag}} class="counter__title">
+                                {{title.text}}
+                            </{{title.tag}}>
+                        {% endif %}
+                        {% if description %}
+                            <p class="counter__description">
+                                {{description}}
+                            </p>
+                        {% endif %}
+                        {% if button_data.anchor.url.href %}
+                            <div class="button-group">
+                                {% call helper.anchor_min(button_data.anchor, button_data.text, button) %}{% endcall %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endcall %}
+{% else %}
+    {% call helper.grid_min(grid, classes_module, id_module) %}
+        {% for item in items %}
+            {% set value         = item.number.value %}
+            {% set prefix        = item.number.prefix %}
+            {% set suffix        = item.number.suffix %}
+            {% set title         = item.title %}
+            {% set description   = item.description %}
+            {% set button_data   = item.button %}
+            <div class="col p-{{spacing_grid}}">
+                <div class="counter">
+                    {% if value or prefix or suffix %}
+                        <div class="counter__number">
+                            {% if prefix %}
+                                <span class="counter__prefix">
+                                    {{prefix}}
+                                </span>
+                            {% endif %}
+                            {% if value %}
+                                <span class="counter__value">
+                                    {{value}}
+                                </span>
+                            {% endif %}
+                            {% if suffix %}
+                                <span class="counter__suffix">
+                                    {{suffix}}
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                    {% if title.text %}
+                        <{{title.tag}} class="counter__title">
+                            {{title.text}}
+                        </{{title.tag}}>
+                    {% endif %}
+                    {% if description %}
+                        <p class="counter__description">
+                            {{description}}
+                        </p>
+                    {% endif %}
+                    {% if button_data.anchor.url.href %}
+                        <div class="button-group">
+                            {% call helper.anchor_min(button_data.anchor, button_data.text, button) %}{% endcall %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endcall %}
+{% endif %}

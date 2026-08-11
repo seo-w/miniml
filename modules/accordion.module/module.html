@@ -1,0 +1,145 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set tabs = module.tabs %}
+{# accordion options #}
+{% set icons = module.accordion_options.icons %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']  %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin      = module.styles.margin.css %}
+{% set z_index     = module.styles.z_index %}
+{% set visible     = module.styles.visible %}
+{% set animation   = module.styles.animation %}
+{% set sticky      = module.styles.sticky %}
+{% set box         = module.styles.box %}
+{% set title       = module.styles.title %}
+{% set description = module.styles.description %}
+{% set icon        = module.styles.icon %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'accordionjs') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {# BOX #}
+            {{helper.box_min(box, 'accordionjs')}}
+
+            {# title section #}
+            {{helper.font_min(title.font, 'accordion__title')}}
+
+            {# Default title #}
+            {{helper.box_min(title.default, 'acc_head')}}
+            {{helper.font_min(title.default, 'accordion__title')}}
+            {% if title.default.text_color.color %}
+                .accordion__default>svg{
+                    fill:{{ helper.color_min(title.default.text_color) }}
+                }
+            {% endif %}
+            
+            {# Hover title #}
+            {{helper.box_min(title.hover, 'acc_head:hover')}}
+            {{helper.font_min(title.hover, 'acc_head:hover .accordion__title')}}
+            {% if title.hover.text_color.color %}
+                .acc_head:hover .accordion__default>svg{
+                    fill:{{ helper.color_min(title.hover.text_color) }}
+                }
+            {% endif %}
+
+            {# Active title #}
+            {{helper.box_min(title.active, 'acc_active .acc_head')}}
+            {{helper.font_min(title.active, 'acc_active .acc_head .accordion__title')}}
+            {% if title.active.text_color.color %}
+                .acc_active .accordion__active>svg{
+                    fill:{{ helper.color_min(title.active.text_color) }}
+                }
+            {% endif %}
+
+            {# description accordion #}
+            {{helper.box_min(description, 'accordion__content')}}
+            {{helper.font_min(description.text, 'accordion__content')}}
+            
+
+            {# icon size and margin right #}
+            {% if icon.size or icon.margin_right %}
+                .accordion__icon{
+                    {% if icon.size %}
+                        width: {{icon.size + 10}}px;
+                    {% endif %}
+                    {% if icon.margin_right %}
+                        margin-right: {{icon.margin_right}}px;
+                    {% endif %}
+                }
+                .accordion__default,
+                .accordion__active{
+                    {% if icon.size %}
+                        width: {{icon.size}}px;
+                    {% endif %}                    
+                }
+            {% endif %}
+
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<ul {{ helper.advance_min(id_module, classes_module) }}>
+    {% for tab in tabs %}
+
+        {% set title       = tab.title %}
+        {% set description = tab.description %}
+        {% set is_first    = loop.index == 1 %}
+        {% set head_id     = 'acc-head-'+name+'-'+loop.index|string %}
+        {% set content_id  = 'acc-content-'+name+'-'+loop.index|string %}
+
+        {# el primer panel viene abierto de por vida (server-rendered), igual que antes con activeIndex: 0 #}
+        <li class="acc_section {{ 'acc_active' if is_first }}">
+            <button type="button" id="{{head_id}}" class="acc_head {% if icons.show and icons.align == 'left' %}acc_head--left{% endif %}" aria-expanded="{{ 'true' if is_first else 'false' }}" aria-controls="{{content_id}}">
+                {% if icons.show and icons.align == 'left' %}
+                    <div class="accordion__icon">
+                        <span class="accordion__default">
+                            {{ helper.icon_min(icons.default, null, true) }}
+                        </span>
+                        <span class="accordion__active">
+                            {{ helper.icon_min(icons.active, null, true) }}
+                        </span>
+                    </div>
+                {% endif %}
+                {% if title %}
+                    <div class="accordion__title">
+                        {{title}}
+                    </div>
+                {% endif %}
+                {% if icons.show and icons.align == 'right'  %}
+                    <div class="accordion__icon">
+                        <span class="accordion__default">
+                            {{ helper.icon_min(icons.default, null, true) }}
+                        </span>
+                        <span class="accordion__active">
+                            {{ helper.icon_min(icons.active, null, true) }}
+                        </span>
+                    </div>
+                {% endif %}
+            </button>
+            <div class="accordion__content" id="{{content_id}}" role="region" aria-labelledby="{{head_id}}">
+                {% if description %}
+                    {{description}}
+                {% endif%}
+            </div>
+        </li>
+
+    {% endfor %}
+</ul>
+
+
+

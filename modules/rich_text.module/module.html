@@ -1,0 +1,38 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set text = module.text %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin    = module.styles.margin.css %}
+{% set z_index   = module.styles.z_index %}
+{% set visible   = module.styles.visible %}
+{% set animation = module.styles.animation %}
+{% set sticky    = module.styles.sticky %}
+{% set box       = module.styles.box %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'custom-rich-text') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {# icon css #}
+            {{ helper.box_min(box, 'custom-rich-text') }}
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<div {{ helper.advance_min(id_module, classes_module) }} >
+    {{module.text}}
+</div>

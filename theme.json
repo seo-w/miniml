@@ -1,0 +1,22 @@
+{
+  "label": "Minimal by Triario",
+  "preview_path": "./images/theme/templates/feature_image_minimal.jpg",
+  "screenshot_path": "./images/theme/templates/feature_image_minimal.jpg",
+  "enable_domain_stylesheets": false,
+  "license": "./license.txt",
+  "version":"1.0",
+  "author":{
+    "name":"Triario",
+    "email":"lucas.escobar@triario.com",
+    "url":"https://www.triario.co/"
+  },
+  "responsive_breakpoints": [
+    {
+      "name": "mobile",
+      "mediaQuery": "@media (max-width: 992px)",
+      "previewWidth": {
+        "value": 767
+      }
+    }
+  ]
+}

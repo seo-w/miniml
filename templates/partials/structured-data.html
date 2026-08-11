@@ -1,0 +1,103 @@
+{#
+  Datos estructurados (JSON-LD) del theme.
+
+  QUÉ HACE: emite un <script type="application/ld+json"> por cada schema que
+  aplique a la página actual (Organization/WebSite en toda página, BlogPosting
+  solo en posts de blog). Cada campo se omite si el dato de origen no existe,
+  para no emitir JSON-LD con campos vacíos.
+
+  CÓMO SE INCLUYE: desde templates/partials/head.html vía
+  {% include './structured-data.html' %}
+
+  CÓMO DESACTIVARLO:
+  - Sin tocar código: apagar el toggle "Enable structured data (JSON-LD)"
+    en Theme settings > SEO (theme.seo.enable_structured_data).
+  - Eliminándolo del todo: borrar este archivo y la línea que lo incluye en
+    head.html. No lo referencia ningún otro archivo del theme.
+
+  CONFIGURAR POR CLIENTE (editar las dos líneas "{% set %}" de abajo):
+  HubSpot NO permite campos de texto ni de link en el fields.json de un
+  theme (solo Boolean, Border, Choice, Color, Font, Image, Number, Spacing —
+  validado al subir el theme), así que el nombre de la empresa y los links
+  de redes sociales no pueden ser un campo editable en Theme settings. Se
+  configuran acá, a mano, una vez por cliente. Mientras "company_name" esté
+  vacío, todo el bloque Organization/WebSite se omite automáticamente
+  (no rompe nada, simplemente no emite ese schema).
+#}
+{% set company_name = "" %}
+{% set social_links = [] %}
+{#  Ejemplo real:
+    {% set company_name = "Triario" %}
+    {% set social_links = ["https://www.facebook.com/triario", "https://www.linkedin.com/company/triario"] %}
+#}
+
+{% if theme.seo.enable_structured_data %}
+
+  {# ---- Organization + WebSite: una vez por página, en toda plantilla ---- #}
+  {% if company_name %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "{{ company_name }}",
+      "url": "{{ request.domain }}"
+      {% if theme.seo.default_social_image.src %}, "logo": "{{ theme.seo.default_social_image.src }}"{% endif %}
+      {% if social_links %}
+        , "sameAs": [
+          {% for url in social_links %}"{{ url }}"{{ "," if not loop.last }}{% endfor %}
+        ]
+      {% endif %}
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "{{ company_name }}",
+      "url": "{{ request.domain }}"
+    }
+    </script>
+    {# Nota: se omite a propósito "potentialAction: SearchAction" (sitelinks
+       search box) porque la URL real de resultados de búsqueda depende de
+       cómo cada cliente publique templates/system/search-results.html, y no
+       hay forma confiable de conocerla desde el theme. Si se necesita para
+       un cliente puntual, agregar acá un tercer {% set search_url = "..." %}
+       y su bloque "potentialAction". #}
+  {% endif %}
+
+  {# ---- BlogPosting: solo en posts de blog ----
+     No existe una variable única "es post de blog" en un partial global
+     (confirmado en la doc de HubL) — se detecta combinando: existe
+     blog_post_author Y no es la página de listado ni de archivo. #}
+  {% if content.blog_post_author is defined and !simple_list_page and !archive_list_page %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": "{{ content.name }}",
+      "url": "{{ content.absolute_url }}",
+      "datePublished": "{{ content.publish_date|datetimeformat('%Y-%m-%dT%H:%M:%SZ') }}",
+      "dateModified": "{{ (content.updated if content.updated is defined else content.publish_date)|datetimeformat('%Y-%m-%dT%H:%M:%SZ') }}"
+      {% if content.featured_image %}, "image": "{{ content.featured_image }}"{% endif %}
+      {% if content.blog_post_author.display_name %}
+        , "author": {
+          "@type": "Person",
+          "name": "{{ content.blog_post_author.display_name }}"
+        }
+      {% endif %}
+      {% if company_name %}
+        , "publisher": {
+          "@type": "Organization",
+          "name": "{{ company_name }}"
+          {% if theme.seo.default_social_image.src %}, "logo": {
+            "@type": "ImageObject",
+            "url": "{{ theme.seo.default_social_image.src }}"
+          }{% endif %}
+        }
+      {% endif %}
+      , "mainEntityOfPage": "{{ content.absolute_url }}"
+    }
+    </script>
+  {% endif %}
+
+{% endif %}

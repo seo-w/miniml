@@ -1,0 +1,178 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# menu #}
+{% set menu               = menu(module.menu) %}
+{% set sub_menu_indicator = module.sub_menu_indicator %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin              = module.styles.margin.css %}
+{% set z_index             = module.styles.z_index %}
+{% set visible             = module.styles.visible %}
+{% set animation           = module.styles.animation %}
+{% set sticky              = module.styles.sticky %}
+{% set container_level_one = module.styles.container_level_one %}
+{% set items_level_one     = module.styles.items_level_one %}
+{% set container_level_two = module.styles.container_level_two %}
+{% set items_level_two     = module.styles.items_level_two %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'vertical-menu') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+   
+            {# container level one #}
+            {{ helper.box_min(container_level_one, 'vertical-menu') }}
+            {# end - container level one #}
+
+            {# items level one #}
+            {{ helper.font_min(items_level_one.text, 'vertical-menu__anchor') }}
+            {{ helper.font_min(items_level_one.text, 'vertical-menu__anchor-sub-parent') }}
+
+            {% if items_level_one.padding.css %}
+                .vertical-menu__anchor{ {{items_level_one.padding.css}} }
+            {% endif %}
+
+            {# Default #}
+            {{ helper.box_min(items_level_one.default, 'vertical-menu__anchor') }}
+            {{ helper.font_min(items_level_one.default, 'vertical-menu__anchor') }}
+            {{ helper.font_min(items_level_one.default, 'vertical-menu__anchor-sub-parent') }}
+            {% if items_level_one.default.text_color.color %}
+                .vertical-menu__anchor>.vertical-menu__sub-icon>svg{ fill: {{helper.color_min(items_level_one.default.text_color)}}; }
+            {% endif %}
+            {# end - Default #}
+            {# Hover #}
+            {{ helper.box_min(items_level_one.hover, 'vertical-menu__anchor:hover') }}
+            {{ helper.font_min(items_level_one.hover, 'vertical-menu__anchor:hover') }}
+            {{ helper.font_min(items_level_one.hover, 'vertical-menu__anchor:hover>.vertical-menu__anchor-sub-parent') }}
+            {% if items_level_one.hover.text_color.color %}
+                .vertical-menu__anchor:hover>.vertical-menu__sub-icon>svg{
+                    fill: {{items_level_one.hover.text_color.color}};
+                }
+            {% endif %}
+            {# end - Hover #}
+            {# Active #}
+            {{ helper.box_min(items_level_one.active, 'vertical-menu__anchor--active') }}
+            {{ helper.font_min(items_level_one.active, 'vertical-menu__anchor--active') }}
+            {{ helper.font_min(items_level_one.active, 'vertical-menu__anchor--active>.vertical-menu__anchor-sub-parent') }}
+            {% if items_level_one.active.text_color.color %}
+                .vertical-menu__anchor--active>.vertical-menu__sub-icon>svg{
+                    fill: {{helper.color_min(items_level_one.active.text_color)}};
+                }
+            {% endif %}
+            {# end - Active #}
+            {# end - items level one #}
+
+            {# container level two #}
+            {{ helper.box_min(container_level_two, 'vertical-menu__menu-sub') }}
+            {# end - container level two #}
+
+            {# items level two #}
+                {{ helper.font_min(items_level_two.text, 'vertical-menu__anchor-sub') }}
+                {% if items_level_two.spacing.css %}
+                    .vertical-menu__anchor-sub{ {{items_level_two.spacing.css}} }
+                {% endif %}
+                {# Default #}
+                {{ helper.box_min(items_level_two.default, 'vertical-menu__anchor-sub') }}
+                {{ helper.font_min(items_level_two.default, 'vertical-menu__anchor-sub') }}
+                {# end - Default #}
+                {# Hover #}
+                {{ helper.box_min(items_level_two.hover, 'vertical-menu__anchor-sub:hover') }}
+                {{ helper.font_min(items_level_two.hover, 'vertical-menu__anchor-sub:hover') }}
+                {# end - Hover #}
+                {# Active #}
+                {{ helper.box_min(items_level_two.active, 'vertical-menu__anchor-sub--active') }}
+                {{ helper.font_min(items_level_two.active, 'vertical-menu__anchor-sub--active') }}
+                {# end - Active #}
+            {# end - items level two #}
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<nav {{ helper.advance_min(id_module, classes_module) }} >
+    <ul class="vertical-menu__menu">
+        {% for node_menu in menu.children %}
+            {% set menu_label  = node_menu.label %}
+            {% set menu_anchor = node_menu.url %}
+            {% set menu_target = node_menu.linkTarget %}
+
+            {% set menu_active_node   = node_menu.activeNode %}
+            {% set menu_active_branch = node_menu.activeBranch %}
+                
+            {% set menu_children = node_menu.children %}
+
+            {% set menu_page_id = node_menu.pageId %}
+
+            <li class="vertical-menu__item">
+                {% if menu_children %}
+                    <span class="vertical-menu__anchor {% if menu_active_node or menu_active_branch %}vertical-menu__anchor--active{% endif %}">
+                        <a class="vertical-menu__anchor-sub-parent"  href="{{menu_anchor}}" 
+                            {% if menu_target %}
+                                target="{{menu_target}}" 
+                            {% endif %}
+                            {% if menu_page_id %}
+                                id="id-page-{{name}}-{{menu_page_id}}"
+                            {% endif %}
+                        >
+                            {{menu_label}} 
+                        </a>
+                        {% if sub_menu_indicator.icon.name %}
+                            <span class="vertical-menu__sub-icon" data-state="disabled">
+                                {{ helper.icon_min(sub_menu_indicator.icon, sub_menu_indicator.size, true ) }}
+                            </span>
+                        {% endif %}
+                    </span>
+                    <ul class="vertical-menu__menu-sub">
+                        {% for node_menu_two in menu_children %}
+                            {% set menu_label  = node_menu_two.label %}
+                            {% set menu_anchor = node_menu_two.url %}
+                            {% set menu_target = node_menu_two.linkTarget %}
+
+                            {% set menu_active_node   = node_menu_two.activeNode %}
+                            {% set menu_active_branch = node_menu_two.activeBranch %}
+
+                            {% set menu_page_id = node_menu_two.pageId %}
+                                
+                            <li class="vertical-menu__item-sub">
+                                <a  class="vertical-menu__anchor-sub {% if menu_active_node %}vertical-menu__anchor-sub--active{% endif %}"
+                                    href="{{menu_anchor}}"
+                                    {% if menu_target %}
+                                        target="{{menu_target}}" 
+                                    {% endif %}
+                                    {% if menu_page_id %}
+                                        id="id-page-sub-{{name}}-{{menu_page_id}}"
+                                    {% endif %}
+                                >
+                                    {{menu_label}}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <a  class="vertical-menu__anchor {% if menu_active_node or menu_active_branch %}vertical-menu__anchor--active{% endif %}"
+                        href="{{menu_anchor}}" 
+                        {% if menu_target %}
+                            target="{{menu_target}}" 
+                        {% endif %}
+                        {% if menu_page_id %}
+                            id="id-page-{{name}}-{{menu_page_id}}"
+                        {% endif %}
+                    >
+                        {{menu_label}} 
+                    </a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+</nav>

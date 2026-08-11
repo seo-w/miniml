@@ -1,0 +1,103 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set close_button = module.close_button %}
+{% set video        = module.video.video %}
+{# advance #}
+{% set id_module      = module.video.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set modal        = module.styles.modal %}
+{% set video_height = module.styles.video_height %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'modal') %}
+
+{% require_css %}
+    <style>
+        .hs-inline-edit #hs_cos_wrapper_{{name}} .modal{
+            display:flex;
+            position:relative;
+        }
+        {% scope_css %}
+
+            {% if video_height.desktop %}
+                .video,
+                .video>iframe{
+                    height:{{video_height.desktop}}px;
+                }
+            {% endif %}
+            {% if video_height.mobile %}
+                {% call helper.media_min() %}
+                    .video,
+                    .video>iframe{
+                        height:{{video_height.mobile}}px;
+                    }
+                {% endcall %}
+            {% endif %}
+
+            {% if modal.close_button.font.css or modal.close_button.margin_bottom %}
+                .modal__close-button{
+                    {{ modal.close_button.font.css if modal.close_button.font.css }}
+                    {{ 'margin-bottom: '+modal.close_button.margin_bottom+'px;' if modal.close_button.margin_bottom }}
+                }
+            {% endif %}
+
+            {% if modal.close_button.font.color %}
+                .modal__close-button>svg{
+                    fill: {{modal.close_button.font.color}};
+                }
+            {% endif %}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+<div {{ helper.advance_min(id_module, classes_module) }} >
+    <div class="modal__content">
+        <div class="modal__content-button">
+            <span class="modal__close-button">
+                {{close_button.text}} {{ helper.icon_min(close_button.icon, modal.close_button.size_icon is truthy? modal.close_button.size_icon:12, true) }}
+            </span>
+        </div>
+        <div class="video">
+            {{video.oembed_response.html}}
+        </div>
+    </div>
+</div>
+
+{% require_js %}
+    <script>
+        (function(){
+            var modal{{name}} = document.getElementById('{{id_module}}');
+            var videoBox{{name}} = modal{{name}}.querySelector('.video');
+            var closeButton{{name}} = modal{{name}}.querySelector('.modal__close-button');
+
+            document.querySelectorAll('a[href="#{{id_module}}"]').forEach(function(trigger){
+                trigger.addEventListener('click', function(e){
+                    e.preventDefault();
+                    videoBox{{name}}.innerHTML = '{{video.oembed_response.html}}';
+                    modal{{name}}.classList.add('modal--active');
+                    document.body.classList.add('modal--body');
+                });
+            });
+
+            if (closeButton{{name}}) {
+                closeButton{{name}}.addEventListener('click', function(){
+                    modal{{name}}.classList.remove('modal--active');
+                    document.body.classList.remove('modal--body');
+                    videoBox{{name}}.innerHTML = '';
+                });
+            }
+        })();
+    </script>
+{% end_require_js %}
+
+
+
+
+

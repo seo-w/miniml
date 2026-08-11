@@ -1,0 +1,166 @@
+[
+    {
+        "label": "Close button",
+        "name": "close_button",
+        "type": "group",
+        "expanded": false,
+        "children": [
+            {
+                "label": "Icon",
+                "name": "icon",
+                "required": false,
+                "locked": false,
+                "type": "icon",
+                "default": null
+            },
+            {
+                "label": "Text",
+                "name": "text",
+                "type": "text",
+                "required": false,
+                "locked": false,
+                "validation_regex": "",
+                "allow_new_line": false,
+                "show_emoji_picker": false,
+                "default": "close" 
+            }
+        ]
+    },
+    {
+        "label": "Video",
+        "name": "video",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+                "label" : "Video",
+                "name" : "video",
+                "type" : "embed",
+                "required" : false,
+                "locked" : false,
+                "supported_source_types" : [ "oembed" ],
+                "supported_oembed_types" : [ "video" ],
+                "default" : {
+                  "source_type" : "oembed"
+                }
+            },
+            {
+                "label": "ID",
+                "name": "id_module",
+                "type": "text",
+                "help_text": "Utilice solo letras, numeros y guiones sin espacio",
+                "required": true,
+                "locked": false,
+                "allow_new_line": false,
+                "show_emoji_picker": false,
+                "placeholder": "id-pop-up",
+                "default": null
+            }
+        ]
+    },
+    {
+        "label": "Advance",
+        "inline_help_text": "Use esta opción para agregar clases",
+        "name": "advance",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+              "label" : "Classes",
+              "name" : "classes",
+              "type" : "text",
+              "required" : false,
+              "locked" : false,
+              "occurrence" : {
+                "min" : null,
+                "max" : null,
+                "sorting_label_field" : null,
+                "default" : null
+              },
+              "allow_new_line" : false,
+              "show_emoji_picker" : false,
+              "default" : null
+            }
+        ]
+    },
+    {
+        "label":"Estilos",
+        "name": "styles",
+        "type": "group",
+        "tab": "STYLE",
+        "children": [
+            {
+                "label": "Modal",
+                "name": "modal",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label": "close button",
+                        "name": "close_button",
+                        "type": "group",
+                        "expanded": false,
+                        "required": false,
+                        "locked": false,
+                        "children": [
+                            {
+                                "label" : "Font",
+                                "name" : "font",
+                                "type" : "font",
+                                "required" : false,
+                                "locked" : false,
+                                "load_external_fonts" : true,
+                                "default" : null
+                            },
+                            {
+                                "label" : "size_icon",
+                                "name" : "size_icon",
+                                "type" : "number",
+                                "default" : null 
+                            },
+                            {
+                                "label" : "Margin bottom",
+                                "name" : "margin_bottom",
+                                "type" : "number",
+                                "default" : null 
+                            }
+                        ]
+                    }
+
+                ]
+            },
+            {
+                "label": "Video height",
+                "name": "video_height",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label" : "Desktop",
+                        "name" : "desktop",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "default" : null 
+                    },
+                    {
+                        "label" : "Mobile",
+                        "name" : "mobile",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "default" : null 
+                    }
+                ]
+            }
+        ]
+    }
+]

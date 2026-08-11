@@ -1,0 +1,54 @@
+{% import '../helpers.html' as helper %}
+
+{# ----------------------------- content ----------------------------- #}
+{# title #}
+{% set title_text   = module.title.text %}
+{% set title_tag    = module.title.tag %}
+{% set title_anchor = module.title.anchor %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# --------------------------- end content --------------------------- #}
+
+{# ----------------------------- styles ------------------------------ #}
+{% set margin      = module.styles.margin.css %}
+{% set z_index     = module.styles.z_index %}
+{% set visible     = module.styles.visible %}
+{% set animation   = module.styles.animation %}
+{% set transform   = module.styles.transform %}
+{% set sticky      = module.styles.sticky %}
+{% set title_align = module.styles.title.align.css %}
+{% set title_style = module.styles.title.style %}
+{% set title_color = module.styles.title.color %}
+{# --------------------------- end styles ---------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'title') %}
+{% do classes_module.insert(1, 'title--'+title_style) %}
+
+{# Generate css #}
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% if title_align or title_color %}
+            {% scope_css %}
+                .title{
+                    {{ 'color:'+helper.color_min(title_color)+';' if title_color.color }}
+                    {{ title_align if title_align }}
+                }
+                {{ helper.transform_min(transform ,'title') }}
+            {% end_scope_css %}
+        {% endif %}
+    </style>
+{% end_require_css %}
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+{% if !title_anchor.url.href %}
+    <{{title_tag}} {{ helper.advance_min(id_module, classes_module) }}>
+        {{title_text}}
+    </{{title_tag}}>
+{% else %}
+    {% call helper.anchor_min(title_anchor, title_text, classes_module, id_module)%}{% endcall %}
+{% endif  %}

@@ -1,0 +1,16 @@
+{% import '../helpers.html' as helper %}
+
+{% set headers = theme.title_module %}
+
+.title{
+    display: block;
+    margin: 0px;
+    text-decoration: none;
+    padding:0px;
+}
+{{ helper.font_min(headers.h1,'title--h1') }}
+{{ helper.font_min(headers.h2,'title--h2') }}
+{{ helper.font_min(headers.h3,'title--h3') }}
+{{ helper.font_min(headers.h4,'title--h4') }}
+{{ helper.font_min(headers.h5,'title--h5') }}
+{{ helper.font_min(headers.h6,'title--h6') }}

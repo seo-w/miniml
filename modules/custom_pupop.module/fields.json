@@ -1,0 +1,86 @@
+[
+    {
+        "label": "ID",
+        "name": "id_module",
+        "type": "text",
+        "help_text": "Utilice solo letras, numeros y guiones sin espacio",
+        "required": true,
+        "locked": false,
+        "allow_new_line": false,
+        "show_emoji_picker": false,
+        "placeholder": "id-module",
+        "default": null
+    },
+    {
+        "label": "Open on page load",
+        "name": "open_on_load",
+        "type": "boolean",
+        "default": false 
+    },
+    {
+        "name": "icon",
+        "label": "icon",
+        "required": true,
+        "locked": false,
+        "type": "icon",
+        "icon_set":"fontawesome-5.0.10",
+        "default": {
+            "name":"times",
+            "unicode":"f00d",
+            "type":"SOLID"
+        } 
+    },
+
+    {
+        "label": "Estilos",
+        "name": "styles",
+        "type": "group",
+        "tab": "STYLE",
+        "children": [
+            {
+                "label": "icon",
+                "name": "icon",
+                "type": "group",
+                "expanded": false,
+                "required": false,
+                "locked": false,
+                "children": [
+                    {
+                        "label" : "Width",
+                        "name" : "width",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "default" : null 
+                    },
+                    {
+                        "label": "Color",
+                        "name": "color",
+                        "type": "color",
+                        "required": false,
+                        "locked": false,
+                        "default": null
+                    },
+                    {
+                        "label" : "Margin top",
+                        "name" : "margin_top",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "default" : null 
+                    },
+                    {
+                        "label" : "Margin right",
+                        "name" : "margin_right",
+                        "type" : "number",
+                        "required" : false,
+                        "locked" : false,
+                        "default" : null 
+                    }
+
+                ]
+            }
+
+        ]
+    }
+]

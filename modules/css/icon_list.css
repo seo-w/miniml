@@ -1,0 +1,49 @@
+{% import '../helpers.html' as helper %}
+
+{% set icon  = theme.icon_list.icon %}
+{% set title = theme.icon_list.title %}
+{% set item  = theme.icon_list.item_box %}
+
+
+.icon-list{
+    display: block;
+    width: 100%;
+    padding: 0px;
+    list-style: none;
+    margin: 0px;
+}
+.icon-list__item{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    {# gap en vez de margin-right en el icono: un solo valor que sirve igual
+       cuando el texto va a la derecha, izquierda, arriba o abajo (ver el
+       campo Text position del modulo). Visualmente identico al margin-right
+       anterior en el caso por defecto (texto a la derecha). #}
+    gap: {{icon.margin_right}}px;
+}
+{{ helper.box_min(item, 'icon-list__item') }}
+.icon-list__icon{
+    min-width: {{icon.size}}px;
+    width: {{icon.size}}px;
+    line-height: 0px;
+}
+.icon-list__image{
+    min-width: {{icon.size}}px;
+    width: {{icon.size}}px;
+    line-height: 0px;
+}
+.icon-list__icon>span{
+    line-height: 0px;
+}
+.icon-list__icon svg{
+    fill: {{helper.color_min(icon.color)}};
+    max-width: initial;
+}
+.icon-list__anchor{
+    text-decoration: none;
+    width:auto;
+}
+{{helper.font_min(title, 'icon-list__anchor')}}
+{{helper.font_min(title.default, 'icon-list__anchor')}}
+{{helper.font_min(title.hover, 'icon-list__anchor:hover')}}

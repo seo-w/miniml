@@ -1,0 +1,87 @@
+
+/* container */
+.pagination{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px;
+}
+
+/* navigation index */
+.pagination__link{
+    margin-right: 5px;
+    width: 35px;
+    height: 35px;
+    background-color: #ffffff;
+    vertical-align: middle;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+
+    color: #292929;
+    font-size: 15px;
+    font-weight: 300;
+    font-family: Roboto;
+}
+.pagination__link:hover{
+    background-color: #000;
+    color: #ffffff;
+}
+.pagination__link--active{
+    background-color: red;
+    color: #ffffff;
+}
+
+
+/* arrows container */
+.pagination__next-link,
+.pagination__prev-link{
+    background-color: rgba(0,0,0,0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    width: auto;
+    
+}
+.pagination__next-link{
+    margin-left: 10px;
+}
+.pagination__prev-link{
+    margin-right: 10px;
+}
+.pagination__next-link:hover,
+.pagination__prev-link:hover{
+    background-color: rgba(0,0,0,0) ;
+}
+
+
+/* arrows text */
+.pagination_navigation-text{
+    color: #292929;
+    font-size: 15px;
+    font-weight: 300;
+    font-family: Roboto;
+}
+.pagination__next-link:hover>.pagination_navigation-text,
+.pagination__prev-link:hover>.pagination_navigation-text{
+    color:red;
+}
+
+/* arrows icon */
+.pagination__next-link>svg,
+.pagination__prev-link>svg{
+    fill:#292929;
+}
+.pagination__next-link>svg{
+    margin: 0px 0px 0px 10px;
+}
+.pagination__prev-link>svg{
+    margin: 0px 10px 0px 0px;
+}
+
+.pagination__next-link:hover>svg,
+.pagination__prev-link:hover>svg{
+    fill:red;
+}

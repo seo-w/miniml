@@ -1,0 +1,131 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# grid #}
+{% set grid         = module.grid %}
+{% set spacing_grid = module.grid.spacing_grid %}
+{# content #}
+{% set items = module.items %}
+{# slider #}
+{% set show_as_slider = module.show_as_slider %}
+{% set slider_options = module.slider_options %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin             = module.styles.margin.css %}
+{% set z_index            = module.styles.z_index %}
+{% set visible            = module.styles.visible %}
+{% set animation          = module.styles.animation %}
+{% set sticky             = module.styles.sticky %}
+{% set box                = module.styles.box %}
+{% set icon_height        = module.styles.icon.height %}
+{% set icon_margin_bottom = module.styles.icon.margin_bottom %}
+{% set title              = module.styles.title %}
+{% set description        = module.styles.description %}
+{% set button             = ['button', 'button--'+module.styles.button.style_button, 'button--'+module.styles.button.size_button] %}
+{% set slider_style       = module.styles.slider %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {# icon css #}
+            {% if icon_margin_bottom %}
+                .icon-box__content-icon{
+                    margin-bottom: {{icon_margin_bottom}}px;
+                }
+            {% endif %}
+            {% if icon_height %}
+                .icon-box__icon{
+                    max-height: {{icon_height}}px !important; 
+                }
+            {% endif %}
+            {# end icon css #}
+
+            {{ helper.box_min(box, 'icon-box') }}
+            {{ helper.font_min(title, 'icon-box__title') }}
+            {{ helper.font_min(description, 'icon-box__description') }}
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+{% if show_as_slider %}
+    {% call helper.slider_min(slider_options, slider_style, classes_module, id_module) %}
+        {% for item in items %}
+            {% set icon             = item.icon %}
+            {% set title_text       = item.title.text %}
+            {% set title_tag        = item.title.tag %}
+            {% set description_text = item.description %}
+            {% set button_text      = item.button.text %}
+            {% set button_anchor    = item.button.anchor %}
+            <div>
+                <div class="p-{{spacing_grid}}">
+                    <div class="icon-box">
+                        {% if icon.src %}
+                            <div class="icon-box__content-icon">
+                                {{ helper.image_min(icon, ['icon-box__icon']) }}
+                            </div>
+                        {% endif %}
+                        {% if title_text %}
+                            <{{title_tag}} class="icon-box__title">
+                                {{title_text}}
+                            </{{title_tag}}>
+                        {% endif %}
+                        {% if description_text %}
+                            <p class="icon-box__description">
+                                {{description_text}}
+                            </p>
+                        {% endif %}
+                        {% if button_anchor.url.href %}
+                            <div class="button-group">
+                                {% call helper.anchor_min(button_anchor, button_text, button) %}{% endcall %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endcall %}
+{% else %}
+    {% call helper.grid_min(grid, classes_module, id_module) %}
+        {% for item in items %}
+            {% set icon             = item.icon %}
+            {% set title_text       = item.title.text %}
+            {% set title_tag        = item.title.tag %}
+            {% set description_text = item.description %}
+            {% set button_text      = item.button.text %}
+            {% set button_anchor    = item.button.anchor %}
+            <div class="col p-{{spacing_grid}}">
+                <div class="icon-box">
+                    {% if icon.src %}
+                        <div class="icon-box__content-icon">
+                            {{ helper.image_min(icon, ['icon-box__icon']) }}
+                        </div>
+                    {% endif %}
+                    {% if title_text %}
+                        <{{title_tag}} class="icon-box__title">
+                            {{title_text}}
+                        </{{title_tag}}>
+                    {% endif %}
+                    {% if description_text %}
+                        <p class="icon-box__description">
+                            {{description_text}}
+                        </p>
+                    {% endif %}
+                    {% if button_anchor.url.href %}
+                        <div class="button-group">
+                            {% call helper.anchor_min(button_anchor, button_text, button) %}{% endcall %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% endcall %}
+{% endif %}

@@ -1,0 +1,19 @@
+{
+  "label": "Post listing",
+  "icon": "../icons-modules/post.svg",
+  "css_assets": [
+    {"path":"../css/post.css"},
+    {"path":"../css/button.css"}
+  ],
+  "external_js": [],
+  "global": false,
+  "help_text": "",
+  "host_template_types": [
+    "BLOG_LISTING"
+  ],
+  "js_assets": [],
+  "other_assets": [],
+  "smart_type": "NOT_SMART",
+  "tags": [],
+  "is_available_for_new_content": true
+}

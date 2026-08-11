@@ -1,0 +1,64 @@
+{% import '../helpers.html' as helper %}
+
+{# ----------------------------- content ----------------------------- #}
+{# content #}
+{% set title = module.title %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# --------------------------- end content --------------------------- #}
+
+{# ----------------------------- styles ------------------------------ #}
+{% set margin      = module.styles.margin.css %}
+{% set z_index     = module.styles.z_index %}
+{% set visible     = module.styles.visible %}
+{% set animation   = module.styles.animation %}
+{% set sticky      = module.styles.sticky %}
+{% set box         = module.styles.box %}
+{% set title_style = module.styles.title %}
+{# --------------------------- end styles ---------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'headline') %}
+
+{# Generate css #}
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+
+            {{ helper.box_min(box, 'headline') }}
+
+            {{ helper.font_min(title_style.before, 'headline__before') }}
+            {{ helper.font_min(title_style.center, 'headline__center') }}
+            {{ helper.font_min(title_style.after, 'headline__affter') }}
+
+            {{ '.headline{'+title_style.text_align.css+'}' if title_style.text_align.css }}
+            
+        {% end_scope_css %}
+    </style>
+{% end_require_css %}
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<{{title.tag}} {{ helper.advance_min(id_module, classes_module) }}>
+    {% if title.text.before %}
+        <span class="headline__before">
+            {{ title.text.before }}
+        </span>
+    {% endif %}
+    {{ '<br/>' if title.text.line_break_before }}
+    {% if title.text.center %}
+        <span class="headline__center">
+            {{ title.text.center }}
+        </span>
+    {% endif %}
+    {{ '<br/>' if title.text.line_break_center }}
+    {% if title.text.after %}
+        <span class="headline__affter">
+            {{ title.text.after }}
+        </span>
+    {% endif %}
+</{{title.tag}}>
+

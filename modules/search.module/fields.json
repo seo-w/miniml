@@ -1,0 +1,149 @@
+[
+    {
+        "label": "Label text",
+        "name": "text_label",
+        "type": "text",
+        "allow_new_line": false,
+        "default": "Lable"
+    },
+    {
+        "label": "Placeholder text",
+        "name": "placeholder",
+        "type": "text",
+        "allow_new_line": false,
+        "default": "Search..."
+    },
+    {
+        "label": "Show search button",
+        "name": "show_search_button",
+        "type": "boolean",
+        "display": "checkbox",
+        "id": "module.show_search_button",
+        "default": false
+    },
+    {
+        "label": "Button",
+        "name": "button",
+        "type": "group",
+        "visibility" : {
+            "controlling_field" : "module.show_search_button",
+            "operator" : "EQUAL",
+            "controlling_value_regex" : "true"
+        },
+        "children": [
+            {
+                "label": "Text",
+                "name": "text",
+                "type": "text",
+                "allow_new_line": false,
+                "default": "Search"
+            },
+            {
+                "label": "Icon",
+                "name": "icon",
+                "type": "image",
+                "responsive": false,
+                "resizable": false,
+                "show_loading" : false,
+                "default": {
+                    "size_type" : "auto",
+                    "src": "",
+                    "alt": null,
+                    "loading": "disabled"
+                }
+            }
+        ]
+    },
+    {
+        "label": "Search results include",
+        "name": "content_types",
+        "expanded": false,
+        "type": "group",
+        "children": [
+            {
+                "label": "Website pages",
+                "name": "website_pages",
+                "type": "boolean",
+                "display": "checkbox",
+                "default": true,
+                "visibility": {
+                    "access": {
+                        "operator": "HAS_ALL",
+                        "scopes": [
+                            "sitepages-access"
+                        ]
+                    },
+                    "operator": "NOT_EMPTY"
+                }
+            },
+            {
+                "label": "Landing pages",
+                "name": "landing_pages",
+                "type": "boolean",
+                "display": "checkbox",
+                "default": false
+            },
+            {
+                "label": "Blog posts",
+                "name": "blog_posts",
+                "type": "boolean",
+                "display": "checkbox",
+                "default": true
+            },
+            {
+                "label": "Knowledge articles",
+                "name": "knowledge_articles",
+                "type": "boolean",
+                "display": "checkbox",
+                "default": false,
+                "visibility": {
+                    "access": {
+                        "operator": "HAS_ALL",
+                        "scopes": [
+                            "service-knowledge-access"
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "label": "Advance",
+        "inline_help_text": "Use esta opción para agregar clases o un id al modulo",
+        "name": "advance",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+            {
+              "label": "ID",
+              "name": "id_module",
+              "type": "text",
+              "help_text": "Utilice solo letras, numeros y guiones sin espacio",
+              "required": false,
+              "locked": false,
+              "allow_new_line": false,
+              "show_emoji_picker": false,
+              "placeholder": "id-module",
+              "default": null
+            },
+            {
+              "label" : "Classes",
+              "name" : "classes",
+              "type" : "text",
+              "required" : false,
+              "locked" : false,
+              "occurrence" : {
+                "min" : null,
+                "max" : null,
+                "sorting_label_field" : null,
+                "default" : null
+              },
+              "allow_new_line" : false,
+              "show_emoji_picker" : false,
+              "default" : null
+            }
+        ]
+    }
+]

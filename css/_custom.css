@@ -1,0 +1,8 @@
+{#
+  Punto de extensión oficial para overrides de CSS por cliente.
+
+  Vacío a propósito — se incluye siempre desde templates/partials/head.html
+  (require_css), en cada página, después de css/main.css. Al reutilizar este
+  theme para un cliente nuevo, los ajustes de marca/CSS específicos de ese
+  cliente van acá, sin tocar el resto del theme.
+#}

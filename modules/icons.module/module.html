@@ -1,0 +1,135 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set items = module.items %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin    = module.styles.margin.css %}
+{% set z_index   = module.styles.z_index %}
+{% set visible   = module.styles.visible %}
+{% set animation = module.styles.animation %}
+{% set sticky    = module.styles.sticky %}
+{% set box       = module.styles.box %}
+{% set icons     = module.styles.icons %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'icons') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {{ helper.box_min(box, 'icons') }}
+
+            {{ helper.box_min(icons.default, 'icons__anchor') }}
+            {% if icons.default.icon_color.color %}
+                .icons__anchor>span>svg{
+                    fill: {{helper.color_min(icons.default.icon_color)}};
+                }
+            {% endif %}
+
+            {{ helper.box_min(icons.hover, 'icons__anchor:hover') }}
+            .icons__anchor:hover>span>svg{
+                {% if icons.hover.icon_color.color %}
+                    fill: {{helper.color_min(icons.hover.icon_color)}};
+                {% endif %}
+            }
+
+            {% if icons.icon_size %}
+                .icons__anchor>span>svg{
+                    height: {{icons.icon_size}}px;
+                    max-height:{{icons.icon_size}}px;
+                }
+            {% endif %}
+
+            {% if icons.icon_size_content %}
+                .icons__anchor{
+                    width:{{icons.icon_size_content}}px;
+                    height:{{icons.icon_size_content}}px;
+                }
+            {% endif %}
+
+            {% if icons.spacing %}
+                .icons__item{ margin: 0px {{icons.spacing}}px 0px 0px; }
+                .icons__item:last-child{ margin: 0px; }
+            {% endif %}
+
+            {# ---- texto junto al icono ----
+               El CSS base pone .icons__anchor>span{line-height:0} para el span
+               del icono; eso tambien golpea al span del texto y lo colapsa, y
+               gana por especificidad a lo que emite font_min. De ahi que el
+               line-height del texto se emita aparte con especificidad mayor
+               (font_min lo saca en %, misma unidad). #}
+            .icons__anchor>.icons__text{
+                line-height: {{ icons.text.line_height~'%' if icons.text.line_height else 'normal' }};
+                white-space: nowrap;
+            }
+            {{ helper.font_min(icons.text, 'icons__text') }}
+            {{ helper.font_min(icons.text.default, 'icons__text') }}
+            {{ helper.font_min(icons.text.hover, 'icons__anchor:hover>.icons__text') }}
+
+            {# El cuadrado fijo de .icons__anchor (width/height = icon_size_content)
+               solo tiene sentido con el icono solo. Se suelta con :has() nativo
+               en vez de una bandera calculada en HubL: asi lo decide cada
+               elemento por si mismo y funciona cuando unos items tienen texto y
+               otros no — un flag a nivel modulo no podria.
+               ponytail: si hay que soportar navegadores sin :has() (Firefox
+               <121), el fallback es que el texto queda apretado en el cuadrado,
+               no roto; ahi tocaria volver a calcular la bandera en HubL.
+               Se mueve el icono con 'order' y no con flex-direction:row-reverse
+               para no tocar el justify-content:center del CSS base. #}
+            .icons__anchor:has(>.icons__text){
+                width: auto;
+                height: auto;
+                gap: {{icons.text_gap|default(8, true)}}px;
+                {% if icons.text_position == 'top' or icons.text_position == 'bottom' %}
+                    flex-direction: column;
+                {% endif %}
+            }
+            {% if icons.text_position == 'left' or icons.text_position == 'top' %}
+                .icons__anchor>span:not(.icons__text){ order: 1; }
+            {% endif %}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<ul {{ helper.advance_min(id_module, classes_module) }}>
+    {% for item in items %}
+        {% set icon   = item.icon %}
+        {% set anchor = item.anchor %}
+        {# el texto va DENTRO del anchor/button para que sea parte del area
+           clicable, no un label suelto al lado #}
+        {% set text_html %}{% if item.text %}<span class="icons__text">{{item.text}}</span>{% endif %}{% endset %}
+        <li class="icons__item">
+            {% if anchor.url.href %}
+                {% call helper.anchor_min(anchor, '', ['icons__anchor']) %}
+                    {{helper.icon_min(icon, 20)}}{{text_html}}
+                {% endcall %}
+            {% elif item.is_button %}
+                {# button real: operable por teclado (Tab + Enter/Espacio), a diferencia de un <span> #}
+                <button type="button" class="icons__anchor"
+                    aria-expanded="false"
+                    {{ 'aria-label="'+item.aria_label+'"' if item.aria_label }}
+                    {{ 'aria-controls="'+item.aria_controls+'"' if item.aria_controls }}
+                >
+                    {{helper.icon_min(icon, 20)}}{{text_html}}
+                </button>
+            {% else %}
+                <span class="icons__anchor">
+                    {{helper.icon_min(icon, 20)}}{{text_html}}
+                </span>
+            {% endif%}
+        </li>
+    {% endfor %}
+</ul>
+

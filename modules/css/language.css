@@ -1,0 +1,29 @@
+.language{
+    display: block;
+    width: 100%;
+}
+.language__items{
+    display: block;
+    margin:0px;
+    padding: 0px;
+    list-style: none;
+}
+.language__item{
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.language__anchor{
+    font-family: Roboto;
+    font-size: 16px;
+    color: red;
+    font-weight: 400;
+    text-decoration: none;}
+.language__anchor--active{
+    font-size: 16px;
+    color: #666;
+    font-weight: 400;
+}
+.language__separator{
+    display: inline-block;
+}

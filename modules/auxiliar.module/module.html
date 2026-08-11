@@ -1,0 +1,30 @@
+<p>
+    {% if module.font_field  %}
+        {{module.font_field|tojson}}
+    {% endif %}
+</p>
+
+<p>
+    {% if module.icon_field %}
+        {{module.icon_field|tojson}}
+    {% endif %}
+</p>
+
+<p>
+    {{module.bg_gradient.css}}
+</p>
+<p>
+    {{module.background_image.src}}
+</p>
+
+
+
+{% for item in module.videos %}
+    <p>
+        {{item.video_field.oembed_response.html}}
+    </p>
+{% endfor %}
+
+<p>
+  {{module.styles.background_image|tojson}}  
+</p>

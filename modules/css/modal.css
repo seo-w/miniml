@@ -1,0 +1,36 @@
+.modal--body{ overflow: hidden; }
+.modal{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0,0,0,0.50);
+    backdrop-filter: blur(4px);
+    height: 100vh;
+    width: 100%;
+    z-index: 1000;
+    overflow-y: auto;
+}
+.modal--active{
+    display: flex;
+}
+.modal__content{
+    max-width: 90%;
+    width: 800px;
+}
+.modal__content-button{
+    display: block;
+    text-align: right;
+}
+.modal__close-button{
+    display: inline-block;
+    cursor: pointer;
+    color: #fff;
+}
+.modal__close-button>svg{
+    vertical-align: middle;
+    display: inline-block;
+    fill: #fff;
+}

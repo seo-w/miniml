@@ -1,0 +1,71 @@
+{#
+  <head> del theme, compartido por templates/layouts/base.html y base-blank.html
+  (antes estaba duplicado e inline en los dos layouts).
+
+  Se incluye con {% include %} (no {% global_partial %}) porque es puro código
+  sin contenido editable por drag-and-drop — igual que css/main.css usa
+  {% include %} para armar sus piezas.
+
+  Para quitar SOLO el structured data (JSON-LD), ver el comentario de cabecera
+  en templates/partials/structured-data.html — no requiere tocar este archivo.
+#}
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {#
+    Preload de fuentes lo más arriba posible: tiene que salir antes de los
+    require_css para que la descarga de la fuente arranque en paralelo con el
+    CSS y no después. Vacío por defecto — ver ese archivo para configurarlo.
+  #}
+  {% include './font-preload.html' %}
+
+  {% if page_meta.html_title %}<title>{{ page_meta.html_title }}</title>{% endif %}
+  {% if site_settings.favicon_src %}<link rel="shortcut icon" href="{{ site_settings.favicon_src }}" />{% endif %}
+  {% if page_meta.meta_description %}<meta name="description" content="{{ page_meta.meta_description }}">{% endif %}
+
+  {#
+    Detección de "es post de blog", duplicada intencionalmente en
+    structured-data.html: cada partial queda auto-contenido y se puede borrar
+    sin depender de una variable definida en otro archivo. Confirmado con la
+    doc de HubL: no hay una variable única para esto en un partial global.
+  #}
+  {% set is_blog_post_page = content.blog_post_author is defined and !simple_list_page and !archive_list_page %}
+  {% set og_image = content.featured_image if (is_blog_post_page and content.featured_image) else theme.seo.default_social_image.src %}
+
+  {# ---- Open Graph ---- #}
+  <meta property="og:title" content="{{ page_meta.html_title|default(content.name, true) }}">
+  {% if page_meta.meta_description %}<meta property="og:description" content="{{ page_meta.meta_description }}">{% endif %}
+  <meta property="og:type" content="{{ 'article' if is_blog_post_page else 'website' }}">
+  <meta property="og:url" content="{{ content.absolute_url }}">
+  {% if og_image %}<meta property="og:image" content="{{ og_image }}">{% endif %}
+  {% if theme.seo.company_name %}<meta property="og:site_name" content="{{ theme.seo.company_name }}">{% endif %}
+
+  {# ---- Twitter Card (reusa los mismos valores de Open Graph, sin datos nuevos) ---- #}
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page_meta.html_title|default(content.name, true) }}">
+  {% if page_meta.meta_description %}<meta name="twitter:description" content="{{ page_meta.meta_description }}">{% endif %}
+  {% if og_image %}<meta name="twitter:image" content="{{ og_image }}">{% endif %}
+
+  {#
+    ---- hreflang ----
+    content.translated_content es la misma fuente de datos que ya usa
+    modules/language.module/module.html para el selector de idioma visible.
+    Si la página no tiene traducciones, este bloque no imprime nada.
+  #}
+  {% if content.translated_content %}
+    {% for lang_code, translation in content.translated_content.items() %}
+      <link rel="alternate" hreflang="{{ lang_code }}" href="{{ translation.absolute_url }}">
+    {% endfor %}
+    <link rel="alternate" hreflang="x-default" href="{{ content.absolute_url }}">
+  {% endif %}
+
+  {% include './structured-data.html' %}
+
+  {{ require_css(get_asset_url("../../css/main.css")) }}
+  {{ require_css(get_asset_url("../../css/_custom.css")) }}
+  {% if template_css %}
+    {{ require_css(get_asset_url(template_css)) }}
+  {% endif %}
+  {{ standard_header_includes }}
+</head>

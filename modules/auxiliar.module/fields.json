@@ -1,0 +1,63 @@
+[
+    {
+        "name": "font_field",
+        "label": "font_field",
+        "required": false,
+        "locked": false,
+        "inline_help_text": "",
+        "help_text": "",
+        "load_external_fonts": true,
+        "type": "font",
+        "default": null
+    },
+    {
+        "name": "icon_field",
+        "label": "Icon field",
+        "required": false,
+        "locked": false,
+        "inline_help_text": "",
+        "help_text": "",
+        "type": "icon",
+        "default": null
+    },
+    {
+        "label": "videos",
+        "name": "videos",
+        "type": "group",
+        "expanded": true,
+        "occurrence" : {
+            "max" : null,
+            "default" : 3
+        },
+        "children": [
+            {
+                "label" : "Embed",
+                "name" : "video_field",
+                "required" : false,
+                "locked" : false,
+                "supported_source_types" : [ "oembed" ],
+                "supported_oembed_types" : [ "video" ],
+                "type" : "embed",
+                "default" : {
+                  "source_type" : "oembed"
+                }
+              }
+        ]
+    },
+    {
+        "label":"Estilos",
+        "name": "styles",
+        "type": "group",
+        "tab": "STYLE",
+        "children": [
+            {
+                "label": "Background image",
+                "name": "background_image",
+                "type": "backgroundimage",
+                "required": false,
+                "locked": false,
+                "default":null
+            }
+        ]
+    }
+]

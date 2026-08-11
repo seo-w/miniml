@@ -1,0 +1,10 @@
+[
+    {
+        "label":"HTML",
+        "name":"html",
+        "type":"html",
+        "help_text":"The HTML field will not render HubL. Pages will not publish if HubL is present.",
+        "locked":false,
+        "required":false
+    }
+]

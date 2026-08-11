@@ -1,0 +1,115 @@
+{% macro post_min(post_object, post_config, post_button, post_mode, post_slider, spacing_card) %}
+
+    {% set blog_show_field    = post_config.show %}
+    {% set blog_text_lengt    = post_config.lenght %}
+    {% set blog_see_more_text = post_config.see_more_text %}
+    {% set open_new_tab       = post_config.open_new_tab %}
+        
+    {% set button             = post_button %}
+    {% set slider             = post_slider %}
+
+    {% for blog_post in post_object %}
+
+        {% set image_url = blog_post.featured_image %}
+        {% set image_alt = blog_post.featured_image_alt_text %}
+        {% set title     = blog_post.name %}
+        {% set excerpt   = blog_post.post_list_content %}
+        {% set url       = blog_post.absolute_url %} 
+        {% set tags      = blog_post.tagList %}
+
+        {% set author      = blog_post.blog_post_author.display_name %}
+        {% set author_slug = blog_post.blog_post_author.slug %}
+        {% set author_url  = blog_author_url(group.id, author_slug) %}
+
+        {% set date_time   = blog_post.publish_date %}
+
+        {{ '<div>' if slider }}
+
+            <div class="p-{{spacing_card}}">
+                <div class="post">
+                    {# Feature image #}
+                    {% if image_url and blog_show_field.image %}
+                        <div class="post__image-content">
+                            <a class="post__image-link" href="{{url}}" tabindex="-1" aria-hidden="true">
+                                {#
+                                  height viene de theme.post_module.image.height (mismo valor
+                                  que ya usa modules/css/post.css para el alto fijo de la
+                                  tarjeta) — width es un valor representativo nada más, ya que
+                                  el ancho real lo define el grid/columna vía CSS.
+                                  object-fit:cover en post.css evita cualquier deformación.
+                                #}
+                                <img class="post__image" src="{{image_url}}" alt="{{image_alt|default(title, true)}}" width="400" height="{{ theme.post_module.image.height }}" loading="lazy">
+                            </a>
+                        </div>
+                    {% endif %}
+                    {# end - Feature image #}
+                    <div class="post__data">
+                        <div class="row post_date_and_tags">
+                            <div class="col">
+                                {# date time #}
+                                {% if blog_show_field.date %}
+                                    <time class="post__date">
+                                        {{ date_time|datetimeformat('%B %e, %Y') }}{% if tags and blog_show_field.tags %}, {% endif %}
+                                    </time>
+                                {% endif %}
+                                {# end - date time #}
+                                {# blog tags #}
+                                {% if tags and blog_show_field.tags %}
+                                    <ul class="post__tags">
+                                        {% for tag in tags %}
+                                            <li class="post__tags-item">
+                                                <a class="post__tags-anchor" href="{{ blog_tag_url(query_blog, tag.slug) }}" {% if open_new_tab %}target="_blank"{% endif %}>
+                                                    {{tag.name}}{% if !loop.last %} | {% endif %}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                                {# end - blog tags #}
+                            </div>
+                        </div>
+
+                        {# autor #}
+                        {% if blog_show_field.author %}
+                            <a class="post__author" href="{{author_url}}">
+                                {{author}}
+                            </a>
+                        {% endif %}
+                        {# end - autor #}
+                        
+                        {# title #}
+                        {% if blog_show_field.title %}
+                            <h3 class="post__title">
+                                <a href="{{url}}">
+                                    {{title|truncate(blog_text_lengt.title, "...")}}
+                                </a>
+                            </h3>
+                        {% endif %}
+                        {# title #}
+
+                        {# description #}
+                        {% if blog_show_field.excerpt %}
+                            <p class="post__description">
+                                {{excerpt|striptags|truncate(blog_text_lengt.excerpt, "...")}}
+                            </p>
+                        {% endif %}
+                        {# end - description #}
+
+                        {# see more cta #}
+                        {% if blog_show_field.see_more %}
+                            <div class="button-group">
+                                <a class="{% for class_button in button %}{{class_button}} {% endfor %}" href="{{url}}" {% if open_new_tab %}target="_blank"{% endif %}>
+                                    {{blog_see_more_text}}
+                                </a>
+                            </div>
+                        {% endif %}
+                        {# end - see more cta #}
+                    </div>
+                </div>
+            </div> 
+
+        {{ '</div>' if slider }}
+    {% endfor %}
+
+
+{% endmacro %}

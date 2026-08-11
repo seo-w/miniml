@@ -1,0 +1,97 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set language = module.language %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']  %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin          = module.styles.margin.css %}
+{% set visible         = module.styles.visible %}
+{% set animation       = module.styles.animation %}
+{% set sticky          = module.styles.sticky %}
+{% set box             = module.styles.box %}
+{% set language_styles = module.styles.language %}
+{% set separator       = module.styles.separator %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'language') %}
+
+{% require_css %}
+  <style>
+      {{ helper.wrapper_min(margin, visible, z_index) }}
+      {% scope_css %}
+        {{ helper.box_min(box, 'language') }}
+
+        {# general #}
+        {{ helper.font_min(language_styles.text, 'language__anchor') }}
+        {% if language_styles.padding.css %}
+          .language__anchor{
+            {{ language_styles.padding.css }}
+          }
+        {% endif %}
+        {# end - general #}
+
+        {# default state #}
+          {{ helper.font_min(language_styles.default, 'language__anchor') }}
+          {{ helper.box_min(language_styles.default, 'language__anchor') }}
+        {# end - default state #}
+
+        {# hover state #}
+          {{ helper.font_min(language_styles.hover, 'language__anchor:hover') }}
+          {{ helper.box_min(language_styles.hover, 'language__anchor:hover') }}
+        {# end - hover state #}
+
+        {# active state #}
+          {{ helper.font_min(language_styles.active, 'language__anchor--active') }}
+          {{ helper.box_min(language_styles.active, 'language__anchor--active') }}
+        {# end - active state #}
+
+        {% if separator.font.css or separator.space %}
+          .language__separator{
+            {{ separator.font.css if separator.font.css }}
+            {{'margin: 0px '+separator.space+'px;' if separator.space }}
+          }
+        {% endif %}
+
+      {% end_scope_css %}
+  </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<nav {{ helper.advance_min(id_module, classes_module) }} >
+  <ul class="language__items">
+    {% for translate in content.translated_content %}
+      {% set code_lang = translate.language %}
+      {% set url_lang  = '/' + content.translated_content[code_lang].slug + '?hsLang=' + code_lang %}
+      {% if loop.first %}
+        <li class="language__item">
+          <span class="language__anchor language__anchor--active">
+            {{ locale.language|upper }} 
+          </span>
+        </li>
+        <li class="language__item">
+          <span class="language__separator">|</span>
+        </li>
+      {% endif %}
+        <li class="language__item">
+          <a class="language__anchor" href="{{url_lang}}">
+            {{code_lang|upper}}
+          </a>
+        </li>
+      {% if !loop.last %}
+        <li class="language__item">
+          <span class="language__separator">|</span>
+        </li>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</nav>
+
+

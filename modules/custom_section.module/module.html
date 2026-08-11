@@ -1,0 +1,126 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{% set type_section = module.type_section %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set overflow_hidden       = module.styles.overflow_hidden %}
+{% set lazy_load_background  = module.styles.lazy_load_background %}
+
+{% set default       = module.styles.default %}
+{% set mobile        = module.styles.mobile %}
+{% set section_class = 'custom-section--'+name %}
+
+{#
+  El toggle "lazy_load_background" solo afecta la combinación
+  overlay + degradado + imagen (el bloque que este módulo genera a mano más
+  abajo). El fondo plano sin overlay lo pone la macro compartida
+  helper.box_min (usada por muchos otros módulos) y ese camino no se toca
+  acá — cambiarlo afectaría todos los módulos que usan box_min, no solo este.
+#}
+{% set default_bg_value = default.bg_gradient.css+', url('+default.background_image.src+')' if (lazy_load_background and default.overlay and default.bg_gradient and default.background_image) else null %}
+{% set mobile_bg_value  = mobile.bg_gradient.css+', url('+mobile.background_image.src+')' if (lazy_load_background and mobile.overlay and mobile.bg_gradient and mobile.background_image) else null %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% require_css %}
+    <style>
+        .{{section_class}}{ 
+            {{ 'overflow: hidden;' if overflow_hidden }}
+            background-repeat: no-repeat;
+        }
+        
+
+        {% call helper.media_desktop_min() %}
+            {{ helper.box_min(default, section_class) }}
+            {{ '.'+section_class+'{ background-attachment: fixed; }' if default.image_background_fixed }}
+            {% if default.overlay and default.bg_gradient and default.background_image and !lazy_load_background %}
+                .{{section_class}}{
+                    background-image: {{default.bg_gradient.css}}, url({{default.background_image.src}});
+                    {{ 'background-blend-mode:'+default.blend_mode+';' if default.blend_mode }}
+                }
+            {% endif %}
+            {% if default.blend_mode and lazy_load_background %}
+                .{{section_class}}{ background-blend-mode: {{default.blend_mode}}; }
+            {% endif %}
+
+            {% if default.horizontal_repeat or default.vertical_repeat %}
+                .{{section_class}}{
+                    {% if default.horizontal_repeat and !default.vertical_repeat %}
+                        background-repeat: repeat-x;
+                    {% elif !default.horizontal_repeat and default.vertical_repeat %}
+                        background-repeat: repeat-y;
+                    {% elif default.horizontal_repeat and default.vertical_repeat %}
+                        background-repeat: repeat;                   
+                    {% endif %}
+                }
+            {% endif %}
+        {% endcall %}
+
+
+
+
+        {% call helper.media_min() %}
+            {{ helper.box_min(mobile, section_class) }}
+            {{ '.'+section_class+'{ background-attachment: fixed; }' if mobile.image_background_fixed }}
+            {% if mobile.overlay and mobile.bg_gradient and mobile.background_image and !lazy_load_background %}
+                .{{section_class}}{
+                    background-image: {{mobile.bg_gradient.css}}, url({{mobile.background_image.src}});
+                    {{ 'background-blend-mode:'+mobile.blend_mode+';' if mobile.blend_mode }}
+                }
+            {% endif %}
+            {% if mobile.blend_mode and lazy_load_background %}
+                .{{section_class}}{ background-blend-mode: {{mobile.blend_mode}}; }
+            {% endif %}
+
+            {% if mobile.horizontal_repeat or mobile.vertical_repeat %}
+                .{{section_class}}{
+                    {% if mobile.horizontal_repeat and !mobile.vertical_repeat %}
+                        background-repeat: repeat-x;
+                    {% elif !mobile.horizontal_repeat and mobile.vertical_repeat %}
+                        background-repeat: repeat-y;
+                    {% elif mobile.horizontal_repeat and mobile.vertical_repeat %}
+                        background-repeat: repeat;                   
+                    {% endif %}
+                }
+            {% endif %}
+
+        {% endcall %}
+
+    </style>
+{% end_require_css %}
+
+<span class="reference-module reference-module--custom-section reference-module-{{name}}"></span>
+
+{% if default_bg_value or mobile_bg_value %}
+    {{ require_js(get_asset_url('../../js/lazy-background.js'), "footer") }}
+{% endif %}
+
+{% require_js %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            {% if type_section == 'section' %}
+                let sectionTarget{{name}} = document.querySelector('.reference-module-{{name}}').closest('.dnd-section');
+            {% endif %}
+
+            {% if type_section == 'row' %}
+                let sectionTarget{{name}} = document.querySelector('.reference-module-{{name}}').closest('.dnd-section>.row-fluid');
+            {% endif %}
+
+            {% if type_section == 'column' %}
+                let sectionTarget{{name}} = document.querySelector('.reference-module-{{name}}').closest('.dnd-column');
+            {% endif %}
+
+            sectionTarget{{name}}.classList.add('{{section_class}}');
+
+            {% if default_bg_value or mobile_bg_value %}
+                lazyLoadBackground(
+                    sectionTarget{{name}},
+                    {{ "'"+default_bg_value+"'" if default_bg_value else "null" }},
+                    {{ "'"+mobile_bg_value+"'" if mobile_bg_value else "null" }},
+                    {{ theme.layout.mobile.break_point }}
+                );
+            {% endif %}
+        });
+    </script>
+{% end_require_js %}

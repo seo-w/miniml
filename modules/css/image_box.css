@@ -1,0 +1,27 @@
+{% import '../helpers.html' as helper %}
+
+{% set box         = theme.image_box.box %}
+{% set data_box    = theme.image_box.data_box %}
+{% set title       = theme.image_box.title %}
+{% set description = theme.image_box.description %}
+
+.image-box{
+    display: block;
+    height: 100%;
+    overflow: hidden;
+}
+{{ helper.box_min(box, 'image-box') }}
+
+.image-box__image{
+    display: block !important;
+    width: 100%;
+}
+
+{{ helper.box_min(data_box, 'image-box__data-content') }}
+.image-box__data-content>*{
+    text-align:{{data_box.text_align}};
+}
+
+{{ helper.font_min(title, 'image-box__title') }}
+{{ helper.font_min(description, 'image-box__description') }}
+

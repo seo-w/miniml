@@ -1,0 +1,25 @@
+<div class="hs-search-results">
+
+  <template class="search-result__template">
+    <div class="p-4">
+      <div class="post">
+        <div class="post__image-content">
+          <a class="post__image" href="#" style=""></a>
+        </div>
+        <h3 class="post__title">
+          <a href="#">Title</a>
+        </h3>
+        <p class="post__description">Description</p>
+      </div>
+    </div>
+  </template>
+
+  {# content result#}
+  <div class="search-result__listing row row-cols-lg-3 row-cols-md-2 row-cols-1"></div>
+
+  <div class="hs-search-results__pagination" data-search-path="{{ site_settings.content_search_results_page_path }}">
+    <a href="" class="button button--primary button--small hs-search-results__prev-page"></a>
+    <a href="" class="button button--primary button--small hs-search-results__next-page"></a>
+  </div>
+
+</div>

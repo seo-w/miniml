@@ -1,0 +1,185 @@
+{% import '../../modules/helpers.html' as helper %}
+
+{% set accent_color      = theme.form.accent_color %}
+{% set title             = theme.form.title %}
+{% set labels            = theme.form.labels %}
+{% set fields            = theme.form.fields.default %}
+{% set fields_focus      = theme.form.fields.focus %}
+{% set choice_and_select = theme.form.choice_and_select %}
+{% set legal             = theme.form.legal %}
+{% set button            = theme.form.button %}
+{% set errors            = theme.form.errors %}
+
+.hs-form>fieldset{
+    display: flex;
+    max-width: 100% !important;
+    align-items: self-end;
+}
+
+.hs-form .input,
+.hs-form .field,
+.hs-form .hs-dependent-field
+{
+    width: 100%;
+}
+
+/* Accent color */
+.hs-form input{
+    accent-color: {{helper.color_min(accent_color)}};
+}
+
+{{helper.font_min(title, 'form-title')}}
+.form-title{
+    text-align: {{title.align}};
+}
+/* label title*/
+.hs-form fieldset label *,
+.hs-form .field>label>*{
+    display: inline;
+}
+{{helper.font_min(labels.text,'hs-form fieldset label *')}}
+{{helper.font_min(labels.text,'hs-form .field>label>*')}}
+.hs-form fieldset label .hs-form-required{
+    color: {{helper.color_min(labels.require_color)}} ;
+    margin-bottom:0px !important;
+}
+/* label title container*/
+.hs-form fieldset label{
+    display: block;
+    margin-bottom: {{labels.margin_bottom}}px;
+}
+
+
+/*inputs styles*/
+.hs-form input[type='text'],
+.hs-form input[type='email'],
+.hs-form input[type='number'],
+.hs-form input[type='tel'],
+.hs-form select,
+.hs-form textarea,
+.hs-form input[type="file"]
+{
+    min-width: 100% !important;
+    border-radius: {{fields.border_radius}}px;
+    border:0px;
+    float: none !important;
+    width: 100%;
+    background-color: {{helper.color_min(fields.background_color)}};
+    {{fields.padding.css}}
+    {{fields.border.css}}
+    {{fields.font.css}}
+}
+.hs-form input[type="file"]{
+    border:none !important;
+    padding:0px !important;
+}
+
+/* inputs styles focus field */
+.hs-form input[type='text']:focus,
+.hs-form input[type='email']:focus,
+.hs-form input[type='number']:focus,
+.hs-form input[type='tel']:focus,
+.hs-form select:focus,
+.hs-form textarea:focus{
+    outline: none;
+    background-color: {{helper.color_min(fields_focus.background_color)}};
+    {{fields_focus.border.css}}
+}
+/*placeholder*/
+.hs-form input::placeholder{
+    {{fields.place_holder.css}}
+}
+
+
+/* input group field phone*/
+.hs-form .hs-fieldtype-intl-phone{
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex;
+}
+
+
+.hs-form .hs-fieldtype-intl-phone>select{
+    width:35% !important;
+    min-width:35% !important;
+}
+.hs-form .hs-fieldtype-intl-phone>input[type="tel"]{
+    width:60% !important;
+    min-width:60% !important;
+    margin-left:5% !important;
+}
+
+
+
+.hs-form .hs-form-field,
+.hs-form .legal-consent-container,
+.hs-form .hs_submit{
+    padding: 10px;
+    width: 100% !important;
+}
+
+
+/* radio and checkbox */
+.hs-form .inputs-list{
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+.hs-form .inputs-list>li{
+    display: block;
+    {{choice_and_select.spacing.css}}
+}
+.hs-form .inputs-list>li span{
+    display: inline-block;
+    vertical-align: middle;
+}
+.hs-form .inputs-list>li>*{
+    margin:0px;
+}
+.hs-form .inputs-list>li input{
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 7px;
+}
+/* radio and checkbox - font*/
+{{helper.font_min(choice_and_select.font, 'hs-form .inputs-list>li>label>span')}}
+.hs-form .inputs-list>li>label>*,
+.hs-form .inputs-list>li>label>span{
+    margin-bottom:0px;
+}
+
+
+/*Legal */
+{{helper.font_min(legal, 'hs-form .legal-consent-container .hs-richtext>*')}}
+.hs-form .legal-consent-container .hs-richtext a{ color: {{helper.color_min(legal.link_color)}} }
+
+
+/*help form*/
+{{helper.font_min(legal, 'hs-form legend.hs-field-desc')}}
+{{helper.font_min(legal, 'hs-form legend.hs-field-desc *')}}
+
+
+/* error message */
+.hs-form .hs-error-msgs{
+    margin: 0px;
+    padding: 0px;
+}
+.hs-form .hs-error-msgs>li{
+    {{errors.spacing.css}}
+}
+{{helper.font_min(errors.font, 'hs-form .hs-error-msg')}}
+{{helper.font_min(errors.font, 'hs-form .hs-main-font-element')}}
+
+
+/*button*/
+.hs-form .actions{
+    text-align: {{button.align_button}};
+}
+.hs-form .actions .hs-button{
+    cursor: pointer;
+    transition: all ease 0.3s;
+}
+{{helper.box_min(button.default, 'hs-form .actions .hs-button')}}
+{{helper.font_min(button.default.font, 'hs-form .actions .hs-button')}}
+{{helper.box_min(button.hover, 'hs-form .actions .hs-button:hover')}}
+{{helper.font_min(button.hover.font, 'hs-form .actions .hs-button:hover')}}

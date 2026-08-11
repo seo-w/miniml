@@ -1,0 +1,16 @@
+.tags{
+    display: block;
+    text-align: left;
+    width: 100%;
+}
+.tags__anchor{
+    padding: 10px 20px;
+    background-color: #fff;
+    border: solid 1px #33333313;
+    display: inline-block;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    line-height: 130%;
+    font-size: 13px;
+}

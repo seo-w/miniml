@@ -1,0 +1,12 @@
+<!--
+  templateType: page
+  isAvailableForNewContent: true
+  label: Blank
+-->
+{% extends "./layouts/base-blank.html" %}
+
+{% block body %}
+  <main id="main-content" class="main-content-blank body-container-wrapper">
+    {% dnd_area 'main_drop_area'%}{% end_dnd_area %}
+  </main>
+{% endblock body %}

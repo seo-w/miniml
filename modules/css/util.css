@@ -1,0 +1,13 @@
+.text-left{ 
+    text-align: left; 
+}
+.text-center{ 
+    text-align: center; 
+}
+.text-right { 
+    text-align: right; 
+}
+
+.section-shadow{
+    box-shadow: 0px 0px 35px rgba(0,0,0,0.04);
+}

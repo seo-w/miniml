@@ -1,0 +1,27 @@
+.tab{
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+.tab__item{
+    display: inline-block;
+    margin: 0px 4px;
+    cursor: pointer;
+}
+
+
+
+.tab-item{
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+.tab-item__item{ 
+    display: none;
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
+}
+.tab-item__item--active{ display: block; }

@@ -1,0 +1,112 @@
+{% import '../helpers.html' as helper %}
+
+{% set container_level_one = theme.horizontal_menu.container_level_one %}
+{% set items_level_one     = theme.horizontal_menu.items_level_one %}
+
+{% set container_level_two = theme.horizontal_menu.container_level_two %}
+{% set items_level_two     = theme.horizontal_menu.items_level_two %}
+
+
+.horizontal-menu{
+    width: auto;
+    display: block;
+}
+{{ helper.box_min(container_level_one, 'horizontal-menu') }}
+
+.horizontal-menu__menu{
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+    text-align: {{container_level_one.text_align}};
+}
+.horizontal-menu__item{
+    display: inline-block;
+    vertical-align: top;
+}
+
+/* item anchor level one */
+.horizontal-menu__anchor{
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+{{ helper.font_min(items_level_one.text, 'horizontal-menu__anchor') }}
+{% if items_level_one.padding.css %}
+    .horizontal-menu__anchor{ {{items_level_one.padding.css}} }
+{% endif %}
+
+/* item anchor level one - default */
+{{ helper.box_min(items_level_one.default, 'horizontal-menu__anchor') }}
+{{ helper.font_min(items_level_one.default, 'horizontal-menu__anchor') }}
+{% if items_level_one.default.text_color.color %}
+    .horizontal-menu__sub-icon>svg{ fill: {{helper.color_min(items_level_one.default.text_color)}}; }
+{% endif %}
+
+/* item anchor level one - hover */
+{{ helper.box_min(items_level_one.hover, 'horizontal-menu__anchor:hover') }}
+{{ helper.font_min(items_level_one.hover, 'horizontal-menu__anchor:hover') }}
+{% if items_level_one.hover.text_color.color %}
+    .horizontal-menu__anchor:hover .horizontal-menu__sub-icon>svg{
+        fill: {{items_level_one.hover.text_color.color}};
+    }
+{% endif %}
+
+/* item anchor level one - active */
+{{ helper.box_min(items_level_one.active, 'horizontal-menu__anchor--active, .horizontal-menu__anchor--active:hover') }}
+{{ helper.font_min(items_level_one.active, 'horizontal-menu__anchor--active, .horizontal-menu__anchor--active:hover') }}
+.horizontal-menu__sub-icon{
+    vertical-align: middle;
+    line-height: 0px;
+    display: inline-block;
+    margin-left: 10px;
+}
+{% if items_level_one.active.text_color.color %}
+    .horizontal-menu__sub-icon--active>svg{
+        fill: {{helper.color_min(items_level_one.active.text_color)}};
+    }
+{% endif %}
+
+
+
+
+
+
+/* level two */
+.horizontal-menu__two-level{
+    position: absolute;
+    display: none;
+  margin: 0px;
+    list-style: none;
+}
+{{ helper.box_min(container_level_two, 'horizontal-menu__two-level') }}
+.horizontal-menu__item:hover>.horizontal-menu__two-level{
+    display: block;
+}
+
+.horizontal-menu__two-level-item{
+    padding: 0px;
+    margin: 0px;
+}
+
+/* level two - item */
+.horizontal-menu__two-level-anchor{
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+}
+{{ helper.font_min(items_level_two.text, 'horizontal-menu__two-level-anchor') }}
+{% if items_level_two.spacing.css %}
+    .horizontal-menu__two-level-anchor{ {{items_level_two.spacing.css}} }
+{% endif %}
+
+/* level two - default */
+{{ helper.box_min(items_level_two.default, 'horizontal-menu__two-level-anchor') }}
+{{ helper.font_min(items_level_two.default, 'horizontal-menu__two-level-anchor') }}
+
+/* level two - hover */
+{{ helper.box_min(items_level_two.hover, 'horizontal-menu__two-level-anchor:hover') }}
+{{ helper.font_min(items_level_two.hover, 'horizontal-menu__two-level-anchor:hover') }}
+
+/* level two - hover */
+{{ helper.box_min(items_level_two.active, 'horizontal-menu__two-level-anchor--active') }}
+{{ helper.font_min(items_level_two.active, 'horizontal-menu__two-level-anchor--active') }}

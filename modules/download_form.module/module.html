@@ -1,0 +1,24 @@
+{% set id_form      = module.id_form %}
+{% set file_dowload = module.file %}
+
+{% require_js %}
+    <!--[if lte IE 8]>
+    <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2-legacy.js"></script>
+    <![endif]-->
+    <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/v2.js"></script>
+    <script>
+        window.addEventListener('message', event => {
+            let id_form = event.data.id;
+            if(event.data.type === 'hsFormCallback' && event.data.eventName === 'onFormSubmit') {
+                if(id_form == '{{id_form}}'){
+                    console.log("{{file_dowload}}");
+                    {% if file_dowload %}
+                        window.open('{{file_dowload}}', '_blank')
+                    {% endif %}
+                }
+            }
+        });
+    </script>
+{% end_require_js %}
+
+<span class="reference-module reference-module--download-form"></span>

@@ -1,0 +1,23 @@
+{
+  "label": "Vertical menu",
+  "icon": "../icons-modules/bars.svg",
+  "css_assets": [
+    {"path":"../css/vertical_menu.css"}
+  ],
+  "external_js": [],
+  "global": false,
+  "help_text": "",
+  "host_template_types": [
+    "PAGE",
+    "BLOG_POST",
+    "BLOG_LISTING"
+  ],
+  "js_assets": [
+    {"path":"../../js/vertical-menu.js"}
+  ],
+  "other_assets": [],
+  "smart_type": "NOT_SMART",
+  "tags": [],
+  "is_available_for_new_content": true
+}
+  

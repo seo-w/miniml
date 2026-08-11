@@ -1,0 +1,124 @@
+{% import '../helpers.html' as helper %}
+
+{% set container_level_one = theme.vertical_menu.container_level_one %}
+{% set items_level_one     = theme.vertical_menu.items_level_one %}
+{% set container_level_two = theme.vertical_menu.container_level_two %}
+{% set items_level_two     = theme.vertical_menu.items_level_two %}
+
+.vertical-menu{
+    display: block;
+    margin: 0px;
+}
+{{ helper.box_min(container_level_one, 'vertical-menu') }}
+
+.vertical-menu__menu{
+    padding: 0px;
+    padding: 0px;
+    list-style: none;
+}
+.vertical-menu__item{
+    padding: 0px;
+    margin:0px;
+}
+
+/* Default */
+.vertical-menu__anchor{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-decoration: none;
+}
+{{ helper.font_min(items_level_one.text, 'vertical-menu__anchor') }}
+{% if items_level_one.padding.css %}
+    .vertical-menu__anchor{ {{items_level_one.padding.css}} }
+{% endif %}
+.vertical-menu__anchor-sub-parent{
+    width: 100%;
+    text-decoration: none;
+}
+{{ helper.font_min(items_level_one.text, 'vertical-menu__anchor-sub-parent') }}
+
+{{ helper.box_min(items_level_one.default, 'vertical-menu__anchor') }}
+{{ helper.font_min(items_level_one.default, 'vertical-menu__anchor') }}
+{{ helper.font_min(items_level_one.default, 'vertical-menu__anchor-sub-parent') }}
+{% if items_level_one.default.text_color.color %}
+    .vertical-menu__anchor>.vertical-menu__sub-icon>svg{ fill: {{helper.color_min(items_level_one.default.text_color)}}; }
+{% endif %}
+.vertical-menu__sub-icon,
+.vertical-menu__sub-icon>svg{ 
+    cursor: pointer;
+    line-height: 0px; 
+}
+/* End - default */
+
+
+{# Hover #}
+{{ helper.box_min(items_level_one.hover, 'vertical-menu__anchor:hover') }}
+{{ helper.font_min(items_level_one.hover, 'vertical-menu__anchor:hover') }}
+{{ helper.font_min(items_level_one.hover, 'vertical-menu__anchor:hover>.vertical-menu__anchor-sub-parent') }}
+{% if items_level_one.hover.text_color.color %}
+    .vertical-menu__anchor:hover>.vertical-menu__sub-icon>svg{
+        fill: {{items_level_one.hover.text_color.color}};
+    }
+{% endif %}
+{# end - Hover #}
+
+{# Active #}
+{{ helper.box_min(items_level_one.active, 'vertical-menu__anchor--active') }}
+{{ helper.font_min(items_level_one.active, 'vertical-menu__anchor--active') }}
+{{ helper.font_min(items_level_one.active, 'vertical-menu__anchor--active>.vertical-menu__anchor-sub-parent') }}
+{% if items_level_one.active.text_color.color %}
+    .vertical-menu__anchor--active>.vertical-menu__sub-icon>svg{
+        fill: {{helper.color_min(items_level_one.active.text_color)}};
+    }
+{% endif %}
+{# end - Active #}
+
+
+
+
+
+
+
+
+
+.vertical-menu__menu-sub{
+    list-style: none;
+    display: none;
+    overflow: hidden;
+    transition: all ease 0.4s;
+}
+{{ helper.box_min(container_level_two, 'vertical-menu__menu-sub') }}
+.vertical-menu__item--active .vertical-menu__menu-sub{
+    display: block;
+}
+.vertical-menu__item-sub{
+    padding: 0px;
+    margin:0px;
+}
+
+
+{# Default #}
+.vertical-menu__anchor-sub{
+    display: inline-block;
+    align-items: middle;
+    width: 100%;
+    text-decoration: none;
+}
+{% if items_level_two.spacing.css %}
+    .vertical-menu__anchor-sub{ {{items_level_two.spacing.css}} }
+{% endif %}
+{{ helper.font_min(items_level_two.text, 'vertical-menu__anchor-sub') }}
+{{ helper.box_min(items_level_two.default, 'vertical-menu__anchor-sub') }}
+{{ helper.font_min(items_level_two.default, 'vertical-menu__anchor-sub') }}
+{# end - Default #}
+
+{# Hover #}
+{{ helper.box_min(items_level_two.hover, 'vertical-menu__anchor-sub:hover') }}
+{{ helper.font_min(items_level_two.hover, 'vertical-menu__anchor-sub:hover') }}
+{# end - Hover #}
+{# Active #}
+{{ helper.box_min(items_level_two.active, 'vertical-menu__anchor-sub--active') }}
+{{ helper.font_min(items_level_two.active, 'vertical-menu__anchor-sub--active') }}
+{# end - Active #}
+

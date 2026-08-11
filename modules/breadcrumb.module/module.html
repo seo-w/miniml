@@ -1,0 +1,50 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set breadcrumb = module.breadcrumb  %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']  %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin           = module.styles.margin.css %}
+{% set z_index          = module.styles.z_index %}
+{% set visible          = module.styles.visible %}
+{% set animation        = module.styles.animation %}
+{% set sticky           = module.styles.sticky %}
+{% set box              = module.styles.box %}
+{% set breadcrumb_style = module.styles.breadcrumb %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'breadcrumb') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {{ helper.box_min(box, 'breadcrumb') }}
+            {{ helper.font_min(breadcrumb_style.links, 'breadcrumb a.hs-breadcrumb-label') }}
+            {% if breadcrumb.separator or breadcrumb_style.separator.font.css or breadcrumb_style.separator.space %}
+                .breadcrumb .hs-breadcrumb-menu-divider::before{
+                    {{ 'content:"'+breadcrumb.separator+'";' if  breadcrumb.separator }}
+                    {{ breadcrumb_style.separator.font.css if breadcrumb_style.separator.font.css}}
+                    {{ 'padding: 0px '+breadcrumb_style.separator.space+'px;' if breadcrumb_style.separator.space }}
+                }
+            {% endif %}
+            {{ helper.font_min(breadcrumb_style.active_page, 'breadcrumb span.hs-breadcrumb-label') }}
+        {% end_scope_css %}
+    </style>
+{% end_require_css %}
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+{% if breadcrumb.menu %}
+    <nav aria-label="Breadcrumb" {{ helper.advance_min(id_module, classes_module) }}>
+        {% menu id="{{breadcrumb.menu}}",  root_type="breadcrumb", no_wrapper=true %}
+    </nav>
+{% endif %}
+

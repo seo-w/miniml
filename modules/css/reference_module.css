@@ -1,0 +1,50 @@
+.reference-module{
+    display: none;
+}
+.hs-inline-edit .reference-module{
+    display: block !important;
+    margin-bottom: 10px;
+    font-family: Helvetica Neue,Helvetica,Arial,sans-serif !important;
+    font-size: 14px !important;
+    text-align: center !important;
+    background-color: #F5F8F8 !important;
+    border: 1px dashed #516f90 !important;
+    outline: 1px dashed #fff !important;
+    padding: 20px;
+}
+
+.reference-module::before{
+    color: #7c98b6 !important;
+    font-style: italic !important;
+    font-weight: 700 !important;
+    display: block !important;
+}
+.reference-module::after{
+
+    color: #7c98b6 !important;
+    font-weight: 300 !important;
+    display: block !important;
+    line-height: 1.6 !important;
+    font-style: italic !important;
+    margin-top: 8px;
+}
+
+/* Module custom section */
+.reference-module--custom-section::before{
+    content: 'Custom section';
+}
+.reference-module--custom-section::after{
+    content: 'Add styles for different devices';
+}
+
+/* Module download form */
+.reference-module--download-form::before{
+    content: 'Download form';
+}
+.reference-module--download-form::after{}
+
+/* Module custom popup */
+.reference-module--custom-popup::before{
+    content: 'Custom popup';
+}
+.reference-module--custom-popup::after{}

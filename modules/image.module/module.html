@@ -1,0 +1,72 @@
+{% import '../helpers.html' as helper %}
+
+{# ----------------------------- content ----------------------------- #}
+{# image #}
+{% set image  = module.image %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:['']   %}
+{# --------------------------- end content --------------------------- #}
+
+{# ----------------------------- styles ------------------------------ #}
+{% set margin    = module.styles.margin.css %}
+{% set z_index   = module.styles.z_index %}
+{% set visible   = module.styles.visible %}
+{% set animation = module.styles.animation %}
+{% set transform = module.styles.transform %}
+{% set sticky    = module.styles.sticky %}
+{% set box       = module.styles.box %}
+{# --------------------------- end styles ---------------------------- #}
+
+{# add class in array #}
+{% do classes_module.insert(0, 'custom-image__image') %}
+
+{# Generate css #}
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {% if box.align.css %}
+                .custom-image{
+                    {{box.align.css}}
+                }
+            {% endif %}
+            {{ helper.box_min(box, 'custom-image') }}
+            {% if image.image.size_type == 'exact' %}
+                .custom-image__anchor{
+                    width:{{image.image.width}}px;
+                    height:auto;
+                }
+            {% endif %}
+
+            {% if image.anchor.url.href %}
+                {{ helper.transform_min(transform ,'custom-image__anchor') }}
+            {% else %}
+                {{ helper.transform_min(transform ,'custom-image__image') }}
+            {% endif %}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %}
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<div class="custom-image">
+    {% if image.anchor.url.href and !image.show_lightbox %}
+        {% call helper.anchor_min(image.anchor, '', ['custom-image__anchor']) %}
+            {{ helper.image_min(image.image, classes_module, id_module) }}
+        {% endcall %}
+    {% elif !image.anchor.url.href and !image.show_lightbox %}
+        {{ helper.image_min(image.image, classes_module, id_module) }}
+    {% elif image.show_lightbox %}
+        {% do classes_module.insert(1, 'custom-image__zoomable') %}
+        {{ require_js(get_asset_url('../../library/zooming/zooming.min.js'), "footer") }}
+        {{ require_js(get_asset_url('../../js/init-custom-image-zoom.js'), "footer") }}
+        <figure class="custom-image__figure">
+            {{ helper.image_min(image.image, classes_module, id_module) }}
+        </figure>
+    {% endif %}
+</div>
+
+

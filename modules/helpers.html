@@ -1,0 +1,568 @@
+{% macro anchor_min(anchor_field, anchor_text, anchor_class, id) %}
+    {% set  url_type     = anchor_field.url.type %}
+    {% set  url_anchor   = anchor_field.url.href %}
+    {% set  anchor_tab   = anchor_field.open_in_new_tab %}
+    {% set  no_follow    = anchor_field.no_follow %}
+
+    {% if url_anchor %}
+        <a class="{% for class in anchor_class %} {{class}} {% endfor %}" 
+        {% if url_type == "EMAIL_ADDRESS" %}
+            href="mailto:{{url_anchor}}" 
+        {% else %}
+            href="{{url_anchor}}" 
+        {% endif %} 
+        {{ 'target="_blank"' if anchor_tab }} 
+        {{ 'rel="nofollow"' if no_follow }}  
+        {{ 'id="'+id+'"' if id }}
+        >
+            {{ anchor_text }} 
+            {{caller()}}  
+        </a>
+    {% endif %}
+{% endmacro %}
+
+{% macro image_min(image_field, image_class, image_id) %}
+    {#
+      HubSpot ya trae un tope de ancho nativo dentro del propio campo de
+      imagen: cuando el editor arrastra el manejador de recorte en el
+      selector, size_type pasa a "auto_custom_max" y quedan guardados
+      image_field.max_width / .max_height (confirmado inspeccionando el
+      campo real — no hace falta ningún campo custom en fields.json para
+      esto, HubSpot ya lo expone).
+
+      LIMITACIÓN CONOCIDA (verificada, no se puede arreglar desde el theme):
+      el atributo "sizes" que HubSpot genera automáticamente en el <img>
+      asume que la imagen se muestra a todo su ancho ("max_width"px) — no
+      sabe que este theme puede mostrarla en una grilla de 2-3 columnas más
+      angosta. Probé pasarle un "sizes" propio y HubSpot lo sobreescribe
+      igual, sin excepción. Consecuencia real: si un editor pone un
+      max_width de 800px en un image_box de 3 columnas (que en realidad se
+      ve a ~1/3 de ese ancho), el navegador puede pedir una variante del
+      srcset más grande de la que realmente hace falta. Mitigación: al
+      configurar max_width, hay que pensar en el ancho REAL que va a verse
+      en pantalla (ancho del contenedor ÷ número de columnas), no en un
+      número "grande por si acaso".
+    #}
+    {% set image_src      =  image_field.src %}
+    {% set image_alt      =  image_field.alt %}
+    {% set image_loadding =  image_field.loading %}
+    {% set size_type      =  image_field.size_type %}
+    {% set size_width     =  image_field.width|int if image_field.width else null %}
+    {% set size_height    =  image_field.height|int if image_field.height else null %}
+    {% set native_max_width  = image_field.max_width|int if image_field.max_width else null %}
+    {% set native_max_height = image_field.max_height|int if image_field.max_height else null %}
+
+    {% if image_src %}
+        {% if size_type == 'auto_custom_max' and native_max_width %}
+            {#
+              El editor puso un tope de ancho con el manejador nativo de
+              HubSpot. resize_image_url solo con el ancho preserva la
+              proporción (nunca deforma), y como el width/height que se
+              imprime abajo es el YA recortado, el srcset automático de
+              HubSpot ("Automatic image resizing", que se genera a partir
+              de estos atributos, no del src) también respeta el tope —
+              confirmado probando el endpoint real con Accept: image/webp.
+            #}
+            <img src="{{ resize_image_url(image_src, native_max_width) }}"
+                alt="{{image_alt|default('', true)}}"
+                {{ 'loading="lazy"' if image_loadding }}
+                {% if image_class %}
+                    class="{% for class in image_class %} {{class}} {% endfor %}"
+                {% endif %}
+                {{ 'id="'+image_id+'"' if image_id }}
+                width="{{native_max_width}}"
+                {{ 'height="'+native_max_height|string+'"' if native_max_height }}
+            />
+        {% elif size_type == 'auto' %}
+            {# sin tope configurado: se usa el ancho/alto real del archivo subido, tal como HubSpot lo guarda #}
+            <img src="{{image_src}}"
+                alt="{{image_alt|default('', true)}}"
+                {{ 'loading="lazy"' if image_loadding }}
+                {% if image_class %}
+                    class="{% for class in image_class %} {{class}} {% endfor %}"
+                {% endif %}
+                {{ 'id="'+image_id+'"' if image_id }}
+                {{ 'width="'+size_width|string+'"' if size_width }}
+                {{ 'height="'+size_height|string+'"' if size_height }}
+            />
+        {% else %}
+            {# tamaño exacto/personalizado: size_width ya es el ancho de display elegido por el editor, así que recortar el archivo a ese mismo ancho no cambia nada visualmente y solo ahorra bytes #}
+            {% set delivered_src = size_width ? resize_image_url(image_src, size_width) : image_src %}
+            <img src="{{delivered_src}}"
+                alt="{{image_alt|default('', true)}}"
+                {{ 'loading="lazy"' if image_loadding }}
+                {% if image_class %}
+                    class="{% for class in image_class %} {{class}} {% endfor %}"
+                {% endif %}
+                {{ 'id="'+image_id+'"' if image_id }}
+                {{ 'width="'+size_width|string+'"' if size_width }}
+                {{ 'height="'+size_height|string+'"' if size_height }}
+            />
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+
+{% macro grid_min(field, classes, id) %}
+    <div class="row row-cols-lg-{{field.desktop}} 
+                row-cols-md-{{field.tablet}} 
+                row-cols-{{field.phone}} 
+                {% if classes %}
+                    {% for class in classes %}
+                        {{class}}
+                    {% endfor %}
+                {% endif %} 
+                " 
+                {{ 'id="'+id+'"' if id }}
+    >
+        {{ caller() }}
+    </div>
+{% endmacro %}
+
+{% macro advance_min(id_module, classes) %}
+    {% if classes %}
+        class="{% for class in classes %} {{class}} {% endfor %}" 
+    {% endif %}
+    {{ 'id="'+id_module+'"' if id_module }}
+{% endmacro %}
+
+{% macro slider_min(field, styles, classes, id) %}
+
+    {# configuraciones slider #}
+    {% set columns          = field.columns %}
+    {% set scroll           = field.scroll %}
+    {% set infinite         = field.infinite %}
+    {% set show_dots        = field.show_dots %}
+    {% set autoplay         = field.autoplay %}
+    {% set transition_spedd = field.transition_spedd %}
+    {% set speed_slide      = field.speed_slide %}
+
+    {# estilos slider #}
+    {% set color  = styles.color %}
+    {% set arrows = styles.arrows %}
+    {% set dots   = styles.dots %}
+
+    {{ require_css(get_asset_url('../../modules/css/carousel.css')) }}
+    {{ require_js(get_asset_url('../../js/carousel.js'), "footer") }}
+
+    {% require_css %}
+        <style>
+            {% scope_css %}
+
+                {# columnas visibles por breakpoint — mismos breakpoints que usaba Slick (992/768) #}
+                .slick-min--{{name}} .carousel__slide{
+                    flex: 0 0 calc(100% / {{columns.desktop}});
+                    max-width: calc(100% / {{columns.desktop}});
+                }
+                @media (max-width: 992px){
+                    .slick-min--{{name}} .carousel__slide{
+                        flex: 0 0 calc(100% / {{columns.tablet}});
+                        max-width: calc(100% / {{columns.tablet}});
+                    }
+                }
+                @media (max-width: 768px){
+                    .slick-min--{{name}} .carousel__slide{
+                        flex: 0 0 calc(100% / {{columns.phone}});
+                        max-width: calc(100% / {{columns.phone}});
+                    }
+                }
+
+                {% if arrows.size or color.color %}
+                    .slick-min--{{name}} .carousel__arrow{
+                        {% if arrows.size %}
+                            font-size: {{arrows.size}}px;
+                        {% endif %}
+                        {% if color.color %}
+                            color: {{ color_min(color) }};
+                        {% endif %}
+                    }
+                {% endif %}
+
+                {% if arrows.space %}
+                    .slick-min--{{name}} .carousel__arrow--prev{ left:{{arrows.space}}px; }
+                    .slick-min--{{name}} .carousel__arrow--next{ right: {{arrows.space}}px; }
+                {% endif %}
+
+                {% if dots.size or color.color %}
+                    .slick-min--{{name}} .carousel__dot{
+                        {% if dots.size %}
+                            height: {{dots.size}}px;
+                            width: {{dots.size}}px;
+                        {% endif %}
+                    }
+                    {# reserva la altura real del dot configurado, para que al
+                       inyectarlos buildDots() no empuje el contenido de abajo
+                       (ver el comentario de .carousel__dots en carousel.css) #}
+                    {% if dots.size %}
+                        .slick-min--{{name}} .carousel__dots{ min-height: {{dots.size}}px; }
+                    {% endif %}
+                    .slick-min--{{name}} .carousel__dot--active{
+                        {% if color.color %}
+                            background: {{ color_min(color) }};
+                        {% endif %}
+                    }
+                {% endif %}
+                {% if dots.space %}
+                    .slick-min--{{name}} .carousel__dots{
+                        margin-top: {{dots.space}}px;
+                    }
+                {% endif %}
+
+            {% end_scope_css %}
+        </style>
+    {% end_require_css %}
+
+    <div class="carousel slick-min--{{name}}
+                {% if arrows.type_of_arrows %}
+                    slick-arrow-{{arrows.type_of_arrows}}
+                {% endif %}
+                {% if classes %}
+                    {% for class in classes %}
+                        {{class}}
+                    {% endfor %}
+                {% endif %}"
+                {% if id %}
+                    id="{{id}}"
+                {% endif %}
+    >
+        <div class="carousel__track">
+            {{caller()}}
+        </div>
+        {# Slick mostraba flechas siempre por defecto (arrows:true) — no hay un toggle explícito en fields.json, así que se mantienen siempre visibles; size/space/color solo cambian su estilo #}
+        <button type="button" class="carousel__arrow carousel__arrow--prev" aria-label="Anterior">‹</button>
+        <button type="button" class="carousel__arrow carousel__arrow--next" aria-label="Siguiente">›</button>
+        {% if show_dots %}
+            <div class="carousel__dots"></div>
+        {% endif %}
+    </div>
+
+    {% require_js %}
+        <script>
+            {#
+              DOMContentLoaded evita depender del orden exacto en que el
+              navegador ejecuta este script inline vs. el <script src> de
+              js/carousel.js (cargado en el footer) — sin esto, initCarousel
+              podía no estar definida todavía en el momento en que corre este
+              bloque, dependiendo de dónde caiga el módulo en la página.
+            #}
+            document.addEventListener('DOMContentLoaded', function () {
+                initCarousel(document.querySelector('.slick-min--{{name}}'), {
+                    infinite: {{infinite}},
+                    showDots: {{show_dots}},
+                    autoplay: {{autoplay}},
+                    autoplaySpeed: {{speed_slide}},
+                    scrollByDesktop: {{scroll.desktop}},
+                    scrollByTablet: {{scroll.tablet}},
+                    scrollByPhone: {{scroll.phone}}
+                });
+            });
+        </script>
+    {% end_require_js %}
+
+{% endmacro %}
+
+{% macro icon_min(field, width_icon, no_wrapper_icon) %}
+    {% icon 
+        name='{{field.name}}' 
+        style='{{field.type}}' 
+        unicode='{{ field.unicode}}' 
+        icon_set='{{field.icon_set}}' 
+        purpose='decorative' 
+        title='{{field.name}}'
+        width='{{width_icon}}'
+        no_wrapper={{no_wrapper_icon}}
+    %}
+{% endmacro %}
+
+{% macro color_min(color) %}
+    {% set colorhex = color.color|convert_rgb %}
+    {% if color.opacity != null %}
+      {% set coloropacity = color.opacity / 100 %}
+    {% else %}
+      {% set coloropacity = '1' %}
+    {% endif %}
+    rgba({{ colorhex }}, {{ coloropacity }})
+{% endmacro %}
+
+{% macro shadow_min(field) %}
+    {% set color_shadow = field.color %}
+    {% set blur         = field.blur %}
+    {% set position_y   = field.position_y %}
+    {% set position_x   = field.position_x %}
+    {% if color_shadow.color or blur or position_y or position_x %}
+        box-shadow: {{position_y is truthy? position_y:10 }}px {{position_x is truthy? position_x:10 }}px {{blur is truthy? blur:10 }}px {{ color_min(color_shadow) }};
+    {% endif %}
+{% endmacro %}
+
+{% macro media_min() %}
+    {% set break_point = theme.layout.mobile.break_point %}
+    @media(max-width:{{break_point}}px){
+        {{caller()}}  
+    }
+{% endmacro %}
+
+{% macro media_desktop_min() %}
+    {% set break_point = theme.layout.mobile.break_point %}
+    @media(min-width:{{break_point|add(1)}}px){
+        {{caller()}}  
+    }
+{% endmacro %}
+
+{% macro font_min(field, class) %}
+    {# container styles #}
+    {% set font_css         = field.font.css %}
+    {% set font_size_mobile = field.font_size_mobile %}
+    {% set line_height      = field.line_height %}
+    {% set letter_spacing   = field.letter_spacing %}
+    {% set margin_bottom    = field.margin_bottom %}
+    {% set font_weight      = field.font_weight %}
+    {% set text_color       = field.text_color %}
+    
+    {# font css #}
+    {% if font_css or line_height or letter_spacing or margin_bottom or font_weight or text_color.color %}
+        .{{class}}{
+            {% if font_css %}{{font_css}}{% endif %}
+            {% if line_height %}
+                line-height:{{line_height}}%;
+            {% endif %}
+            {% if letter_spacing %}
+                letter-spacing:{{letter_spacing}}px;
+            {% endif %}
+            {% if margin_bottom %}
+                margin:0px 0px {{margin_bottom}}px 0px;
+            {% endif %}
+            {% if font_weight %}
+                font-weight:{{font_weight}};
+            {% endif %}
+            {% if text_color.color %}
+                color: {{color_min(text_color)}};
+            {% endif %}
+        }
+    {% endif %}
+    {# end font css #}
+
+    {% if font_size_mobile %}
+        {% call media_min()%}
+            .{{class}}{ font-size: {{font_size_mobile}}px; }
+        {% endcall %}
+    {% endif %}
+{% endmacro %}
+
+{% macro box_min(field, class) %}
+    {# container styles #}
+    {% set text_align       = field.align.css %}
+    {% set background_color = field.background_color %}
+    {% set background_image = field.background_image.css %}
+    {% set padding          = field.padding.css %}
+    {% set border           = field.border.css %}
+    {% set border_radius    = field.border_radius %}
+        
+    {# shadow #}
+    {% set shadow = field.shadow %}
+
+    {# box css#}
+    {% if background_color.color or padding or border or border_radius or shadow_color.color or background_image %}
+        .{{class}}{
+            {{ 'background-color:'+color_min(background_color)+';' if background_color.color }}
+            {{ background_image if background_image}}
+            {{ padding if padding}}
+            {{ border if border}}
+            {{ 'border-radius:'+border_radius+'px;' if border_radius }}
+            {{ shadow_min(shadow) }}
+        }
+    {% endif %}
+    {% if text_align %}
+        .{{class}}>*,
+        .{{class}}{ {{text_align}} }
+    {% endif %}
+    {# end box css#}
+{% endmacro %}
+
+{% macro wrapper_min(margin, visible, z_index) %}
+    {% if margin or z_index %}
+        #hs_cos_wrapper_{{name}}{
+            {{ margin if margin }}
+            {{ 'z-index:'+z_index+';' if z_index }} 
+        }
+    {% endif %}
+
+    {% if !visible.desktop %} 
+        @media(min-width:{{theme.layout.mobile.break_point + 1}}px){
+            #hs_cos_wrapper_{{name}}{ display: none; }
+            .hs-inline-edit #hs_cos_wrapper_{{name}}{ 
+                display: block;
+                filter: grayscale(100%);
+                background-image: linear-gradient(45deg, #d9d9d9 30.77%, #ededed 30.77%, #ededed 50%, #d9d9d9 50%, #d9d9d9 80.77%, #ededed 80.77%, #ededed 100%);
+                background-size: 18.38px 18.38px;
+                padding:10px;
+            }
+        }
+    {% endif %} 
+
+    {% if !visible.mobile %} 
+        @media(max-width:{{theme.layout.mobile.break_point}}px){
+            #hs_cos_wrapper_{{name}}{ display: none; }
+            .hs-inline-edit #hs_cos_wrapper_{{name}}{ 
+                display: block;
+                filter: grayscale(100%);
+                background-image: linear-gradient(45deg, #d9d9d9 30.77%, #ededed 30.77%, #ededed 50%, #d9d9d9 50%, #d9d9d9 80.77%, #ededed 80.77%, #ededed 100%);
+                background-size: 18.38px 18.38px;
+                padding:10px;
+            }
+        }
+    {% endif %}
+
+{% endmacro %}
+
+{% macro animation_delay_min(duration) %}
+    -webkit-animation-delay: {{duration}}ms;
+    animation-delay: {{duration}}ms;
+{% endmacro %}
+
+{% macro animation_min(field) %}
+    {% set animation_type = field.type %}
+    {% set animation_time = field.time %}
+
+    {% set element_selector ='hs_cos_wrapper_'+name %}
+    {% set prefix_class     ='animate__' %}
+
+    {% if animation_type %}
+        {% for key, val in field.transition.items()  %}
+            {% if animation_type == key %}
+
+                {% set transition = val %}
+
+                {#
+                  async: true (nativo de HubSpot en require_css) — animate.css
+                  son 72KB crudos de keyframes que NO pintan nada above-the-fold:
+                  la animación la dispara animationMin() por JS después de
+                  cargar. Sacarla del camino crítico no produce FOUC porque
+                  ningún estilo de layout depende de este archivo.
+                  Ojo: esto NO aplica igual a main.css ni al CSS de los módulos
+                  visibles — ahí async sí causaría destello sin estilos y CLS.
+                #}
+                {{ require_css(get_asset_url('../library/animate/animate.min.css'), { async: true }) }}
+
+                {% require_js  %}
+                    <script async>
+                        let animationElement{{name}} = document.getElementById('{{element_selector}}');
+                        let animationTransition{{name}} = '{{prefix_class+transition}}';
+                        animationMin(animationElement{{name}}, animationTransition{{name}});
+                    </script>
+                {% end_require_js %}
+
+                {% if animation_time.duration or animation_time.delay  %}
+                    {% require_css %}
+                        <style>
+                            #{{element_selector}}{
+                                {{ 'animation-duration: '+animation_time.duration+'ms !important;' if animation_time.duration }}
+                                {{ animation_delay_min(animation_time.delay) if animation_time.delay }}
+                            }
+                        </style>
+                    {% end_require_css %}
+                {% endif %}
+
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endmacro %}
+
+
+{% macro sticky_min(field) %}
+
+    {% set desktop = field.desktop %}
+    {% set mobile  = field.mobile %}
+
+    {% set position = field.position %}
+    {% set offset   = field.offset %}
+
+    {% set id_wrapper = 'hs_cos_wrapper_'+name %}
+    {% set class_sticky = 'sticky_'+name %}
+
+    {% set break_point = theme.layout.mobile.break_point %}
+
+    {% if desktop or mobile%}
+        {% require_css %}
+            <style>
+                {% if desktop %}
+                    @media(min-width:{{break_point|add(1)}}px){
+                        .{{class_sticky}}{
+                            position: fixed;
+                            top: {{offset}}px;
+                        }
+                    }
+                {% endif %}
+                {% if mobile %}
+                    @media(max-width:{{break_point}}px){
+                        .{{class_sticky}}{
+                            position: fixed;
+                            top: {{offset}}px;
+                        }
+                    }
+                {% endif %}
+            </style>
+        {% end_require_css %}
+        {% require_js %}
+            <script>
+                var initialPosition{{name}} = document.getElementById('{{id_wrapper}}').offsetTop;
+                window.addEventListener('scroll', function(){ 
+                    stickyMin('{{id_wrapper}}', '{{class_sticky}}', initialPosition{{name}});
+                });
+                window.addEventListener('resize', function(){ 
+                    stickyMin('{{id_wrapper}}', '{{class_sticky}}', initialPosition{{name}});
+                });
+            </script>
+        {% end_require_js %}
+    {% endif %}
+
+{% endmacro %}
+
+
+{% macro transform_css_min(field) %}
+
+    {# scale #}
+    {% set scale      = field.scale %}
+    {% set scale_size = field.scale_size %}
+
+    {# translate #}
+    {% set translate                  = field.translate %}
+    {% set horizontal_tanslate        = field.horizontal_tanslate + field.horizontal_translate_units %}
+    {% set vertical_tanslate          = field.vertical_tanslate + field.vertical_translate_units %}
+
+    {# rotate #}
+    {% set rotate         = field.rotate %}
+    {% set degrees_rotate = field.degrees_rotate %}
+
+    {% if scale or translate or rotate %}
+        transform: 
+            {{ 'scale('+scale_size+')' if scale }} 
+            {{ 'translate('+horizontal_tanslate+', '+vertical_tanslate+')' if translate }} 
+            {{ 'rotate('+degrees_rotate+'deg)' if rotate }}
+        ;
+    {% endif %}
+
+{% endmacro %}
+
+
+{% macro transform_min(field, class) %}
+
+    {% set desktop = field.desktop %}
+    {% set mobile  = field.mobile %}
+
+    {% if (desktop.scale or desktop.translate or desktop.rotate) and class %}
+        {% call media_desktop_min() %}
+            .{{class}}{
+                {{ transform_css_min(desktop) }}
+            }
+        {% endcall %}
+    {% endif %}
+
+    {% if (mobile.scale or mobile.translate or mobile.rotate) and class %}
+        {% call media_min() %}
+            .{{class}}{
+                {{ transform_css_min(mobile) }}
+            }
+        {% endcall %}
+    {% endif %}
+
+{% endmacro %}

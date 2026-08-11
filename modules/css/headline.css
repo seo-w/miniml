@@ -1,0 +1,19 @@
+{% import '../helpers.html' as helper %} 
+
+{% set headline = theme.title_module %}
+
+.headline{
+    margin:0px;
+    padding: 0px;
+    display:block;
+    text-decoration: none;
+}
+
+.headline__before,
+.headline__center,
+.headline__affter{
+    display: inline;
+    text-decoration: none;
+}
+
+{{ helper.font_min(headline.h2,'headline__before, .headline__center, .headline__affter') }}

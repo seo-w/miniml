@@ -1,0 +1,64 @@
+html{ scroll-behavior: smooth; }
+#main-content>.container-fluid{
+    padding: 0px;
+}
+{#
+  max-width + height:auto es lo que hace seguro agregar atributos width/height
+  nativos en cada <img> del theme (para reservar espacio y evitar CLS) sin que
+  se deformen al verse más angostos que su tamaño original: el navegador
+  calcula el aspect-ratio real a partir de esos dos atributos y lo respeta acá,
+  en vez de forzar la altura literal del atributo cuando el ancho ya cambió.
+#}
+img,
+svg{ max-width: 100%; height: auto; }
+
+
+body{
+    width: 100%;
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+.hs-inline-edit body{
+    width: inherit;
+    height: inherit;
+    overflow-x: inherit;
+    overflow-y: inherit;
+}
+
+.main-content-blank{padding: 0px !important;}
+
+@media(min-width:{{theme.layout.mobile.break_point + 1}}px){
+    .hide--desktop{ display: none; }
+}
+@media(max-width:{{theme.layout.mobile.break_point}}px){
+    .hide--mobile{ display: none; }
+}
+
+.hs-private.hs-private.hs-private .eOvNFv{
+    background-color: red !important;
+}
+
+.container-fluid{
+    padding-left: 0rem;
+    padding-right: 0rem;
+}
+
+
+.hs-inline-edit div[class*="-hidden"] {
+    display: block !important;
+    padding:10px;
+    border: 1px dashed #516f90 !important;
+    outline: 1px dashed #fff !important;
+    margin: 3px;
+}
+
+@media(max-width:{{theme.layout.mobile.break_point}}px){
+    .hs-inline-edit div[class*="-hidden"]{ 
+        display: block;
+        padding:10px;
+        border: 1px dashed #516f90 !important;
+        outline: 1px dashed #fff !important;
+        margin: 3px;
+    }
+}

@@ -1,0 +1,87 @@
+{% import '../helpers.html' as helper %}
+{% import '../post_macro.html' %}
+
+{# -------------------------------- content ------------------------------- #}
+{# grid #}
+{% set grid = module.grid %}
+{% set spacing_grid = module.grid.spacing_grid %}
+{# post #}
+{% set post = module.post %}
+{# slider #}
+{% set show_as_slider = module.show_as_slider %}
+{% set slider_options = module.slider_options %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# ------------------------------ Post vars ------------------------------- #}
+{# Query #}
+{% set query_blog      = post.query.blog %}
+{% set query_tag       = post.query.tag %}
+{% set query_show_post = post.query.show_post %}
+{# Query object #}
+{% set blog_object =  blog_recent_tag_posts(query_blog, query_tag, query_show_post) if query_tag is truthy else blog_recent_posts(query_blog, query_show_post) %}
+{# ----------------------------- end Post vars ----------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin           = module.styles.margin.css %}
+{% set z_index          = module.styles.z_index %}
+{% set visible          = module.styles.visible %}
+{% set animation        = module.styles.animation %}
+{% set sticky           = module.styles.sticky %}
+{% set box              = module.styles.box %}
+{% set image            = module.styles.image.height %}
+{% set data_box         = module.styles.data_box %}
+{% set date             = module.styles.date %}
+{% set tags             = module.styles.tags %}
+{% set margin_date_tags = module.styles.margin_date_tags.margin_bottom %}
+{% set author           = module.styles.author %}
+{% set title            = module.styles.title %}
+{% set excerpt          = module.styles.excerpt %}
+{% set button           = ['button', 'button--' + module.styles.button.style_button, 'button--' + module.styles.button.size_button] %}
+{% set slider_style     = module.styles.slider %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+            {{ helper.box_min(box, 'post') }}
+            
+            {% if image.height or image.border_radius %}
+                .post__image{ 
+                    {{ 'min-height:'+image.height+'px;' if image.height  }}
+                    {{ 'border-radius:'+image.border_radius+'px;' if image.border_radius }}
+                }
+            {% endif %}
+
+            {{ helper.box_min(data_box, 'post__data') }}
+            {{ helper.font_min(date, 'post__date') }}
+            {{ helper.font_min(tags, 'post__tags-anchor') }}
+            {% if margin_date_tags %}
+                .post_date_and_tags{
+                    margin-bottom: {{margin_date_tags}}px;
+                }
+            {% endif %}
+            {{ helper.font_min(author, 'post__author') }}
+            {{ helper.font_min(title, 'post__title, .post__title>a') }}
+            .post__title>a{ margin:0px; }
+            {{ helper.font_min(excerpt, 'post__description') }}
+        {% end_scope_css %}
+    </style>
+{% end_require_css %} 
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+{% if show_as_slider %}
+    {% call helper.slider_min(slider_options, slider_style, classes_module, id_module) %}
+        {{ post_min(blog_object, post, button, 1, true, spacing_grid) }}
+    {% endcall %}
+{% else %}
+    {% call helper.grid_min(grid, classes_module, id_module) %}
+        {{ post_min(blog_object, post, button, 1, false, spacing_grid) }}
+    {% endcall %}
+{% endif %}
+

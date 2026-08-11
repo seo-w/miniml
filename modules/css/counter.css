@@ -1,0 +1,49 @@
+{% import '../helpers.html' as helper %}
+
+{% set box         = theme.counter.box %}
+{% set number      = theme.counter.number %}
+{% set title       = theme.counter.title %}
+{% set description = theme.counter.description %}
+
+
+.counter{ 
+    display: block;
+    height: 100%;
+ }
+{{ helper.box_min(box, 'counter') }}
+
+.counter>*{
+    margin:0px 0px 15px 0px;
+    padding: 0px;
+    display: block;
+    text-align: {{box.text_align}};
+}
+
+
+.counter__number{
+    margin:0px 0px {{number.margin_bottom}}px 0px;
+}
+.counter__number>*{
+    margin: 0px {{number.space}}px 0px 0px;
+    vertical-align: {{number.vertical_align}};
+}
+.counter__number>*:last-child{
+    margin: 0px;
+}
+
+.counter__prefix,
+.counter__value,
+.counter__suffix{
+    display: inline-block;
+}
+
+{{ helper.font_min(number.value, 'counter__value') }}
+{{ helper.font_min(number.prefix, 'counter__prefix') }}
+{{ helper.font_min(number.suffix, 'counter__suffix') }}
+
+.counter>*:last-child{
+    margin-bottom: 0px;
+}
+
+{{ helper.font_min(title, 'counter__title') }}
+{{ helper.font_min(description, 'counter__description') }}

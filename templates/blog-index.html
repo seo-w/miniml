@@ -1,0 +1,16 @@
+<!--
+  templateType: blog_listing
+  isAvailableForNewContent: true
+  label: Minimal - blog listing
+-->
+
+{% extends './layouts/base.html' %}
+
+{{ require_css(get_asset_url("../modules/css/post.css")) }}
+
+{% block body %}
+  <main id="main-content" class="body-container-wrapper">
+    {% dnd_area 'main_drop_area'%}
+    {% end_dnd_area %}
+  </main>
+{% endblock body %}

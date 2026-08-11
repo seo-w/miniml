@@ -1,0 +1,124 @@
+{% import '../helpers.html' as helper %}
+
+{% set accordion   = theme.accordion %}
+{% set title       = accordion.title %}
+{% set description = accordion.description %}
+{% set icon        = accordion.icon %}
+
+.accordionjs{
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+}
+
+.acc_section{
+    margin-bottom:{{accordion.space_items}}px;
+}
+
+/* box title */
+.acc_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: all ease 0.3s;
+    /* reset del <button> nativo (antes era un <div>) */
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    text-align: left;
+    -webkit-appearance: none;
+    appearance: none;
+}
+{{helper.box_min(title.default, 'acc_head')}}
+
+.acc_head--left {
+    justify-content: left;
+}
+/* box title - Hover */
+{{helper.box_min(title.hover, 'acc_head:hover')}}
+
+/* box title - active */
+{{helper.box_min(title.active, 'acc_active .acc_head')}}
+
+
+/*Title*/
+.accordion__title{
+    color: {{helper.color_min(title.default.text_color)}};
+    transition: all ease 0.3s;
+}
+{{helper.font_min(title.font, 'accordion__title')}}
+
+/*Title - hover*/
+.acc_head:hover .accordion__title{
+    color: {{helper.color_min(title.hover.text_color)}};
+}
+/*Title - active*/
+.acc_active .acc_head .accordion__title{
+    color: {{helper.color_min(title.active.text_color)}};
+}
+
+
+/*icons*/
+.accordion__icon{
+    width: {{icon.size + 10}}px;
+    text-align: center;
+}
+.accordion__default,
+.accordion__active{
+    width: {{icon.size}}px;
+    display: inline-block;
+}
+/*icons color - default */
+.accordion__default svg,
+.accordion__active svg{
+    fill:{{helper.color_min(icon.default)}};
+}
+/*icons color - hover */
+.acc_head:hover .accordion__default svg,
+.acc_head:hover .accordion__active svg{
+    fill:{{helper.color_min(icon.hover)}};
+}
+/*icons color - active */
+.acc_active .acc_head .accordion__default svg,
+.acc_active .acc_head .accordion__active svg{
+    fill:{{helper.color_min(icon.active)}};
+}
+/*display state icon*/
+.acc_section .accordion__default{
+    display: inline-block;
+}
+.acc_section.acc_active .accordion__default{
+    display: none;
+}
+.acc_section .accordion__active{
+    display: none;
+}
+.acc_section.acc_active .accordion__active{
+    display: inline-block;
+}
+
+/*Accordion content*/
+{{helper.box_min(description, 'accordion__content')}}
+{{helper.font_min(description.font, 'accordion__content')}}
+.accordion__content{
+    text-align: {{description.text_align}};
+    overflow: hidden;
+    max-height: 0px;
+    transition: max-height 0.3s ease, padding-top 0.3s ease, padding-bottom 0.3s ease;
+    {#
+      El padding vertical (arriba, via box_min) sigue ocupando espacio
+      aunque max-height sea 0 — por eso un panel "cerrado" seguía viéndose
+      con alto real. Se pone en 0 acá y se restaura solo en .acc_active.
+    #}
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+.acc_section.acc_active .accordion__content{
+    {{ description.padding.css }}
+}
+
