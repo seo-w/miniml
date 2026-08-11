@@ -1,388 +1,860 @@
 [
-    {
-        "label": "Type section",
-        "name": "type_section",
-        "type": "choice",
-        "display": "select",
+  {
+    "label": "Type section",
+    "name": "type_section",
+    "type": "choice",
+    "display": "select",
+    "required": false,
+    "locked": false,
+    "choices": [
+      [
+        "section",
+        "section"
+      ],
+      [
+        "row",
+        "row"
+      ],
+      [
+        "column",
+        "column"
+      ]
+    ],
+    "default": "section"
+  },
+  {
+    "label": "Estilos",
+    "name": "styles",
+    "type": "group",
+    "tab": "STYLE",
+    "children": [
+      {
+        "label": "Overflow hidden",
+        "name": "overflow_hidden",
         "required": false,
         "locked": false,
-        "choices": [
-            ["section","section"],
-            ["row","row"],
-            [ "column", "column"]
-        ],
-        "default": "section"
-    },
-    {
-        "label":"Estilos",
-        "name": "styles",
+        "type": "boolean",
+        "default": false
+      },
+      {
+        "label": "Lazy-load background image",
+        "name": "lazy_load_background",
+        "required": false,
+        "locked": false,
+        "type": "boolean",
+        "inline_help_text": "Activar solo si esta sección queda claramente debajo del pliegue (ej. muy abajo en una página larga). Carga el fondo con IntersectionObserver en vez de al inicio. No lo actives en una sección que sea la primera cosa visible de la página — ahí el fondo debe cargar de inmediato.",
+        "default": false
+      },
+      {
+        "label": "Default",
+        "name": "default",
         "type": "group",
-        "tab": "STYLE",
+        "expanded": false,
+        "required": false,
+        "locked": false,
         "children": [
-            {
-                "label": "Overflow hidden",
-                "name": "overflow_hidden",
-                "required": false,
-                "locked": false,
-                "type": "boolean",
-                "default": false
-            },
-            {
-                "label": "Lazy-load background image",
-                "name": "lazy_load_background",
-                "required": false,
-                "locked": false,
-                "type": "boolean",
-                "inline_help_text": "Activar solo si esta sección queda claramente debajo del pliegue (ej. muy abajo en una página larga). Carga el fondo con IntersectionObserver en vez de al inicio. No lo actives en una sección que sea la primera cosa visible de la página — ahí el fondo debe cargar de inmediato.",
-                "default": false
-            },
-            {
-                "label": "Default",
-                "name": "default",
-                "type": "group",
-                "expanded": false,
-                "required": false,
-                "locked": false,
-                "children": [
-                    {
-                        "label" : "Background color",
-                        "name" : "background_color",
-                        "type" : "color",
-                        "required" : false,
-                        "locked" : false,
-                        "default": null
-                    },
-                    {
-                        "label": "Overlay",
-                        "name": "overlay",
-                        "id" : "overlay",
-                        "required": false,
-                        "locked": false,
-                        "type": "boolean",
-                        "default": false 
-                    },
-                    {
-                        "label": "Background blend mode",
-                        "name": "blend_mode",
-                        "required": false,
-                        "locked": false,
-                        "display": "select",
-                        "choices": [
-                            [ "normal", "normal" ],
-                            [ "multiply", "multiply" ],
-                            [ "screen", "screen" ],
-                            [ "overlay", "overlay" ],
-                            [ "darken", "darken" ],
-                            [ "lighten", "lighten" ],
-                            [ "color-dodge", "color-dodge" ],
-                            [ "saturation", "saturation" ],
-                            [ "color", "color" ],
-                            [ "luminosity", "luminosity" ]
-                        ],
-                        "type": "choice",
-                        "default": null,
-                        "visibility" : {
-                            "controlling_field" : "overlay",
-                            "controlling_value_regex" : "true",
-                            "operator" : "EQUAL",
-                            "access" : null,
-                            "hidden_subfields" : null
-                        }
-                    },
-                    {
-                        "label": "Background gradient",
-                        "name": "bg_gradient",
-                        "type": "gradient",
-                        "helptext": "Sets a gradient behind the content",
-                        "required": false,
-                        "default": null,
-                        "visibility" : {
-                            "controlling_field" : "overlay",
-                            "controlling_value_regex" : "true",
-                            "operator" : "EQUAL",
-                            "access" : null,
-                            "hidden_subfields" : null
-                        }
-                    },
-                    {
-                        "label": "Background image",
-                        "name": "background_image",
-                        "type": "backgroundimage",
-                        "required": false,
-                        "locked": false,
-                        "default":null
-                    },
-                    {
-                        "label": "Horizontal repeat",
-                        "name": "horizontal_repeat",
-                        "type": "boolean",
-                        "required": false,
-                        "locked": false,
-                        "default": false 
-                    },
-                    {
-                        "label": "Vertical repeat",
-                        "name": "vertical_repeat",
-                        "type": "boolean",
-                        "required": false,
-                        "locked": false,
-                        "default": false 
-                    },
-                    {
-                        "label": "Padding",
-                        "name": "padding",
-                        "type": "spacing",
-                        "required": false,
-                        "visibility" : {
-                            "hidden_subfields" : {
-                                "margin": true
-                            }
-                        }
-                    },
-                    {
-                        "label": "Image background fixed",
-                        "name": "image_background_fixed",
-                        "type": "boolean",
-                        "required": false,
-                        "locked": false,
-                        "default": false 
-                    },
-                    {
-                        "label" : "Border",
-                        "name" : "border",
-                        "type" : "border",
-                        "required" : false,
-                        "locked" : false,
-                        "allow_custom_border_sides" : true,
-                        "default" : null
-                    },
-                    {
-                        "label" : "Border radius",
-                        "name" : "border_radius",
-                        "type" : "number",
-                        "required" : false,
-                        "locked" : false,
-                        "suffix" : "px",
-                        "default" : null
-                    },
-                    {
-                        "label":"Shadow",
-                        "name": "shadow",
-                        "type": "group",
-                        "children": [
-                            {
-                                "label" : "Color",
-                                "name" : "color",
-                                "type" : "color",
-                                "required" : false,
-                                "locked" : false,
-                                "default" : null
-                            },
-                            {
-                                "label" : "Blur",
-                                "name" : "blur",
-                                "type" : "number",
-                                "required" : false,
-                                "locked" : false,
-                                "suffix" : "px",
-                                "default" : null 
-                            },
-                            {
-                                "label" : "Position y",
-                                "name" : "position_y",
-                                "type" : "number",
-                                "required" : false,
-                                "locked" : false,
-                                "suffix" : "px",
-                                "default" : null 
-                            },
-                            {
-                                "label" : "Position x",
-                                "name" : "position_x",
-                                "type" : "number",
-                                "required" : false,
-                                "locked" : false,
-                                "suffix" : "px",
-                                "default" : null 
-                            }
-                        ]
-                    }
-                ]
-            },
-            {
-                "label": "Mobile",
-                "name": "mobile",
-                "type": "group",
-                "expanded": false,
-                "required": false,
-                "locked": false,
-                "children": [
-                    {
-                        "label" : "Background color",
-                        "name" : "background_color",
-                        "type" : "color",
-                        "required" : false,
-                        "locked" : false,
-                        "default" : null
-                    },
-                    {
-                        "label": "Overlay",
-                        "name": "overlay",
-                        "id" : "overlay-mobile",
-                        "required": false,
-                        "locked": false,
-                        "type": "boolean",
-                        "default": false 
-                    },
-                    {
-                        "label": "Background blend mode",
-                        "name": "blend_mode",
-                        "required": false,
-                        "locked": false,
-                        "display": "select",
-                        "choices": [
-                            [ "normal", "normal" ],
-                            [ "multiply", "multiply" ],
-                            [ "screen", "screen" ],
-                            [ "overlay", "overlay" ],
-                            [ "darken", "darken" ],
-                            [ "lighten", "lighten" ],
-                            [ "color-dodge", "color-dodge" ],
-                            [ "saturation", "saturation" ],
-                            [ "color", "color" ],
-                            [ "luminosity", "luminosity" ]
-                        ],
-                        "type": "choice",
-                        "default": null,
-                        "visibility" : {
-                            "controlling_field" : "overlay-mobile",
-                            "controlling_value_regex" : "true",
-                            "operator" : "EQUAL",
-                            "access" : null,
-                            "hidden_subfields" : null
-                        }
-                    },
-                    {
-                        "label": "Background gradient",
-                        "name": "bg_gradient",
-                        "type": "gradient",
-                        "helptext": "Sets a gradient behind the content",
-                        "required": false,
-                        "default": null,
-                        "visibility" : {
-                            "controlling_field" : "overlay-mobile",
-                            "controlling_value_regex" : "true",
-                            "operator" : "EQUAL",
-                            "access" : null,
-                            "hidden_subfields" : null
-                        }
-                    },
-                    {
-                        "label": "Background image",
-                        "name": "background_image",
-                        "type": "backgroundimage",
-                        "required": false,
-                        "locked": false,
-                        "default":null
-                    },
-                    {
-                        "label": "Horizontal repeat",
-                        "name": "horizontal_repeat",
-                        "type": "boolean",
-                        "required": false,
-                        "locked": false,
-                        "default": false 
-                    },
-                    {
-                        "label": "Vertical repeat",
-                        "name": "vertical_repeat",
-                        "type": "boolean",
-                        "required": false,
-                        "locked": false,
-                        "default": false 
-                    },
-                    {
-                        "label": "Image background fixed",
-                        "name": "image_background_fixed",
-                        "type": "boolean",
-                        "required": false,
-                        "locked": false,
-                        "default": false 
-                    },
-                    {
-                        "label": "Padding",
-                        "name": "padding",
-                        "type": "spacing",
-                        "required": false,
-                        "default" : null,
-                        "visibility" : {
-                            "hidden_subfields" : {
-                                "margin": true
-                            }
-                        }
-                    },
-                    {
-                        "label" : "Border",
-                        "name" : "border",
-                        "type" : "border",
-                        "required" : false,
-                        "locked" : false,
-                        "allow_custom_border_sides" : true,
-                        "default" : null
-                    },
-                    {
-                        "label" : "Border radius",
-                        "name" : "border_radius",
-                        "type" : "number",
-                        "required" : false,
-                        "locked" : false,
-                        "suffix" : "px",
-                        "default" : null
-                    },
-                    {
-                        "label":"Shadow",
-                        "name": "shadow",
-                        "type": "group",
-                        "children": [
-                            {
-                                "label" : "Color",
-                                "name" : "color",
-                                "type" : "color",
-                                "required" : false,
-                                "locked" : false,
-                                "default" : null
-                            },
-                            {
-                                "label" : "Blur",
-                                "name" : "blur",
-                                "type" : "number",
-                                "required" : false,
-                                "locked" : false,
-                                "suffix" : "px",
-                                "default" : null 
-                            },
-                            {
-                                "label" : "Position y",
-                                "name" : "position_y",
-                                "type" : "number",
-                                "required" : false,
-                                "locked" : false,
-                                "suffix" : "px",
-                                "default" : null 
-                            },
-                            {
-                                "label" : "Position x",
-                                "name" : "position_x",
-                                "type" : "number",
-                                "required" : false,
-                                "locked" : false,
-                                "suffix" : "px",
-                                "default" : null 
-                            }
-                        ]
-                    }
-                ]
+          {
+            "label": "Background color",
+            "name": "background_color",
+            "type": "color",
+            "required": false,
+            "locked": false,
+            "default": null
+          },
+          {
+            "label": "Overlay",
+            "name": "overlay",
+            "id": "overlay",
+            "required": false,
+            "locked": false,
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "label": "Background blend mode",
+            "name": "blend_mode",
+            "required": false,
+            "locked": false,
+            "display": "select",
+            "choices": [
+              [
+                "normal",
+                "normal"
+              ],
+              [
+                "multiply",
+                "multiply"
+              ],
+              [
+                "screen",
+                "screen"
+              ],
+              [
+                "overlay",
+                "overlay"
+              ],
+              [
+                "darken",
+                "darken"
+              ],
+              [
+                "lighten",
+                "lighten"
+              ],
+              [
+                "color-dodge",
+                "color-dodge"
+              ],
+              [
+                "saturation",
+                "saturation"
+              ],
+              [
+                "color",
+                "color"
+              ],
+              [
+                "luminosity",
+                "luminosity"
+              ]
+            ],
+            "type": "choice",
+            "default": null,
+            "visibility": {
+              "controlling_field": "overlay",
+              "controlling_value_regex": "true",
+              "operator": "EQUAL",
+              "access": null,
+              "hidden_subfields": null
             }
+          },
+          {
+            "label": "Background gradient",
+            "name": "bg_gradient",
+            "type": "gradient",
+            "helptext": "Sets a gradient behind the content",
+            "required": false,
+            "default": null,
+            "visibility": {
+              "controlling_field": "overlay",
+              "controlling_value_regex": "true",
+              "operator": "EQUAL",
+              "access": null,
+              "hidden_subfields": null
+            }
+          },
+          {
+            "label": "Background image",
+            "name": "background_image",
+            "type": "backgroundimage",
+            "required": false,
+            "locked": false,
+            "default": null
+          },
+          {
+            "label": "Background size y position (detallado)",
+            "name": "background_detail",
+            "type": "group",
+            "expanded": false,
+            "inline_help_text": "Control fino del fondo, para cuando los presets del campo Background image no alcanzan. Todo vacio = no emite nada y manda el campo Background image.",
+            "required": false,
+            "locked": false,
+            "children": [
+              {
+                "label": "Background size",
+                "name": "size_type",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "",
+                    "(usar el del campo Background image)"
+                  ],
+                  [
+                    "cover",
+                    "cover"
+                  ],
+                  [
+                    "contain",
+                    "contain"
+                  ],
+                  [
+                    "auto",
+                    "auto"
+                  ],
+                  [
+                    "custom",
+                    "Valores exactos (ancho y alto)"
+                  ]
+                ],
+                "default": ""
+              },
+              {
+                "label": "Ancho",
+                "name": "size_width",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Alto",
+                "name": "size_height",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Unidad de ancho/alto",
+                "name": "units_size",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "px",
+                    "px"
+                  ],
+                  [
+                    "%",
+                    "%"
+                  ],
+                  [
+                    "em",
+                    "em"
+                  ],
+                  [
+                    "rem",
+                    "rem"
+                  ]
+                ],
+                "default": "px"
+              },
+              {
+                "label": "Posicion horizontal: desde",
+                "name": "position_x",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "",
+                    "(sin definir)"
+                  ],
+                  [
+                    "left",
+                    "izquierda"
+                  ],
+                  [
+                    "right",
+                    "derecha"
+                  ],
+                  [
+                    "center",
+                    "centro"
+                  ]
+                ],
+                "default": ""
+              },
+              {
+                "label": "Distancia horizontal",
+                "name": "offset_x",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Posicion vertical: desde",
+                "name": "position_y",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "",
+                    "(sin definir)"
+                  ],
+                  [
+                    "top",
+                    "arriba"
+                  ],
+                  [
+                    "bottom",
+                    "abajo"
+                  ],
+                  [
+                    "center",
+                    "centro"
+                  ]
+                ],
+                "default": ""
+              },
+              {
+                "label": "Distancia vertical",
+                "name": "offset_y",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Unidad de las distancias",
+                "name": "units_position",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "px",
+                    "px"
+                  ],
+                  [
+                    "%",
+                    "%"
+                  ],
+                  [
+                    "em",
+                    "em"
+                  ],
+                  [
+                    "rem",
+                    "rem"
+                  ]
+                ],
+                "default": "px"
+              }
+            ]
+          },
+          {
+            "label": "Horizontal repeat",
+            "name": "horizontal_repeat",
+            "type": "boolean",
+            "required": false,
+            "locked": false,
+            "default": false
+          },
+          {
+            "label": "Vertical repeat",
+            "name": "vertical_repeat",
+            "type": "boolean",
+            "required": false,
+            "locked": false,
+            "default": false
+          },
+          {
+            "label": "Padding",
+            "name": "padding",
+            "type": "spacing",
+            "required": false,
+            "visibility": {
+              "hidden_subfields": {
+                "margin": true
+              }
+            }
+          },
+          {
+            "label": "Image background fixed",
+            "name": "image_background_fixed",
+            "type": "boolean",
+            "required": false,
+            "locked": false,
+            "default": false
+          },
+          {
+            "label": "Border",
+            "name": "border",
+            "type": "border",
+            "required": false,
+            "locked": false,
+            "allow_custom_border_sides": true,
+            "default": null
+          },
+          {
+            "label": "Border radius",
+            "name": "border_radius",
+            "type": "number",
+            "required": false,
+            "locked": false,
+            "suffix": "px",
+            "default": null
+          },
+          {
+            "label": "Shadow",
+            "name": "shadow",
+            "type": "group",
+            "children": [
+              {
+                "label": "Color",
+                "name": "color",
+                "type": "color",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Blur",
+                "name": "blur",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              },
+              {
+                "label": "Position y",
+                "name": "position_y",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              },
+              {
+                "label": "Position x",
+                "name": "position_x",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              }
+            ]
+          }
         ]
-    }
+      },
+      {
+        "label": "Mobile",
+        "name": "mobile",
+        "type": "group",
+        "expanded": false,
+        "required": false,
+        "locked": false,
+        "children": [
+          {
+            "label": "Background color",
+            "name": "background_color",
+            "type": "color",
+            "required": false,
+            "locked": false,
+            "default": null
+          },
+          {
+            "label": "Overlay",
+            "name": "overlay",
+            "id": "overlay-mobile",
+            "required": false,
+            "locked": false,
+            "type": "boolean",
+            "default": false
+          },
+          {
+            "label": "Background blend mode",
+            "name": "blend_mode",
+            "required": false,
+            "locked": false,
+            "display": "select",
+            "choices": [
+              [
+                "normal",
+                "normal"
+              ],
+              [
+                "multiply",
+                "multiply"
+              ],
+              [
+                "screen",
+                "screen"
+              ],
+              [
+                "overlay",
+                "overlay"
+              ],
+              [
+                "darken",
+                "darken"
+              ],
+              [
+                "lighten",
+                "lighten"
+              ],
+              [
+                "color-dodge",
+                "color-dodge"
+              ],
+              [
+                "saturation",
+                "saturation"
+              ],
+              [
+                "color",
+                "color"
+              ],
+              [
+                "luminosity",
+                "luminosity"
+              ]
+            ],
+            "type": "choice",
+            "default": null,
+            "visibility": {
+              "controlling_field": "overlay-mobile",
+              "controlling_value_regex": "true",
+              "operator": "EQUAL",
+              "access": null,
+              "hidden_subfields": null
+            }
+          },
+          {
+            "label": "Background gradient",
+            "name": "bg_gradient",
+            "type": "gradient",
+            "helptext": "Sets a gradient behind the content",
+            "required": false,
+            "default": null,
+            "visibility": {
+              "controlling_field": "overlay-mobile",
+              "controlling_value_regex": "true",
+              "operator": "EQUAL",
+              "access": null,
+              "hidden_subfields": null
+            }
+          },
+          {
+            "label": "Background image",
+            "name": "background_image",
+            "type": "backgroundimage",
+            "required": false,
+            "locked": false,
+            "default": null
+          },
+          {
+            "label": "Background size y position (detallado)",
+            "name": "background_detail",
+            "type": "group",
+            "expanded": false,
+            "inline_help_text": "Control fino del fondo, para cuando los presets del campo Background image no alcanzan. Todo vacio = no emite nada y manda el campo Background image.",
+            "required": false,
+            "locked": false,
+            "children": [
+              {
+                "label": "Background size",
+                "name": "size_type",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "",
+                    "(usar el del campo Background image)"
+                  ],
+                  [
+                    "cover",
+                    "cover"
+                  ],
+                  [
+                    "contain",
+                    "contain"
+                  ],
+                  [
+                    "auto",
+                    "auto"
+                  ],
+                  [
+                    "custom",
+                    "Valores exactos (ancho y alto)"
+                  ]
+                ],
+                "default": ""
+              },
+              {
+                "label": "Ancho",
+                "name": "size_width",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Alto",
+                "name": "size_height",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Unidad de ancho/alto",
+                "name": "units_size",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "px",
+                    "px"
+                  ],
+                  [
+                    "%",
+                    "%"
+                  ],
+                  [
+                    "em",
+                    "em"
+                  ],
+                  [
+                    "rem",
+                    "rem"
+                  ]
+                ],
+                "default": "px"
+              },
+              {
+                "label": "Posicion horizontal: desde",
+                "name": "position_x",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "",
+                    "(sin definir)"
+                  ],
+                  [
+                    "left",
+                    "izquierda"
+                  ],
+                  [
+                    "right",
+                    "derecha"
+                  ],
+                  [
+                    "center",
+                    "centro"
+                  ]
+                ],
+                "default": ""
+              },
+              {
+                "label": "Distancia horizontal",
+                "name": "offset_x",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Posicion vertical: desde",
+                "name": "position_y",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "",
+                    "(sin definir)"
+                  ],
+                  [
+                    "top",
+                    "arriba"
+                  ],
+                  [
+                    "bottom",
+                    "abajo"
+                  ],
+                  [
+                    "center",
+                    "centro"
+                  ]
+                ],
+                "default": ""
+              },
+              {
+                "label": "Distancia vertical",
+                "name": "offset_y",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Unidad de las distancias",
+                "name": "units_position",
+                "type": "choice",
+                "display": "select",
+                "required": false,
+                "locked": false,
+                "choices": [
+                  [
+                    "px",
+                    "px"
+                  ],
+                  [
+                    "%",
+                    "%"
+                  ],
+                  [
+                    "em",
+                    "em"
+                  ],
+                  [
+                    "rem",
+                    "rem"
+                  ]
+                ],
+                "default": "px"
+              }
+            ]
+          },
+          {
+            "label": "Horizontal repeat",
+            "name": "horizontal_repeat",
+            "type": "boolean",
+            "required": false,
+            "locked": false,
+            "default": false
+          },
+          {
+            "label": "Vertical repeat",
+            "name": "vertical_repeat",
+            "type": "boolean",
+            "required": false,
+            "locked": false,
+            "default": false
+          },
+          {
+            "label": "Image background fixed",
+            "name": "image_background_fixed",
+            "type": "boolean",
+            "required": false,
+            "locked": false,
+            "default": false
+          },
+          {
+            "label": "Padding",
+            "name": "padding",
+            "type": "spacing",
+            "required": false,
+            "default": null,
+            "visibility": {
+              "hidden_subfields": {
+                "margin": true
+              }
+            }
+          },
+          {
+            "label": "Border",
+            "name": "border",
+            "type": "border",
+            "required": false,
+            "locked": false,
+            "allow_custom_border_sides": true,
+            "default": null
+          },
+          {
+            "label": "Border radius",
+            "name": "border_radius",
+            "type": "number",
+            "required": false,
+            "locked": false,
+            "suffix": "px",
+            "default": null
+          },
+          {
+            "label": "Shadow",
+            "name": "shadow",
+            "type": "group",
+            "children": [
+              {
+                "label": "Color",
+                "name": "color",
+                "type": "color",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Blur",
+                "name": "blur",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              },
+              {
+                "label": "Position y",
+                "name": "position_y",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              },
+              {
+                "label": "Position x",
+                "name": "position_x",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "label": "Advance",
+    "inline_help_text": "Agrega un ID y/o clases CSS a la sección, fila o columna contenedora (la misma que este módulo estiliza), no al módulo.",
+    "name": "advance",
+    "type": "group",
+    "expanded": false,
+    "required": false,
+    "locked": false,
+    "children": [
+      {
+        "label": "ID",
+        "name": "id_module",
+        "type": "text",
+        "help_text": "Utilice solo letras, numeros y guiones sin espacio",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "show_emoji_picker": false,
+        "placeholder": "id-module",
+        "default": null
+      },
+      {
+        "label": "Classes",
+        "name": "classes",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "occurrence": {
+          "min": null,
+          "max": null,
+          "sorting_label_field": null,
+          "default": null
+        },
+        "allow_new_line": false,
+        "show_emoji_picker": false,
+        "default": null
+      }
+    ]
+  }
 ]

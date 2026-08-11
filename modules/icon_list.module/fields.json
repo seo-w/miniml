@@ -21,6 +21,17 @@
         "default": "List item"
       },
       {
+        "label": "Description",
+        "name": "description",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "validation_regex": "",
+        "allow_new_line": true,
+        "show_emoji_picker": false,
+        "default": ""
+      },
+      {
         "label": "Custom icon",
         "name": "custom_icon",
         "type": "boolean",
@@ -1224,6 +1235,15 @@
                 "default": null
               },
               {
+                "label": "Margin bottom",
+                "name": "margin_bottom",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              },
+              {
                 "label": "Default",
                 "name": "default",
                 "type": "group",
@@ -1348,6 +1368,114 @@
                     "default": null
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "label": "Description",
+            "name": "description",
+            "type": "group",
+            "children": [
+              {
+                "label": "Font",
+                "name": "font",
+                "type": "font",
+                "required": false,
+                "locked": false,
+                "load_external_fonts": true,
+                "default": null
+              },
+              {
+                "label": "Font size mobile",
+                "name": "font_size_mobile",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              },
+              {
+                "label": "line height",
+                "name": "line_height",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "%",
+                "default": null
+              },
+              {
+                "label": "letter spacing",
+                "name": "letter_spacing",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
+              },
+              {
+                "label": "Font weight",
+                "name": "font_weight",
+                "required": false,
+                "locked": false,
+                "display": "select",
+                "choices": [
+                  [
+                    "100",
+                    "100"
+                  ],
+                  [
+                    "200",
+                    "200"
+                  ],
+                  [
+                    "300",
+                    "300"
+                  ],
+                  [
+                    "400",
+                    "400"
+                  ],
+                  [
+                    "500",
+                    "500"
+                  ],
+                  [
+                    "600",
+                    "600"
+                  ],
+                  [
+                    "700",
+                    "700"
+                  ],
+                  [
+                    "800",
+                    "800"
+                  ],
+                  [
+                    "900",
+                    "900"
+                  ]
+                ],
+                "type": "choice",
+                "placeholder": "",
+                "default": null
+              },
+              {
+                "label": "Text color",
+                "name": "text_color",
+                "type": "color",
+                "required": false,
+                "locked": false,
+                "default": null
+              },
+              {
+                "label": "Margin bottom",
+                "name": "margin_bottom",
+                "type": "number",
+                "required": false,
+                "locked": false,
+                "suffix": "px",
+                "default": null
               }
             ]
           },

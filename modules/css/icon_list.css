@@ -44,6 +44,22 @@
     text-decoration: none;
     width:auto;
 }
+/*
+  Contenedor de titulo + descripcion. Es un bloque a secas: los hijos se apilan
+  solos, no hace falta flex. Existe para que el parrafo quede debajo del titulo
+  y no como un tercer flex item al lado (ver el comentario en module.html).
+*/
+.icon-list__content{
+    display: block;
+}
+/*
+  El <p> trae margin 1em arriba y abajo del navegador. Se resetea a 0 para que
+  el espaciado lo controle el editor con los campos Margin bottom del titulo y
+  de la descripcion (font_min los emite), y no un default del navegador.
+*/
+.icon-list__description{
+    margin: 0px;
+}
 {{helper.font_min(title, 'icon-list__anchor')}}
 {{helper.font_min(title.default, 'icon-list__anchor')}}
 {{helper.font_min(title.hover, 'icon-list__anchor:hover')}}

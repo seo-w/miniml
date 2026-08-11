@@ -82,6 +82,9 @@
             {{helper.font_min(items_style.title.default, 'icon-list__anchor')}}
             {{helper.font_min(items_style.title.hover, 'icon-list__anchor:hover')}}
 
+            {# description #}
+            {{helper.font_min(items_style.description, 'icon-list__description')}}
+
         {% end_scope_css %}
     </style>
 {% end_require_css %} 
@@ -92,6 +95,7 @@
 <ul {{helper.advance_min(id_module, classes_module)}}>
     {% for item in items %}
         {% set title        = item.title %}
+        {% set description  = item.description %}
         {% set custom_icon  = item.custom_icon %}
         {% set icon         = item.icon %}
         {% set image        = item.image %}
@@ -111,15 +115,30 @@
                 {% endif %}
             {% endif %}
 
-            {% if anchor.url.href %}
-                {% call helper.anchor_min(anchor, title, ['icon-list__anchor'] ) %}{% endcall %}
-            {% else %}
-                {% if title %}
-                    <span class="icon-list__anchor">
-                        {{title}}
-                    </span>
+            {#
+              Título y descripción van dentro de .icon-list__content para que el
+              párrafo quede DEBAJO del título. .icon-list__item es flex en fila
+              (icono | texto), así que sin este contenedor el <p> sería un tercer
+              flex item y caería al lado del título, no debajo.
+              Envolver no rompe nada existente: ningún selector del theme usa
+              hijo directo sobre .icon-list__anchor (verificado), y el gap del
+              item queda entre el icono y este bloque, igual que antes.
+            #}
+            <div class="icon-list__content">
+                {% if anchor.url.href %}
+                    {% call helper.anchor_min(anchor, title, ['icon-list__anchor'] ) %}{% endcall %}
+                {% else %}
+                    {% if title %}
+                        <span class="icon-list__anchor">
+                            {{title}}
+                        </span>
+                    {% endif %}
                 {% endif %}
-            {% endif %}
+
+                {% if description %}
+                    <p class="icon-list__description">{{description}}</p>
+                {% endif %}
+            </div>
         </li>
     {% endfor %}
 </ul>

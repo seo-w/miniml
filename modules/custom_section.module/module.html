@@ -2,6 +2,13 @@
 
 {# -------------------------------- content ------------------------------- #}
 {% set type_section = module.type_section %}
+{# advance
+   A diferencia del resto de los módulos, acá NO se usa helper.advance_min():
+   este módulo no renderiza wrapper propio (solo el <span> marcador de abajo),
+   sino que por JS le agrega la clase al ancestro dnd que le toque. El id y las
+   clases tienen que ir al mismo elemento, así que se aplican en ese script. #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:[] %}
 {# ---------------------------- end content ------------------------------- #}
 
 {# --------------------------------- styles -------------------------------- #}
@@ -23,9 +30,59 @@
 {% set mobile_bg_value  = mobile.bg_gradient.css+', url('+mobile.background_image.src+')' if (lazy_load_background and mobile.overlay and mobile.bg_gradient and mobile.background_image) else null %}
 {# ------------------------------ end styles ------------------------------- #}
 
+{#
+  Control fino de background-size / background-position, para cuando los
+  presets del campo nativo `backgroundimage` (cover/contain/auto + grilla de 9
+  posiciones) no alcanzan y hacen falta valores exactos.
+
+  Se declara como macro local porque se usa dos veces (desktop y móvil) y no lo
+  consume ningún otro módulo — por eso no va en helpers.html.
+
+  Sobre `!important`: este módulo estiliza el elemento dnd, y ahí compiten dos
+  fuentes que YA usan !important — el CSS de los "background layers" nativos de
+  las secciones dnd de HubSpot (verificado en vivo) y, según el caso, el `.css`
+  del propio campo `backgroundimage`. Sin !important estos valores exactos
+  perderían justo cuando el editor los necesita, que es cuando ya configuró un
+  fondo. Es una excepción deliberada, no un descuido.
+  ponytail: si algún día HubSpot deja de emitir !important en los dnd
+  background layers, esto puede bajar a especificidad normal.
+#}
+{% macro background_detail_min(field, class) %}
+    {% set size_type      = field.size_type %}
+    {% set size_width     = field.size_width %}
+    {% set size_height    = field.size_height %}
+    {% set units_size     = field.units_size|default('px', true) %}
+    {% set position_x     = field.position_x %}
+    {% set position_y     = field.position_y %}
+    {% set offset_x       = field.offset_x %}
+    {% set offset_y       = field.offset_y %}
+    {% set units_position = field.units_position|default('px', true) %}
+
+    {# 4 valores (borde + distancia por eje) solo si AMBOS ejes tienen un borde
+       concreto: la sintaxis de 4 valores de CSS no admite 'center' con
+       distancia, y la de 3 valores no es válida por spec. #}
+    {% set use_offsets = (offset_x or offset_y) and position_x in ['left','right'] and position_y in ['top','bottom'] %}
+
+    {% if size_type or position_x or position_y or offset_x or offset_y %}
+        .{{class}}{
+            {% if size_type == 'custom' and (size_width or size_height) %}
+                background-size: {{ size_width~units_size if size_width else 'auto' }} {{ size_height~units_size if size_height else 'auto' }} !important;
+            {% elif size_type and size_type != 'custom' %}
+                background-size: {{size_type}} !important;
+            {% endif %}
+
+            {% if use_offsets %}
+                background-position: {{position_x}} {{ offset_x|default(0, true) }}{{units_position}} {{position_y}} {{ offset_y|default(0, true) }}{{units_position}} !important;
+            {% elif position_x or position_y %}
+                background-position: {{ position_x|default('center', true) }} {{ position_y|default('center', true) }} !important;
+            {% endif %}
+        }
+    {% endif %}
+{% endmacro %}
+
 {% require_css %}
     <style>
-        .{{section_class}}{ 
+        .{{section_class}}{
             {{ 'overflow: hidden;' if overflow_hidden }}
             background-repeat: no-repeat;
         }
@@ -51,10 +108,13 @@
                     {% elif !default.horizontal_repeat and default.vertical_repeat %}
                         background-repeat: repeat-y;
                     {% elif default.horizontal_repeat and default.vertical_repeat %}
-                        background-repeat: repeat;                   
+                        background-repeat: repeat;
                     {% endif %}
                 }
             {% endif %}
+
+            {# va al final del bloque: pisa lo que emitieron box_min y el overlay #}
+            {{ background_detail_min(default.background_detail, section_class) }}
         {% endcall %}
 
 
@@ -80,10 +140,13 @@
                     {% elif !mobile.horizontal_repeat and mobile.vertical_repeat %}
                         background-repeat: repeat-y;
                     {% elif mobile.horizontal_repeat and mobile.vertical_repeat %}
-                        background-repeat: repeat;                   
+                        background-repeat: repeat;
                     {% endif %}
                 }
             {% endif %}
+
+            {# va al final del bloque: pisa lo que emitieron box_min y el overlay #}
+            {{ background_detail_min(mobile.background_detail, section_class) }}
 
         {% endcall %}
 
@@ -112,6 +175,22 @@
             {% endif %}
 
             sectionTarget{{name}}.classList.add('{{section_class}}');
+
+            {#
+              className += en vez de classList.add() a propósito: el campo
+              Classes es texto libre y el editor puede escribir varias clases
+              separadas por espacio en un solo ítem. classList.add() lanza
+              InvalidCharacterError con espacios; className no.
+            #}
+            {% for class_module in classes_module %}
+                {% if class_module %}
+                    sectionTarget{{name}}.className += ' {{class_module}}';
+                {% endif %}
+            {% endfor %}
+
+            {% if id_module %}
+                sectionTarget{{name}}.id = '{{id_module}}';
+            {% endif %}
 
             {% if default_bg_value or mobile_bg_value %}
                 lazyLoadBackground(
