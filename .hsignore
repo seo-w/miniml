@@ -1,0 +1,13 @@
+# Copia que viaja CON el theme, para cuando el upload se corre desde dentro de
+# esta carpeta (por ejemplo si este directorio es la raíz del repo de git).
+# El CLI de HubSpot busca .hsignore en el directorio desde el que se ejecuta el
+# comando, así que hay uno acá y otro en la carpeta de arriba: cubren los dos
+# casos y ninguno depende de recordar desde dónde se corrió.
+
+# Documentación del proyecto: se versiona en git, no se sirve desde HubSpot.
+CLAUDE.md
+
+# este archivo tampoco tiene por qué llegar al Design Manager
+.hsignore
+
+.DS_Store
