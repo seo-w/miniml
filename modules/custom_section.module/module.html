@@ -58,10 +58,27 @@
     {% set offset_y       = field.offset_y %}
     {% set units_position = field.units_position|default('px', true) %}
 
-    {# 4 valores (borde + distancia por eje) solo si AMBOS ejes tienen un borde
-       concreto: la sintaxis de 4 valores de CSS no admite 'center' con
-       distancia, y la de 3 valores no es válida por spec. #}
-    {% set use_offsets = (offset_x or offset_y) and position_x in ['left','right'] and position_y in ['top','bottom'] %}
+    {#
+      Si hay CUALQUIER distancia, los dos ejes se expresan con la forma
+      "borde + distancia" de CSS:
+          [center | [left|right] <len>?] && [center | [top|bottom] <len>?]
+      Esa forma sí admite mezclar un eje con distancia y el otro en 'center'
+      (ej. "right 30px center" es válido), así que NO hace falta exigir un borde
+      en ambos ejes. Una versión anterior lo exigía y descartaba la distancia en
+      silencio cuando el otro eje estaba sin definir — el bug que se reportó.
+
+      Reglas de cada eje cuando hay distancia:
+        - borde concreto (left/right, top/bottom) -> se usa con su distancia
+        - sin definir -> se asume el borde por defecto de CSS (left / top), así
+          la distancia que escribió el editor SÍ se aplica
+        - 'center' explícito -> gana center y esa distancia se ignora, porque
+          centrar y desplazar desde un borde son cosas contradictorias
+      OJO: en esta forma no se puede usar una distancia "suelta" sin borde, por
+      eso siempre se emite el borde.
+    #}
+    {% set any_offset = offset_x or offset_y %}
+    {% set x_edge = position_x if position_x in ['left','right'] else ('center' if position_x == 'center' else 'left') %}
+    {% set y_edge = position_y if position_y in ['top','bottom'] else ('center' if position_y == 'center' else 'top') %}
 
     {% if size_type or position_x or position_y or offset_x or offset_y %}
         .{{class}}{
@@ -71,8 +88,10 @@
                 background-size: {{size_type}} !important;
             {% endif %}
 
-            {% if use_offsets %}
-                background-position: {{position_x}} {{ offset_x|default(0, true) }}{{units_position}} {{position_y}} {{ offset_y|default(0, true) }}{{units_position}} !important;
+            {% if any_offset %}
+                {% set x_part = 'center' if x_edge == 'center' else x_edge~' '~(offset_x if offset_x else 0)~units_position %}
+                {% set y_part = 'center' if y_edge == 'center' else y_edge~' '~(offset_y if offset_y else 0)~units_position %}
+                background-position: {{x_part}} {{y_part}} !important;
             {% elif position_x or position_y %}
                 background-position: {{ position_x|default('center', true) }} {{ position_y|default('center', true) }} !important;
             {% endif %}
