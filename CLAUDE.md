@@ -16,6 +16,43 @@ corre el comando, así que hacen falta los dos para cubrir ambos casos).
 Verificado subiendo el theme completo desde las dos ubicaciones: ni `CLAUDE.md`
 ni `.hsignore` llegan al Design Manager.
 
+## Continuar desde otro equipo u otra cuenta de Claude
+
+Este archivo **no alcanza por sí solo**. Es la memoria de decisiones y
+aprendizajes, no el proyecto. Lo que hace falta además, en orden de qué bloquea
+más:
+
+1. **Autenticar el CLI de HubSpot — esto es el bloqueador real.** La auth NO
+   está en el repo ni puede estar: vive en `~/.hscli/config.yml` con un
+   `personalAccessKey` por portal, que es secreto y por máquina. Sin esto no se
+   puede subir ni leer nada, y ningún comando `hs` de estas notas funciona.
+   En el equipo nuevo:
+   - generar un **personal access key** en cada portal (HubSpot → Settings →
+     Integrations → Private Apps / Personal Access Key)
+   - correr `hs init` (o `hs auth`) y pegarlo
+   - nombrar las cuentas **igual que acá** (`Parautos`, `DemoAccount`), porque
+     todos los comandos documentados usan `--account=<nombre>`
+   - verificar con `hs accounts list`
+2. **El código del theme.** Este archivo documenta el *por qué*, no el *qué*.
+   Hace falta la carpeta `minimal/` completa — que es justamente para lo que
+   está el repo de git.
+3. **El respaldo pre-proyecto.** `minimal-backup-2026-08-09/` está **fuera** de
+   `minimal/`, así que si el repo es la carpeta del theme, ese respaldo NO
+   viaja. Es la única foto anterior a todos los cambios de este proyecto.
+4. **Lo que vive en el portal de HubSpot y no en ningún archivo.** Nada de esto
+   está en git:
+   - La página `/test` del sandbox y sus **instancias publicadas** de módulos
+     (`image_box`, `icon_box`, `slider`, `accordion`, `custom_section`,
+     `card_grid`). Buena parte de la verificación de este proyecto depende de
+     tenerlas; en un portal distinto hay que volver a armarlas.
+   - Los **valores de la configuración del theme** (los 44 campos de fuente,
+     colores de botón, etc.) se guardan por portal.
+   - El pendiente del **menú móvil**: es contenido global del header, se edita
+     en el editor de HubSpot, no en archivos.
+
+No hace falta llevar `.claude/settings.local.json` (solo tiene un allowlist de
+permisos con rutas de scratchpad ya viejas) ni `~/.claude/plans/`.
+
 ## Qué es esto
 
 Theme de HubSpot CMS de la agencia Triario (`minimal/`), en **producción**
