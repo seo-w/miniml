@@ -613,6 +613,86 @@ bajó a `padding: 20px` y el alto grande lo emite solo el modo que lo necesita.
   visual no siempre es el orden de los ítems. Es inherente a cualquier masonry.
 - En modo `columns` el orden de lectura es por columna, no de lado a lado.
 
+## `image_box.module`: imagen, botones múltiples e iconos (2026-08-11)
+
+Siete cambios pedidos de corrido. Lo que hay que saber de cada uno:
+
+### 1. `cover` / `contain` + color de fondo (grupo `styles.image`)
+
+Campos `fit`, `height`, `height_mobile`, `background_color`.
+
+- **`object-fit` no hace nada sin un alto definido**: sin alto la imagen usa su
+  tamaño natural y no hay nada que recortar ni encajar. Está dicho en el texto
+  de ayuda del campo.
+- **El color de fondo va sobre el propio `<img>`, no en un div envolvente.** Con
+  `contain` el aire que queda dentro de la caja de la imagen lo pinta el
+  `background-color` del `<img>`. Un wrapper habría sido un elemento de más para
+  el mismo resultado. También se ve detrás de PNG con transparencia.
+
+### 2. Botones: de uno a varios, y el contenedor vacío eliminado
+
+`items.button` (uno) pasó a `items.buttons` (repetido), copiando el idioma que
+ya usaba `slider.module`.
+
+**Bug que existía desde antes**: el contenedor se emitía con
+`{% if button_anchor %}`, y `button_anchor` es un **objeto** — siempre truthy,
+aunque el enlace esté vacío. O sea que el `<div class="button-group">` salía en
+TODAS las tarjetas siempre. Ahora se arma una lista `valid_buttons` (texto Y
+enlace) y el contenedor solo existe si hay al menos uno. Verificado en vivo: 0
+divs de botones en una instancia sin botones configurados.
+
+**Ojo con el cambio de nombre del campo**: una instancia publicada con el viejo
+`button` pierde ese dato y hay que volver a ponerlo en el editor. Hay una guarda
+`item.buttons is truthy ? ... : []` porque si no, el `for` iteraría sobre algo
+indefinido en esas instancias. Fue seguro hacerlo ahora porque el theme está
+**inactivo** en Parautos; con el theme en vivo, un cambio de forma de campo pide
+más cuidado.
+
+### 3. Apariencia por botón, como OVERRIDE (no como campo obligatorio)
+
+El theme ya genera **16 apariencias** (`primary`, `secondary`, los dos `-link`,
+`light`, `dark`, `one`…`ten`, cada una con hover) y 5 tamaños desde
+`modules/css/button.css` + ajustes del theme. El vocabulario ya existía; solo
+faltaba elegirlo por botón, así que **no hay CSS nuevo**.
+
+Se hizo con una opción `(usar el del módulo)` por defecto, en vez de copiar tal
+cual el campo obligatorio de `slider.module`: así las instancias existentes no
+cambian, no hay que configurar cada botón, y solo se toca el que se quiera
+distinto (el caso típico: un primario y un secundario).
+
+### 4. Icono por botón: del set o propio
+
+Grupo `icon` por botón con `custom_icon` (toggle), `icon` (set de HubSpot),
+`image` (imagen propia) y `align` (izq/der del texto), más
+`styles.button.icon_size` a nivel módulo (vacío = 15px).
+
+- Los campos `icon` e `image` se muestran **excluyentes** con las reglas de
+  visibilidad del theme. El `id` del toggle es `image-box-button-custom-icon` y
+  no `custom-icon`, para no cruzarse con el de `button.module`.
+- **`button.module` tiene estos mismos campos pero su template NUNCA renderiza
+  la variante de imagen** — son campos muertos ahí. Acá sí están conectados.
+- La imagen propia pasa por `helper.image_min`, así que se lleva srcset, WebP,
+  `width`/`height` y `loading`. Necesitó CSS propio
+  (`.image-box__button-icon`: `width` del icon_size + `height:auto`) porque si no
+  sale del tamaño del archivo subido; el icono del set no necesita nada, el CSS
+  base ya lo dimensiona con `.button .hs_cos_wrapper_type_icon`.
+- **El HTML del icono se arma en un `{% set %}` y se decide con `|trim`.** Esto
+  resuelve el caso raro de "toggle encendido pero sin imagen subida": no queda un
+  envoltorio vacío, cae a botón de texto plano. Verificado forzando los 6 casos
+  (set izq/der, propio izq/der, propio sin imagen, sin nada).
+
+### 5. Acomodo de los botones
+
+`styles.button.direction` (fila con wrap / columna) + `gap`. Emite `display:flex`
+sobre una clase propia `.image-box__buttons` y **no toca el `.button-group`** del
+CSS base, que es `display:block` y lo comparten otros módulos.
+
+### 6. La tarjeta salió a un macro local
+
+El bloque de la tarjeta estaba **duplicado** entre la rama slider y la de grid,
+así que cualquier arreglo había que hacerlo dos veces. Ahora es
+`image_box_card(item, style_default, size_default, icon_size_default)`.
+
 ## Pendientes / por hacer
 
 - **Menú móvil (`header.html`) no muestra el `<button>` accesible en el
@@ -641,9 +721,10 @@ bajó a `padding: 20px` y el alto grande lo emite solo el modo que lo necesita.
 
   Al 2026-08-11 Parautos está al día con el local, incluyendo
   `custom_section` (advance + background detallado con el fix de la distancia),
-  `icon_list` (párrafo + los 7 campos de tipografía) y el módulo nuevo
-  `card_grid` (más su `modules/css/card_grid.css`). Verificado leyendo los
-  archivos de vuelta, no de memoria.
+  `icon_list` (párrafo + los 7 campos de tipografía), el módulo nuevo
+  `card_grid` (más su `modules/css/card_grid.css`) e `image_box` (los 7 cambios
+  de imagen/botones/iconos). Verificado leyendo los archivos de vuelta, no de
+  memoria.
 
   Para comparar local vs Parautos sin subir nada (útil para detectar desfases
   como el de `custom_section`, que quedó fuera por orden cronológico):

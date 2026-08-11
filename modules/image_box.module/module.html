@@ -21,12 +21,118 @@
 {% set animation    = module.styles.animation %}
 {% set sticky       = module.styles.sticky %}
 {% set box          = module.styles.box %}
+{% set image_style  = module.styles.image %}
 {% set data_box     = module.styles.data_box %}
 {% set title        = module.styles.title %}
 {% set description  = module.styles.description %}
-{% set button       = ['button', 'button--' + module.styles.button.style_button, 'button--' + module.styles.button.size_button] %}
+{% set button_style = module.styles.button %}
 {% set slider_style = module.styles.slider %}
 {# ------------------------------ end styles ------------------------------- #}
+
+{#
+  El contenido de la tarjeta es idéntico en la rama slider y en la de grid, así
+  que va en un macro local en vez de duplicarlo (antes estaba escrito dos veces
+  y cualquier arreglo había que hacerlo en los dos lados).
+#}
+{% macro image_box_card(item, style_default, size_default, icon_size_default) %}
+    {% set image            = item.image %}
+    {% set title_text       = item.title.text %}
+    {% set title_tag        = item.title.tag %}
+    {% set description_text = item.description %}
+
+    {#
+      Botones válidos = los que tienen texto Y enlace. Un botón sin enlace no
+      lleva a ninguna parte y uno sin texto sale vacío, así que ninguno de los
+      dos se renderiza.
+      La lista se arma mutándola con `do append` porque un {% set %} dentro de un
+      {% for %} no se ve fuera del loop (scoping de Jinja, HubL lo hereda).
+      Con esto el contenedor .button-group solo existe si hay al menos uno —
+      antes se emitía siempre, porque `item.button.anchor` es un objeto y un
+      objeto siempre es truthy aunque el enlace esté vacío.
+    #}
+    {#
+      La guarda `is truthy` importa: el campo antes se llamaba `button` (uno
+      solo), así que en una instancia ya publicada `item.buttons` llega vacío y
+      sin esto el for iteraría sobre algo indefinido.
+    #}
+    {% set item_buttons = item.buttons is truthy ? item.buttons : [] %}
+    {% set valid_buttons = [] %}
+    {% for btn in item_buttons %}
+        {% if btn.text and btn.anchor.url.href %}
+            {% do valid_buttons.append(btn) %}
+        {% endif %}
+    {% endfor %}
+
+    <div class="image-box">
+        {% if image.src %}
+            {{ helper.image_min(image, ['image-box__image'])}}
+        {% endif %}
+        <div class="image-box__data-content">
+            {% if title_text %}
+                <{{title_tag}} class="image-box__title">
+                    {{title_text}}
+                </{{title_tag}}>
+            {% endif %}
+            {% if description_text %}
+                <p class="image-box__description">
+                    {{description_text}}
+                </p>
+            {% endif %}
+            {% if valid_buttons %}
+                <div class="button-group image-box__buttons">
+                    {#
+                      Apariencia por botón como OVERRIDE, no como campo obligatorio:
+                      vacío = se usa la del módulo (Estilos > Button). Así las
+                      instancias que ya existen no cambian y solo hay que tocar el
+                      botón que se quiera distinto — el caso típico es un primario
+                      y un secundario.
+                      El vocabulario de clases es el mismo que genera
+                      modules/css/button.css a partir de los ajustes del theme
+                      (16 apariencias y 5 tamaños), así que no hay CSS nuevo.
+                    #}
+                    {% for btn in valid_buttons %}
+                        {% set btn_style = btn.style.style is truthy ? btn.style.style : style_default %}
+                        {% set btn_size  = btn.style.size  is truthy ? btn.style.size  : size_default %}
+                        {% set btn_classes = ['button', 'button--'+btn_style, 'button--'+btn_size] %}
+                        {#
+                          Dos fuentes de icono: el set de HubSpot, o una imagen
+                          propia (toggle "Usar icono propio"). La imagen pasa por
+                          image_min, así que se lleva srcset/WebP/width/height
+                          igual que cualquier otra imagen del theme.
+                          Con icono el texto va DENTRO del bloque caller (no como
+                          segundo argumento de anchor_min) para poder ordenarlo
+                          respecto al icono. Mismo patrón que button.module.
+                          El CSS base ya estiliza `.button .hs_cos_wrapper_type_icon`
+                          y buttonStyle_min le pinta el svg con el color del botón,
+                          así que para el icono del set no hace falta CSS nuevo.
+                        #}
+                        {% set btn_icon_html %}
+                            {% if btn.icon.custom_icon %}
+                                {% if btn.icon.image.src %}
+                                    {{ helper.image_min(btn.icon.image, ['image-box__button-icon']) }}
+                                {% endif %}
+                            {% elif btn.icon.icon.name %}
+                                {{ helper.icon_min(btn.icon.icon, icon_size_default, false) }}
+                            {% endif %}
+                        {% endset %}
+
+                        {% if btn_icon_html|trim %}
+                            {% call helper.anchor_min(btn.anchor, '', btn_classes) %}
+                                {% if btn.icon.align == 'right' %}
+                                    {{ btn.text }} {{ btn_icon_html }}
+                                {% else %}
+                                    {{ btn_icon_html }} {{ btn.text }}
+                                {% endif %}
+                            {% endcall %}
+                        {% else %}
+                            {% call helper.anchor_min(btn.anchor, btn.text, btn_classes) %}{% endcall %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endmacro %}
 
 {% require_css %}
     <style>
@@ -36,6 +142,58 @@
             {{ helper.box_min(data_box, 'image-box__data-content') }}
             {{ helper.font_min(title, 'image-box__title') }}
             {{ helper.font_min(description, 'image-box__description') }}
+
+            {#
+              object-fit necesita un alto para tener efecto: sin alto la imagen
+              usa su tamaño natural y no hay nada que recortar ni encajar.
+              El color de fondo va sobre el propio <img> y no en un div envolvente:
+              con `contain` el aire que queda dentro de la caja de la imagen lo
+              pinta el background del <img>, así que no hace falta otro elemento.
+            #}
+            {% if image_style.fit or image_style.height or image_style.background_color.color %}
+                .image-box__image{
+                    {{ 'object-fit: '+image_style.fit+';' if image_style.fit }}
+                    {{ 'height: '+image_style.height+'px;' if image_style.height }}
+                    {{ 'background-color: '+helper.color_min(image_style.background_color)+';' if image_style.background_color.color }}
+                }
+            {% endif %}
+            {% if image_style.height_mobile %}
+                {% call helper.media_min() %}
+                    .image-box__image{ height: {{image_style.height_mobile}}px; }
+                {% endcall %}
+            {% endif %}
+
+            {#
+              .button-group es display:block en el CSS base (css/button.css), que
+              lo comparten varios módulos. Acá se pasa a flex solo para este
+              módulo, con una clase propia, para no cambiarlo en los demás.
+            #}
+            {% if button_style.direction or button_style.gap %}
+                .image-box__buttons{
+                    display: flex;
+                    {% if button_style.direction == 'column' %}
+                        flex-direction: column;
+                    {% else %}
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                    {% endif %}
+                    {{ 'gap: '+button_style.gap+'px;' if button_style.gap }}
+                }
+            {% endif %}
+
+            {#
+              El icono propio es un <img>, así que hay que acotarlo: sin esto sale
+              del tamaño del archivo subido. El icono del set no necesita nada
+              porque el CSS base ya lo dimensiona (`.button .hs_cos_wrapper_type_icon`).
+              `width` fijo + `height:auto` conserva la proporción, y como el <img>
+              trae width/height reales del archivo, no hay salto de layout.
+            #}
+            .image-box__button-icon{
+                display: inline-block;
+                width: {{ button_style.icon_size|default(15, true) }}px;
+                height: auto;
+                vertical-align: middle;
+            }
         {% end_scope_css %}
     </style>
 {% end_require_css %}
@@ -46,36 +204,9 @@
 {% if show_as_slider %}
     {% call helper.slider_min(slider_options, slider_style, classes_module, id_module) %}
         {% for item in items %}
-            {% set image            = item.image %}
-            {% set title_text       = item.title.text %}
-            {% set title_tag        = item.title.tag %}
-            {% set description_text = item.description %}
-            {% set button_text      = item.button.text %}
-            {% set button_anchor    = item.button.anchor %}
             <div>
                 <div class="p-{{spacing_grid}}">
-                    <div class="image-box">
-                        {% if image.src %}
-                            {{ helper.image_min(image, ['image-box__image'])}}
-                        {% endif %}
-                        <div class="image-box__data-content">
-                            {% if title_text %}
-                                <{{title_tag}} class="image-box__title">
-                                    {{title_text}}
-                                </{{title_tag}}>
-                            {% endif %}
-                            {% if description_text %}
-                                <p class="image-box__description">
-                                    {{description_text}}
-                                </p>
-                            {% endif %}
-                            {% if button_anchor %}
-                                <div class="button-group">
-                                    {% call helper.anchor_min(button_anchor, button_text, button) %}{% endcall %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
+                    {{ image_box_card(item, button_style.style_button, button_style.size_button, button_style.icon_size|default(15, true)) }}
                 </div>
             </div>
         {% endfor %}
@@ -83,35 +214,8 @@
 {% else %}
     {% call helper.grid_min(grid, classes_module, id_module) %}
         {% for item in items %}
-            {% set image            = item.image %}
-            {% set title_text       = item.title.text %}
-            {% set title_tag        = item.title.tag %}
-            {% set description_text = item.description %}
-            {% set button_text      = item.button.text %}
-            {% set button_anchor    = item.button.anchor %}
             <div class="col p-{{spacing_grid}}">
-                <div class="image-box">
-                    {% if image.src %}
-                        {{ helper.image_min(image, ['image-box__image'])}}
-                    {% endif %}
-                    <div class="image-box__data-content">
-                        {% if title_text %}
-                            <{{title_tag}} class="image-box__title">
-                                {{title_text}}
-                            </{{title_tag}}>
-                        {% endif %}
-                        {% if description_text %}
-                            <p class="image-box__description">
-                                {{description_text}}
-                            </p>
-                        {% endif %}
-                        {% if button_anchor %}
-                            <div class="button-group">
-                                {% call helper.anchor_min(button_anchor, button_text, button) %}{% endcall %}
-                            </div>
-                        {% endif %}
-                    </div>
-                </div>
+                {{ image_box_card(item, button_style.style_button, button_style.size_button, button_style.icon_size|default(15, true)) }}
             </div>
         {% endfor %}
     {% endcall %}
