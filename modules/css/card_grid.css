@@ -1,0 +1,90 @@
+/*
+  Mosaico de tarjetas con imagen, overlay y título.
+
+  LAYOUT: el módulo emite uno de dos modos (campo "Tipo de acomodo"), porque
+  ninguno gana siempre:
+
+  - grid (default): filas parejas, reparto uniforme. Con 7 tarjetas en 3
+    columnas da 3+2+2 y el hueco queda al final de la última fila. Orden de
+    lectura de lado a lado, que es el que espera un editor.
+  - columns (multi-column): las tarjetas fluyen hacia ABAJO en cada columna y
+    cada columna se apila por su cuenta, así que las columnas quedan
+    escalonadas solas cuando los títulos ocupan distinta cantidad de líneas.
+    Pero el reparto lo decide el navegador llenando cada columna hasta una
+    altura objetivo: con 7 tarjetas en 3 columnas da 3+3+1 y deja una columna
+    casi vacía. Además el orden de lectura es por columna, no de lado a lado.
+
+  CSS masonry (grid-template-rows: masonry) daría escalonado CON reparto
+  uniforme, pero todavía no tiene soporte en navegadores.
+
+  Este archivo solo trae lo común a los dos modos; las columnas, el gap y el
+  display los emite el módulo por instancia.
+
+  ALTO: lo da `padding-top`, no `height`. Así el título queda empujado al fondo
+  sin alto fijo y la tarjeta crece sola si el título ocupa más líneas.
+
+  IMAGEN: va como <img> absoluto con object-fit, NO como background-image de
+  CSS. Es deliberado y es lo que más importa acá: un <img> del theme pasa por
+  helper.image_min y se lleva todo el pipeline de HubSpot — srcset responsive,
+  WebP automático, width/height (que es lo que activa ese srcset) y
+  loading="lazy". Un background-image de CSS no recibe nada de eso: se descarga
+  a tamaño completo, sin variantes responsive y sin poder diferirse.
+*/
+.card-grid{
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+.card-grid__item{
+    /* que una tarjeta no se parta entre dos columnas */
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+}
+.card-grid__card{
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    /*
+      Solo el padding de respiro del texto. El espacio grande sobre el título NO
+      va acá: en modo masonry el alto lo da `height` (que el módulo emite por
+      instancia) y un padding-top grande lo infla, porque con box-sizing:
+      border-box la caja no puede ser más baja que la suma de sus paddings.
+      En modo columnas el módulo emite el padding-top que hace de alto.
+    */
+    padding: 20px;
+    border-radius: 20px;
+    text-decoration: none;
+    /* el título va al fondo por defecto */
+    align-items: flex-end;
+}
+.card-grid__image{
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+}
+/*
+  Overlay como ::after y no como degradado encima de la imagen: así el color se
+  cambia sin tocar la imagen, y el <img> de abajo queda intacto.
+*/
+.card-grid__card::after{
+    content: "";
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    background: rgba(0,0,0,0.5);
+    z-index: 1;
+}
+.card-grid__title{
+    position: relative;
+    z-index: 2;
+    margin: 0px;
+    width: 100%;
+}

@@ -1,0 +1,22 @@
+{
+  "label": "Card grid",
+  "icon": "../icons-modules/image-box.svg",
+  "css_assets": [
+    {
+      "path": "../css/card_grid.css"
+    }
+  ],
+  "external_js": [],
+  "global": false,
+  "help_text": "Mosaico de tarjetas con imagen de fondo, overlay y titulo. Las tarjetas fluyen hacia abajo en cada columna.",
+  "host_template_types": [
+    "PAGE",
+    "BLOG_POST",
+    "BLOG_LISTING"
+  ],
+  "js_assets": [],
+  "other_assets": [],
+  "smart_type": "NOT_SMART",
+  "tags": [],
+  "is_available_for_new_content": true
+}

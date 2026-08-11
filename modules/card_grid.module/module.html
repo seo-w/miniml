@@ -1,0 +1,216 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{% set items = module.items %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:[''] %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin      = module.styles.margin.css %}
+{% set z_index     = module.styles.z_index %}
+{% set visible     = module.styles.visible %}
+{% set animation   = module.styles.animation %}
+{% set sticky      = module.styles.sticky %}
+{% set box         = module.styles.box %}
+{% set grid        = module.styles.grid %}
+{% set card        = module.styles.card %}
+{% set title_style = module.styles.title %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% do classes_module.insert(0, 'card-grid') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {#
+          scope_css ya prefija cada selector con #hs_cos_wrapper_<name>, así que
+          las clases van peladas: agregar además un sufijo --{{name}} sería
+          escopar dos veces (más bytes y más especificidad sin razón). Mismo
+          criterio que icons.module e icon_list.module.
+        #}
+        {% scope_css %}
+            {{ helper.box_min(box, 'card-grid') }}
+
+            {#
+              Dos modos de acomodo, porque resuelven cosas distintas y ninguno
+              gana siempre (ver el comentario de cabecera de card_grid.css):
+
+              - grid: filas parejas y reparto uniforme. Con 7 tarjetas en 3
+                columnas da 3+2+2 y el hueco queda al final de la última fila,
+                que se lee como intencional. Es el default.
+              - columns (multicol): las tarjetas fluyen hacia abajo y las
+                columnas quedan escalonadas, pero el reparto lo decide el
+                navegador llenando cada columna hasta una altura objetivo — con
+                7 tarjetas da 3+3+1 y deja una columna casi vacía.
+
+              CSS masonry (grid-template-rows: masonry) resolvería las dos cosas
+              a la vez, pero todavía no tiene soporte en navegadores.
+              ponytail: cuando lo tenga, este switch puede desaparecer.
+            #}
+            {% if grid.layout == 'columns' %}
+                .card-grid{
+                    columns: {{grid.desktop}};
+                    {{ 'column-gap: '+grid.gap+'px;' if grid.gap }}
+                }
+                @media (max-width: 992px){
+                    .card-grid{ columns: {{grid.tablet}}; }
+                }
+                @media (max-width: 768px){
+                    .card-grid{ columns: {{grid.phone}}; }
+                }
+                {# en multicol el gap vertical lo da el margen del ítem #}
+                {% if grid.gap %}
+                    .card-grid__item{ margin-bottom: {{grid.gap}}px; }
+                {% endif %}
+            {% else %}
+                {#
+                  MASONRY con row spans. Un grid normal alinea las filas: si una
+                  tarjeta es más alta, las de su fila dejan hueco debajo y la
+                  fila siguiente arranca después de la más alta. Para que cada
+                  tarjeta conserve SU alto y las demás se acomoden alrededor, se
+                  usa la técnica de pistas finas:
+
+                    - grid-auto-rows: 1px  -> pistas de 1px
+                    - cada ítem ocupa `span (alto + gap)` pistas
+                    - row-gap: 0            -> el gap vertical lo aporta el
+                      sobrante del span (el alto de la tarjeta es `alto`, pero
+                      reserva `alto + gap`)
+                    - grid-auto-flow: dense -> las tarjetas cortas rellenan los
+                      huecos que deja una alta
+
+                  El span se puede calcular acá porque los altos son valores
+                  explícitos del editor. Por eso en este modo el alto es
+                  `height` fijo y no `padding-top`: si el alto dependiera del
+                  largo del título no habría forma de saberlo desde el servidor.
+                  ponytail: cuando `grid-template-rows: masonry` tenga soporte,
+                  todo esto se reemplaza por esa línea.
+                #}
+                {% set gap_px  = grid.gap|default(0, true)|int %}
+                {% set base_h  = card.height|default(250, true)|int %}
+                .card-grid{
+                    display: grid;
+                    grid-template-columns: repeat({{grid.desktop}}, minmax(0, 1fr));
+                    grid-auto-rows: 1px;
+                    grid-auto-flow: row dense;
+                    row-gap: 0px;
+                    {{ 'column-gap: '+grid.gap+'px;' if grid.gap }}
+                }
+                @media (max-width: 992px){
+                    .card-grid{ grid-template-columns: repeat({{grid.tablet}}, minmax(0, 1fr)); }
+                }
+                @media (max-width: 768px){
+                    .card-grid{ grid-template-columns: repeat({{grid.phone}}, minmax(0, 1fr)); }
+                }
+                .card-grid__item{
+                    margin-bottom: 0px;
+                    grid-row: span {{ base_h + gap_px }};
+                }
+                .card-grid__card{ height: {{base_h}}px; }
+
+                {# los ítems con alto propio: su span y su alto #}
+                {% for item in items %}
+                    {% if item.height %}
+                        .card-grid__item--{{loop.index}}{ grid-row: span {{ item.height|int + gap_px }}; }
+                        .card-grid__card--{{loop.index}}{ height: {{item.height|int}}px; }
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            .card-grid__card{
+                {{ card.padding.css if card.padding.css }}
+                {#
+                  El alto se aplica distinto según el modo, y por eso NO va acá:
+                  - masonry -> `height` fijo (lo emite la rama de arriba), porque
+                    el span del grid tiene que coincidir con el alto real.
+                  - columnas -> `padding-top`, así la tarjeta crece sola si el
+                    título ocupa más líneas.
+                #}
+                {% if grid.layout == 'columns' and card.height %}
+                    padding-top: {{card.height}}px;
+                {% endif %}
+                {{ 'border-radius: '+card.border_radius+'px;' if card.border_radius }}
+                {{ 'align-items: '+title_style.vertical+';' if title_style.vertical }}
+            }
+
+            {# object-fit/position en el <img>, el equivalente de
+               background-size/position cuando la imagen no es un fondo #}
+            {% if card.image_size or card.image_position %}
+                .card-grid__image{
+                    {{ 'object-fit: '+card.image_size+';' if card.image_size }}
+                    {{ 'object-position: '+card.image_position+';' if card.image_position }}
+                }
+            {% endif %}
+
+            {% if card.overlay.color %}
+                .card-grid__card::after{ background: {{ helper.color_min(card.overlay) }}; }
+            {% endif %}
+            {% if card.overlay_hover.color %}
+                .card-grid__card:hover::after{ background: {{ helper.color_min(card.overlay_hover) }}; }
+            {% endif %}
+
+            {{ helper.font_min(title_style, 'card-grid__title') }}
+            {% if title_style.align %}
+                .card-grid__title{ text-align: {{title_style.align}}; }
+            {% endif %}
+
+            {# alto propio por ítem en modo columnas (en masonry ya se emitió
+               arriba junto con su span, que tiene que ir en la misma rama) #}
+            {% if grid.layout == 'columns' %}
+                {% for item in items %}
+                    {% if item.height %}
+                        .card-grid__card--{{loop.index}}{ padding-top: {{item.height}}px; }
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %}
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+<ul {{ helper.advance_min(id_module, classes_module) }}>
+    {% for item in items %}
+        {% set title  = item.title %}
+        {% set anchor = item.anchor %}
+        {#
+          El contenido de la tarjeta se arma una sola vez y se reutiliza en las
+          dos ramas (con y sin enlace), para no duplicar el markup.
+          alt vacío a propósito: la imagen es decorativa y el título ya dice de
+          qué es la tarjeta — un alt que repita el título se lo lee dos veces un
+          lector de pantalla. Si el editor pone un alt en el campo, image_min usa
+          el suyo.
+        #}
+        {% set card_inner %}
+            {{ helper.image_min(item.image, ['card-grid__image']) }}
+            {% if title.text %}
+                <{{title.tag}} class="card-grid__title">{{ title.text }}</{{title.tag}}>
+            {% endif %}
+        {% endset %}
+
+        {# la clase por ítem va en el <li> porque el <li> es el grid item: es
+           quien lleva el grid-row: span en modo masonry #}
+        <li class="card-grid__item card-grid__item--{{loop.index}}">
+            {% if anchor.url.href %}
+                {#
+                  anchor_min en vez de un <a> a mano: ya resuelve mailto: para
+                  los enlaces de tipo EMAIL_ADDRESS y el target/rel, y evita
+                  reimplementar (una versión previa de este módulo perdía el
+                  rel="nofollow" cuando además se abría en pestaña nueva).
+                  La tarjeta entera es el enlace: un solo destino y un solo foco
+                  de teclado.
+                #}
+                {% call helper.anchor_min(anchor, '', ['card-grid__card', 'card-grid__card--'+loop.index|string]) %}
+                    {{ card_inner }}
+                {% endcall %}
+            {% else %}
+                <div class="card-grid__card card-grid__card--{{loop.index}}">
+                    {{ card_inner }}
+                </div>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
