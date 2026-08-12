@@ -1,0 +1,100 @@
+/*
+  Tarjeta de testimonio + el comportamiento de "flechas al pasar el mouse".
+
+  El carrusel en sí NO está acá: el módulo usa el macro slider_min de
+  helpers.html, que es el mismo carrusel vanilla (js/carousel.js +
+  modules/css/carousel.css) que ya usan icon_box, counter, image_box, post,
+  video_box y slider. Este archivo solo trae lo propio del testimonio.
+
+  Los valores de acá son los DEFAULTS; casi todos los pisa el módulo por
+  instancia desde los campos del editor (tamaño del avatar, colores de la
+  calificación, tipografías, radio de la tarjeta).
+*/
+.testimonial{
+    height: 100%;
+    /*
+      El fondo/padding/radio los emite box_min por instancia, pero sin
+      box-sizing el padding del editor se sumaría al ancho del slide y el
+      último se saldría del track.
+    */
+    box-sizing: border-box;
+}
+.testimonial__avatar{
+    display: block;
+    width: 72px;
+    height: 72px;
+    /* recorta en vez de deformar cuando la foto subida no es cuadrada */
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 24px;
+}
+.testimonial__quote{
+    /*
+      El <p> trae margin del navegador; sin esto aparecería un espacio que
+      ningún campo del editor explica. El espacio real lo controla el
+      "margen inferior" del grupo Testimonio y el "espacio superior" de la
+      calificación.
+    */
+    margin: 0px;
+}
+.testimonial__rating{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+.testimonial__star{
+    display: inline-flex;
+    /*
+      El <span> del icono hereda el line-height del texto y agregaría alto
+      fantasma debajo de las estrellas.
+    */
+    line-height: 0;
+}
+.testimonial__star svg{
+    width: 24px;
+    height: auto;
+    fill: currentColor;
+}
+.testimonial__star--empty svg{
+    fill: rgba(0,0,0,0.15);
+}
+.testimonial__signature{
+    margin: 0px;
+}
+.testimonial__author{
+    font-weight: 700;
+}
+.testimonial__separator{
+    /*
+      El espacio a los lados va acá y no como &nbsp; en el HTML: así, cuando
+      el editor deja el separador vacío, el módulo no emite el <span> y
+      tampoco queda el espacio suelto.
+    */
+    margin: 0px 6px;
+}
+
+/*
+  Flechas visibles solo con el mouse encima, como en la referencia.
+
+  - Se oculta con `opacity` a secas, NO con visibility/display: un elemento
+    con visibility:hidden deja de ser enfocable, así que el usuario de
+    teclado nunca podría llegar a la flecha y :focus-within jamás se
+    dispararía. Con opacity el botón sigue en el orden de tabulación y al
+    enfocarlo se ve.
+  - :focus-within es lo que las revela con el teclado.
+  - @media (hover: hover) deja fuera a las pantallas táctiles, donde no
+    existe el hover: ahí las flechas se ven siempre (además del swipe, que
+    ya funciona nativo por el scroll del track).
+*/
+@media (hover: hover){
+    .testimonial-carousel--hover-arrows .carousel__arrow{
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+    .testimonial-carousel--hover-arrows:hover .carousel__arrow,
+    .testimonial-carousel--hover-arrows:focus-within .carousel__arrow{
+        opacity: 1;
+    }
+}

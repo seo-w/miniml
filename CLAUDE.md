@@ -30,9 +30,19 @@ más:
    - generar un **personal access key** en cada portal (HubSpot → Settings →
      Integrations → Private Apps / Personal Access Key)
    - correr `hs init` (o `hs auth`) y pegarlo
-   - nombrar las cuentas **igual que acá** (`Parautos`, `DemoAccount`), porque
+   - nombrar las cuentas **igual que acá** (`Parautos`, `demo-acount`), porque
      todos los comandos documentados usan `--account=<nombre>`
    - verificar con `hs accounts list`
+
+   **Ojo con el nombre del sandbox (corregido 2026-08-11):** es `demo-acount`
+   (así, con esa grafía), no `DemoAccount`. Y el CLI **no falla** con un
+   `--account` que no existe: cae en silencio a la cuenta default, que hoy es
+   **Topaz (491500)**, un portal que no tiene este theme. Pasó de verdad y el
+   síntoma es confuso — el upload arranca bien y revienta con
+   `Missing template: minimal/modules/helpers.html` más un montón de
+   `Cannot find method <macro>_min`, como si los macros estuvieran rotos. No lo
+   están: es que se está subiendo al portal equivocado. Verificar siempre la
+   primera línea del upload, que dice a qué cuenta va.
 2. **El código del theme.** Este archivo documenta el *por qué*, no el *qué*.
    Hace falta la carpeta `minimal/` completa — que es justamente para lo que
    está el repo de git.
@@ -62,11 +72,12 @@ librerías legacy pesadas (Slick, accordionjs, zooming, animate.css global),
 sin romper el sitio en producción, dejándolo reutilizable como base para
 otros clientes de la agencia.
 
-**No hay git.** El único respaldo es la carpeta `minimal-backup-2026-08-09/`
-(copia completa del theme ANTES de cualquier cambio de este proyecto). Si
-vas a seguir trabajando, considera inicializar git ahora (`git init` dentro
-de `minimal/`) para tener un historial real de aquí en adelante — hasta
-ahora todo el "control de versiones" fue manual.
+**Ya hay git** (corregido 2026-08-11; antes esta sección decía que no). El
+repo vive en la carpeta del theme, rama `master`, y tiene historial real desde
+los últimos cambios. Además sigue existiendo `minimal-backup-2026-08-09/`
+(copia completa del theme ANTES de cualquier cambio de este proyecto), que es
+la única foto anterior a git y vive **fuera** de la carpeta del theme, así que
+no viaja con el repo.
 
 ## Cuentas / entorno
 
@@ -82,10 +93,15 @@ ahora todo el "control de versiones" fue manual.
     Consecuencia práctica: subir `minimal` ahí es **aditivo** (crea carpeta
     nueva, no sobreescribe Growth ni Session) y **no afecta el sitio en
     vivo** hasta que alguien cambie el theme de una plantilla a mano.
-  - **DemoAccount** (id `51581785`) — portal **sandbox** de pruebas, es la
-    cuenta default del CLI. Todo este proyecto se validó ahí.
-- Subir cambios: `hs cms upload minimal minimal --account=DemoAccount`
+  - **demo-acount** (id `51581785`) — portal **sandbox** de pruebas. Todo este
+    proyecto se validó ahí. **Ya no es la cuenta default del CLI**: hoy la
+    default es Topaz (491500), así que el `--account` es obligatorio y hay que
+    escribirlo bien (ver la advertencia de arriba).
+- Subir cambios: `hs cms upload miniml minimal --account=demo-acount`
   (o el archivo específico en vez de la carpeta completa, más rápido).
+  **La carpeta local se llama `miniml/` y la remota `minimal/`**, así que los
+  dos argumentos de `upload` no son iguales: origen local primero, destino
+  remoto después.
 - Página de prueba real en el sandbox:
   `https://51581785.hs-sites.com/test` — tiene instancias de `image_box`,
   `icon_box`, `slider`, y `accordion` ya puestas y publicadas.
@@ -729,6 +745,85 @@ CSS base, que es `display:block` y lo comparten otros módulos.
 El bloque de la tarjeta estaba **duplicado** entre la rama slider y la de grid,
 así que cualquier arreglo había que hacerlo dos veces. Ahora es
 `image_box_card(item, style_default, size_default, icon_size_default)`.
+
+## Módulo nuevo: `testimonial.module` (2026-08-11)
+
+Pedido: reproducir el carrusel de testimonios de "Lo que dicen nuestros
+clientes" de `https://parautos.com.mx/`, donde las flechas de navegación
+aparecen al pasar el mouse.
+
+**Qué es el original** (WordPress + Divi, se leyó su HTML real): un
+`et_pb_slider` donde cada slide es **un solo bloque de texto enriquecido** con
+todo adentro — la foto como `<img>`, el párrafo, las estrellas como **una
+imagen PNG** (`stars.png`, 193×32) y la firma `<strong>Nombre</strong> |
+Empresa`. O sea que no hay campos: el editor arma cada testimonio a mano y no
+hay forma de cambiar la calificación sin cambiar la imagen.
+
+### Decisiones de implementación
+
+- **Reusa el carrusel del theme, no trae uno propio.** Se llama a
+  `helper.slider_min(...)`, el mismo macro que ya usan `icon_box`, `counter`,
+  `image_box`, `post`, `video_box` y `slider`. Así hereda gratis columnas por
+  breakpoint, dots por páginas reales, autoplay, teclado y los tres fixes de
+  rendimiento del carrusel — y cualquier arreglo futuro de `js/carousel.js` lo
+  arregla también acá. Los defaults quedaron en 1 columna y dots encendidos.
+- **La calificación son iconos, no una imagen.** Campo `rating` por ítem
+  (número) + un icono configurable a nivel módulo (default `star` sólido) y un
+  máximo. Se dibujan `max` iconos y los que superan la calificación van con el
+  color "vacío". Ventaja concreta sobre el PNG del original: no hay descarga,
+  escala sin pixelarse, el color sale de un campo, y cambiar de 5 a 4 estrellas
+  es escribir un número.
+- **Accesibilidad de la calificación**: el contenedor lleva `role="img"` +
+  `aria-label="4 de 5"` y cada icono va `aria-hidden`. Para un lector de
+  pantalla es UNA información, no cinco iconos sueltos.
+- **Las flechas al hover se ocultan con `opacity` a secas, NUNCA con
+  `visibility`/`display`.** Un elemento con `visibility:hidden` deja de ser
+  enfocable, así que el usuario de teclado no podría llegar nunca a la flecha y
+  el `:focus-within` que la revela jamás se dispararía. Con `opacity` el botón
+  sigue en el orden de tabulación. Todo va dentro de
+  `@media (hover: hover)` para que en pantallas táctiles —donde el hover no
+  existe— las flechas se vean siempre.
+- **La clase del hover viaja por el parámetro `classes` de `slider_min`**, no
+  como un `class` propio en el mismo `<div>`. `slider_min` ya emite su atributo
+  `class`; poner otro hace que uno se pierda — es exactamente el bug de
+  `slider.module` de 2026-08-10.
+- **La separación entre tarjetas va como `padding` del slide, no como `gap` del
+  track.** `slider_min` calcula el ancho del slide con `calc(100%/columnas)`,
+  así que un `gap` desbordaría el último.
+- **Separador de la firma configurable y con el espacio en CSS**: el
+  `margin` a los lados está en `.testimonial__separator`, no como `&nbsp;` en
+  el HTML, para que al dejar el campo vacío no quede un espacio suelto.
+
+### Aprendizaje nuevo (verificado por el validador de HubSpot)
+
+- **En un módulo, un campo `text` NO se admite en la pestaña STYLE**:
+  `text field 'styles.separator.text' is not allowed in the 'STYLE' tab`. Es
+  primo del límite ya documentado para el `fields.json` del *theme* (que solo
+  admite Boolean, Border, Choice, Color, Font, Image, Number, Spacing), pero es
+  otra cosa: acá el tipo sí existe, lo que no se puede es ponerlo en esa
+  pestaña. Por eso el carácter separador quedó en contenido (grupo *Firma*) y
+  solo su color en estilos.
+- **Copiar un grupo de otro módulo se lleva sus reglas de visibilidad.** Los
+  grupos `slider_options` y `styles.slider` de `icon_box` están condicionados
+  al toggle `show-as-carousel`; al copiarlos a un módulo que no tiene ese
+  toggle, HubSpot rechaza el upload con
+  `no controlling_field with id 'show-as-carousel' exists`. Hay que limpiar las
+  claves `visibility` al copiar.
+
+### Sin verificar a ojo
+
+El módulo **sube y compila** en el sandbox, pero **no hay ninguna instancia
+puesta en una página todavía**, así que el render final no se ha visto. Para
+verlo hay que agregarlo a `/test` desde el editor de HubSpot (las instancias
+son contenido del portal, no viajan en archivos).
+
+### Pendiente relacionado que se encontró de paso
+
+**El campo *Type of arrows* del carrusel no hace nada.** `slider_min` emite una
+clase `slick-arrow-<tipo>` y `slider.module` otra igual, pero **no existe CSS
+para esas clases en ninguna parte del theme** (se fue con `library/slick/`).
+Verificado con `grep` sobre todo el repo: las únicas dos apariciones son las
+que las emiten. O se les escribe el CSS o se quita el campo.
 
 ## Pendientes / por hacer
 

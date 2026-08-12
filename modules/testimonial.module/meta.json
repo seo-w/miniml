@@ -1,0 +1,22 @@
+{
+  "label": "Testimonial",
+  "icon": "../icons-modules/slider.svg",
+  "css_assets": [
+    {
+      "path": "../css/testimonial.css"
+    }
+  ],
+  "external_js": [],
+  "global": false,
+  "help_text": "Carrusel de testimonios: avatar, texto, calificacion con iconos y firma. Las flechas de navegacion aparecen al pasar el mouse.",
+  "host_template_types": [
+    "PAGE",
+    "BLOG_POST",
+    "BLOG_LISTING"
+  ],
+  "js_assets": [],
+  "other_assets": [],
+  "smart_type": "NOT_SMART",
+  "tags": [],
+  "is_available_for_new_content": true
+}

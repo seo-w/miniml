@@ -1,0 +1,162 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{# content #}
+{% set items = module.items %}
+{# calificacion #}
+{% set rating_icon       = module.rating.icon %}
+{% set rating_max        = module.rating.max is truthy? module.rating.max:5 %}
+{% set rating_show_empty = module.rating.show_empty %}
+{# firma — el carácter separador vive en contenido y no en estilos porque
+   HubSpot no admite campos de texto en la pestaña STYLE (mismo límite que ya
+   obliga a que font-preload y structured-data sean archivos y no campos) #}
+{% set separator_text = module.signature.separator %}
+{# slider #}
+{% set slider_options = module.slider_options %}
+{# advance #}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:[''] %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin        = module.styles.margin.css %}
+{% set z_index       = module.styles.z_index %}
+{% set visible       = module.styles.visible %}
+{% set animation     = module.styles.animation %}
+{% set sticky        = module.styles.sticky %}
+{% set box           = module.styles.box %}
+{% set slide_spacing = module.styles.slide_spacing %}
+{% set avatar        = module.styles.avatar %}
+{% set quote         = module.styles.quote %}
+{% set rating_style  = module.styles.rating %}
+{% set author        = module.styles.author %}
+{% set separator     = module.styles.separator %}
+{% set company       = module.styles.company %}
+{% set slider_style  = module.styles.slider %}
+{# el tamaño del icono va como atributo width del tag {% icon %}, no solo como CSS #}
+{% set rating_size = rating_style.size is truthy? rating_style.size:24 %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% do classes_module.insert(0, 'testimonial-carousel') %}
+{#
+  La clase de "flechas al pasar el mouse" viaja por el parámetro `classes` de
+  slider_min, no por un atributo class propio: slider_min ya emite su propio
+  atributo class en ese mismo <div> y dos atributos class en un elemento hacen
+  que uno se pierda (fue exactamente el bug de slider.module en 2026-08-10).
+  La regla vive en modules/css/testimonial.css.
+#}
+{% if slider_style.arrows.show_on_hover %}
+    {% do classes_module.insert(1, 'testimonial-carousel--hover-arrows') %}
+{% endif %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+
+            {# tarjeta #}
+            {{ helper.box_min(box, 'testimonial') }}
+
+            {# separacion entre tarjetas: va como padding del slide, no como gap
+               del track — el ancho del slide lo calcula slider_min con
+               calc(100%/columnas) y un gap lo desbordaria #}
+            {% if slide_spacing %}
+                .testimonial__slide{ padding: {{slide_spacing}}px; }
+            {% endif %}
+
+            {# avatar #}
+            {% if avatar.size or avatar.border_radius or avatar.margin_bottom %}
+                .testimonial__avatar{
+                    {% if avatar.size %}
+                        width: {{avatar.size}}px;
+                        height: {{avatar.size}}px;
+                    {% endif %}
+                    {{ 'border-radius: '+avatar.border_radius+'px;' if avatar.border_radius }}
+                    {{ 'margin-bottom: '+avatar.margin_bottom+'px;' if avatar.margin_bottom != null }}
+                }
+            {% endif %}
+
+            {# testimonio #}
+            {{ helper.font_min(quote, 'testimonial__quote') }}
+
+            {# calificacion #}
+            .testimonial__rating{
+                {{ 'gap: '+rating_style.gap+'px;' if rating_style.gap != null }}
+                {{ 'margin-top: '+rating_style.margin_top+'px;' if rating_style.margin_top != null }}
+                {{ 'margin-bottom: '+rating_style.margin_bottom+'px;' if rating_style.margin_bottom != null }}
+            }
+            {% if rating_style.size %}
+                .testimonial__star svg{ width: {{rating_style.size}}px; }
+            {% endif %}
+            {% if rating_style.color.color %}
+                .testimonial__star--full svg{ fill: {{ helper.color_min(rating_style.color) }}; }
+            {% endif %}
+            {% if rating_style.color_empty.color %}
+                .testimonial__star--empty svg{ fill: {{ helper.color_min(rating_style.color_empty) }}; }
+            {% endif %}
+
+            {# firma #}
+            {{ helper.font_min(author, 'testimonial__author') }}
+            {{ helper.font_min(company, 'testimonial__company') }}
+            {% if separator.color.color %}
+                .testimonial__separator{ color: {{ helper.color_min(separator.color) }}; }
+            {% endif %}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %}
+
+{{ helper.animation_min(animation) }}
+{{ helper.sticky_min(sticky) }}
+
+{% call helper.slider_min(slider_options, slider_style, classes_module, id_module) %}
+    {% for item in items %}
+        {% set item_rating = item.rating is truthy? item.rating:0 %}
+        <div class="testimonial__slide">
+            <div class="testimonial">
+                {% if item.image.src %}
+                    {{ helper.image_min(item.image, ['testimonial__avatar']) }}
+                {% endif %}
+
+                {% if item.quote %}
+                    <p class="testimonial__quote">{{ item.quote }}</p>
+                {% endif %}
+
+                {% if item_rating and rating_icon.name %}
+                    {#
+                      role="img" + aria-label: para un lector de pantalla la
+                      calificacion es UNA sola informacion ("4 de 5"), no cinco
+                      iconos sueltos; por eso cada icono va aria-hidden.
+                    #}
+                    <div class="testimonial__rating" role="img" aria-label="{{ item_rating }} de {{ rating_max }}">
+                        {% for star in range(rating_max) %}
+                            {% if star < item_rating %}
+                                <span class="testimonial__star testimonial__star--full" aria-hidden="true">
+                                    {{ helper.icon_min(rating_icon, rating_size, true) }}
+                                </span>
+                            {% elif rating_show_empty %}
+                                <span class="testimonial__star testimonial__star--empty" aria-hidden="true">
+                                    {{ helper.icon_min(rating_icon, rating_size, true) }}
+                                </span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if item.author or item.company %}
+                    <p class="testimonial__signature">
+                        {%- if item.author -%}
+                            <strong class="testimonial__author">{{ item.author }}</strong>
+                        {%- endif -%}
+                        {%- if item.author and item.company and separator_text -%}
+                            <span class="testimonial__separator">{{ separator_text }}</span>
+                        {%- endif -%}
+                        {%- if item.company -%}
+                            <span class="testimonial__company">{{ item.company }}</span>
+                        {%- endif -%}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endcall %}
