@@ -817,6 +817,83 @@ puesta en una página todavía**, así que el render final no se ha visto. Para
 verlo hay que agregarlo a `/test` desde el editor de HubSpot (las instancias
 son contenido del portal, no viajan en archivos).
 
+### Bug de fondo que destapó este módulo (2026-08-12)
+
+Reporte del usuario: puesto en `/test` de Parautos, "no funciona como un
+slider". No era del módulo — era del macro `slider_min`, o sea de **los 6
+módulos con carrusel**, desde siempre.
+
+**Las rutas relativas de `get_asset_url()` se resuelven contra el archivo que
+contiene la llamada, NO contra el módulo que llama al macro.** En `slider_min`
+estaban como `'../../modules/css/carousel.css'` y `'../../js/carousel.js'`, que
+desde `minimal/modules/helpers.html` se salen de la raíz del theme. Resultado:
+`get_asset_url` devuelve **cadena vacía en silencio** — el `<link>` sale con
+`href=""` y el `<script>` del carrusel no se emite. Sin ese JS no existe
+`initCarousel` y sin ese CSS `.carousel__track` no es flex, así que los slides
+quedan apilados: exactamente "no funciona como slider".
+
+**Por qué nadie lo vio en meses:** `slider.module` pide esos mismos dos
+archivos desde su **propio** `module.html`, donde la ruta sí resuelve. La
+página `/test` del sandbox tiene una instancia de `slider.module`, así que
+cargaba los assets para todos los demás módulos de la página. En Parautos no
+hay ninguna instancia de `slider.module` y el andamio desapareció. La pista
+estaba a la vista igual: esa página del sandbox emitía un
+`<link rel="stylesheet" href="">` vacío, que era el require roto.
+
+Corregido a `'../modules/css/carousel.css'` y `'../js/carousel.js'`. Ojo:
+**`'css/carousel.css'` a secas NO resuelve** (probado en vivo, seguía saliendo
+`href=""`); hay que subir un nivel y volver a bajar. La referencia de qué forma
+sirve estaba en el mismo archivo: el `'../library/animate/...'` de
+`animation_min`, que siempre funcionó.
+
+Verificado en vivo en los dos portales después del fix: los dos assets cargan
+con URL real, `carousel__track{display:flex;overflow-x:auto}` llega servido, y
+la página pasó de 1 a **0** `<link>` vacíos.
+
+**Lección de método, no de código:** este módulo se dio por entregado con un
+"sube y compila". Compilar no es funcionar — el `href=""` lo emitía HubSpot sin
+error alguno. Un módulo nuevo no está verificado hasta que se lee el HTML
+servido de una instancia real.
+
+### Segunda ronda de fixes (2026-08-12), los tres del mismo origen
+
+Reporte: no se ve la navegación por puntos, el tamaño de las flechas no hace
+nada, y al deslizar "se corren los bordes de un lado a otro".
+
+1. **El `border-radius` iba en cada tarjeta.** Ahora `box_min` se aplica al
+   **contenedor** (`.testimonial-carousel`) y no a `.testimonial`. Las tarjetas
+   se deslizan DENTRO del recuadro en vez de arrastrar cada una su propio borde,
+   y los dots quedan adentro del recuadro. **No hace falta `overflow:hidden`**:
+   el track ya recorta su contenido por ser `overflow-x:auto`, así que un slide
+   nunca se pinta sobre el padding del contenedor.
+2. **`arrows.size` solo emitía `font-size`**, y `carousel.css` fija el botón en
+   36×36 — el glifo crecía dentro de una caja que no se movía, así que a ojo
+   "no hacía nada". Ahora emite también `width`/`height` al **doble** del
+   valor, que es la proporción del default del theme (36/18): un size de 18
+   reproduce exactamente lo de antes.
+3. **Bug real que destapó el cambio 1**: `scrollToSlide` usaba
+   `slides[index].offsetLeft` tal cual. `offsetLeft` se mide desde el
+   `offsetParent`, que es `.carousel` (tiene `position:relative`), **no** el
+   track. Al ponerle padding al contenedor, ese padding quedó sumado en todos
+   los `offsetLeft` y cada salto se pasaba por esa cantidad (medido en vivo:
+   `[40, 609, 1177]` con el track en `offsetLeft: 40`). Ahora hay un
+   `offsetOf(i)` que resta el del primer slide — correcto con o sin padding, y
+   se usa también en el listener de scroll. Afecta a los 6 módulos con
+   carrusel.
+
+**Lo que NO se pudo verificar desde acá** (y confirma lo ya documentado): el
+navegador de este entorno **no ejecuta scroll horizontal ni siquiera asignando
+`track.scrollLeft` directo** — devuelve 0 siempre. Se verificó lo medible: el
+JS servido trae `offsetOf`, el CSS emitido trae `width`/`height` en la flecha, y
+los dots existen (3) y marcan el activo al hacer clic. El desplazamiento hay que
+confirmarlo a ojo.
+
+**Y un recordatorio que costó**: `slides[0].offsetWidth` da **0** cuando el
+navegador automatizado reporta viewport 0×0, y `getVisibleCount()` cae a
+`slides.length`, así que `buildDots()` calcula 0 páginas y parece que los dots
+no existen. Hay que tomar un `screenshot` ANTES de medir (ya estaba
+documentado; volvió a morder).
+
 ### Pendiente relacionado que se encontró de paso
 
 **El campo *Type of arrows* del carrusel no hace nada.** `slider_min` emite una
@@ -854,9 +931,21 @@ que las emiten. O se les escribe el CSS o se quita el campo.
   Al 2026-08-11 Parautos está al día con el local, incluyendo
   `custom_section` (advance + background detallado con el fix de la distancia),
   `icon_list` (párrafo + los 7 campos de tipografía), el módulo nuevo
-  `card_grid` (más su `modules/css/card_grid.css`) e `image_box` (los 7 cambios
-  de imagen/botones/iconos). Verificado leyendo los archivos de vuelta, no de
-  memoria.
+  `card_grid` (más su `modules/css/card_grid.css`), `image_box` (los 7 cambios
+  de imagen/botones/iconos) y el módulo nuevo `testimonial` (más su
+  `modules/css/testimonial.css`). Verificado leyendo los archivos de vuelta, no
+  de memoria.
+
+  **Al comparar con `hs cms fetch`, esperar diferencias que NO son un problema**:
+  el fetch devuelve la versión normalizada por HubSpot, no el archivo tal cual
+  se subió. En `meta.json` agrega `module_id` y `content_types`, y **omite
+  siempre `help_text`** y los arrays vacíos (`js_assets`, `tags`…) — verificado
+  contra `card_grid`, que lleva días arriba y funcionando, y tampoco lo
+  devuelve. En `fields.json` agrega `id`, `tab` y `display_width` por campo, y
+  omite las claves cuyo valor era vacío o nulo (`default: null`,
+  `validation_regex: ""`, `show_emoji_picker: false`). Para comparar de verdad
+  hay que mirar la estructura (nombres, tipos, anidación) y los defaults que
+  importan, no hacer un `diff` crudo.
 
   Para comparar local vs Parautos sin subir nada (útil para detectar desfases
   como el de `custom_section`, que quedó fuera por orden cronológico):

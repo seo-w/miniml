@@ -54,8 +54,15 @@
         {{ helper.wrapper_min(margin, visible, z_index) }}
         {% scope_css %}
 
-            {# tarjeta #}
-            {{ helper.box_min(box, 'testimonial') }}
+            {#
+              El fondo/radio/padding/sombra van al CONTENEDOR del carrusel, no a
+              cada tarjeta. Si van en la tarjeta, al deslizar se ven los bordes
+              redondeados corriéndose de lado a lado, y los dots quedan fuera del
+              recuadro. Puestos acá, las tarjetas se deslizan DENTRO del recuadro
+              (el track ya recorta su contenido, porque es overflow-x:auto) y los
+              dots quedan adentro, como en la referencia.
+            #}
+            {{ helper.box_min(box, 'testimonial-carousel') }}
 
             {# separacion entre tarjetas: va como padding del slide, no como gap
                del track — el ancho del slide lo calcula slider_min con

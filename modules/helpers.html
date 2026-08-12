@@ -142,8 +142,21 @@
     {% set arrows = styles.arrows %}
     {% set dots   = styles.dots %}
 
-    {{ require_css(get_asset_url('../../modules/css/carousel.css')) }}
-    {{ require_js(get_asset_url('../../js/carousel.js'), "footer") }}
+    {#
+      Las rutas relativas de get_asset_url() se resuelven contra ESTE archivo
+      (minimal/modules/helpers.html), NO contra el módulo que llama al macro.
+      Estaban como '../../modules/...' y '../../js/...', que desde acá se salen
+      de la raíz del theme y devolvían una URL vacía: el <link> salía con
+      href="" y el <script> del carrusel no se emitía. Se veía "arreglado" solo
+      en páginas que además tuvieran un slider.module, porque ese módulo pide
+      los mismos dos archivos desde su propio module.html, donde la ruta sí
+      resuelve. (El '../library/animate/...' de animation_min, que siempre
+      funcionó, es la prueba de contra qué archivo resuelve esto.)
+    #}
+    {# 'css/carousel.css' a secas NO resuelve (probado en vivo: seguía saliendo
+       href=""); hay que subir un nivel y volver a bajar, igual que el js #}
+    {{ require_css(get_asset_url('../modules/css/carousel.css')) }}
+    {{ require_js(get_asset_url('../js/carousel.js'), "footer") }}
 
     {% require_css %}
         <style>
@@ -170,7 +183,19 @@
                 {% if arrows.size or color.color %}
                     .slick-min--{{name}} .carousel__arrow{
                         {% if arrows.size %}
+                            {#
+                              El campo solo emitía font-size, que mueve el glifo
+                              pero NO el botón: carousel.css lo fija en 36x36 y
+                              la flecha se veía igual pasara lo que pasara.
+                              La caja va al doble del glifo, que es exactamente
+                              la proporción del default del theme (36/18), así
+                              que un size de 18 reproduce lo de siempre y las
+                              instancias que ya tenían un valor no cambian de
+                              forma, solo de tamaño.
+                            #}
                             font-size: {{arrows.size}}px;
+                            width: {{arrows.size * 2}}px;
+                            height: {{arrows.size * 2}}px;
                         {% endif %}
                         {% if color.color %}
                             color: {{ color_min(color) }};

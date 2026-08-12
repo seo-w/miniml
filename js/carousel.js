@@ -34,6 +34,20 @@ window.initCarousel = function (container, options) {
     var dots = [];
     var currentIndex = 0;
 
+    /*
+      Posición de un slide DENTRO del track.
+
+      No sirve usar slide.offsetLeft a secas: offsetLeft se mide desde el
+      offsetParent, que es .carousel (tiene position:relative), no el track. Si
+      el módulo le pone padding al contenedor —como el de testimonios, que
+      dibuja ahí el recuadro— ese padding queda sumado en todos los offsetLeft
+      y cada salto se pasa por esa cantidad. Restar el del primer slide da la
+      posición relativa correcta, con o sin padding.
+    */
+    function offsetOf(index) {
+        return slides[index].offsetLeft - slides[0].offsetLeft;
+    }
+
     function getScrollBy() {
         if (window.matchMedia('(max-width:' + options.phoneBreakpoint + 'px)').matches) { return options.scrollByPhone; }
         if (window.matchMedia('(max-width:' + options.tabletBreakpoint + 'px)').matches) { return options.scrollByTablet; }
@@ -78,7 +92,7 @@ window.initCarousel = function (container, options) {
             index = Math.max(0, Math.min(index, slides.length - 1));
         }
         currentIndex = index;
-        track.scrollTo({ left: slides[index].offsetLeft, behavior: 'smooth' });
+        track.scrollTo({ left: offsetOf(index), behavior: 'smooth' });
         setActiveDot(index);
     }
 
@@ -110,7 +124,7 @@ window.initCarousel = function (container, options) {
             var left = track.scrollLeft;
             var nearest = 0;
             for (var i = 1; i < slides.length; i++) {
-                if (Math.abs(slides[i].offsetLeft - left) < Math.abs(slides[nearest].offsetLeft - left)) { nearest = i; }
+                if (Math.abs(offsetOf(i) - left) < Math.abs(offsetOf(nearest) - left)) { nearest = i; }
             }
             currentIndex = nearest;
             setActiveDot(nearest);

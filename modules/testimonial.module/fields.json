@@ -1211,7 +1211,7 @@
         ]
       },
       {
-        "label": "Tarjeta",
+        "label": "Contenedor",
         "name": "box",
         "type": "group",
         "inline_help_text": "Use esta opción para dar estilos al contenedor del bloque",
@@ -1328,7 +1328,8 @@
               }
             ]
           }
-        ]
+        ],
+        "help_text": "El fondo, el radio y el padding se aplican al recuadro del carrusel completo, no a cada testimonio: asi las tarjetas se deslizan dentro del recuadro en vez de arrastrar sus propios bordes."
       },
       {
         "label": "Separacion entre tarjetas (px)",
