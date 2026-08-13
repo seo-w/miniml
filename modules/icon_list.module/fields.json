@@ -1137,6 +1137,17 @@
         "type": "group",
         "children": [
           {
+            "label": "Separacion entre items (px)",
+            "name": "space_between",
+            "type": "number",
+            "required": false,
+            "locked": false,
+            "display": "text",
+            "step": 1,
+            "default": null,
+            "help_text": "Espacio vertical ENTRE items. No se aplica antes del primero ni despues del ultimo. Distinto del padding de 'item box', que es espacio DENTRO de cada item y hace crecer su fondo y su borde."
+          },
+          {
             "label": "Icon",
             "name": "icon",
             "type": "group",

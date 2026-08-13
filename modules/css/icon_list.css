@@ -41,6 +41,17 @@
     max-width: initial;
 }
 .icon-list__anchor{
+    /*
+      El titulo se renderiza como <a> o como <span>, los dos inline por defecto,
+      y en CSS los margenes verticales NO aplican a elementos inline. Sin este
+      display, el "Margin bottom" del grupo Title se emitia igual (font_min lo
+      pone en la regla por instancia) pero el navegador lo descartaba en
+      silencio. Por lo mismo el width:auto de abajo era inerte hasta ahora.
+      Es block y no inline-block para que el margen quede exacto: un
+      inline-block se sienta en la linea base y agrega unos pixeles de mas
+      debajo, asi que 10px se verian como algo mas.
+    */
+    display: block;
     text-decoration: none;
     width:auto;
 }

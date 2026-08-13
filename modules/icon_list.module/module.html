@@ -29,6 +29,20 @@
             {{ helper.box_min(box, 'icon-list') }}
             {{ helper.box_min(items_style.item_box, 'icon-list__item') }}
 
+            {#
+              Separación entre ítems. Va como margin-top sobre el hermano
+              adyacente y no como gap del <ul>: así no hay que cambiar el
+              display de .icon-list (hoy es block) y el espacio nunca sobra
+              después del último ítem. El padding del item_box sigue siendo
+              otra cosa — ese es espacio DENTRO del ítem y hace crecer su fondo
+              y su borde.
+            #}
+            {% if items_style.space_between %}
+                .icon-list__item + .icon-list__item{
+                    margin-top: {{items_style.space_between}}px;
+                }
+            {% endif %}
+
             {% if items_style.item_box.alignment.horizontal_align or items_style.item_box.alignment.vertical_align %}
                 .icon-list__item{
                     {% if items_style.item_box.alignment.horizontal_align %}
@@ -81,6 +95,27 @@
             {{helper.font_min(items_style.title, 'icon-list__anchor')}}
             {{helper.font_min(items_style.title.default, 'icon-list__anchor')}}
             {{helper.font_min(items_style.title.hover, 'icon-list__anchor:hover')}}
+
+            {#
+              El "margin bottom" del título separa título de descripción. Cuando
+              el ítem NO tiene descripción, el título es el último hijo de
+              .icon-list__content y ese margen deja un hueco al final que ningún
+              campo del editor explica.
+
+              Se resuelve con :last-child y no con una bandera en HubL porque
+              así funciona con ítems MEZCLADOS — unos con descripción y otros
+              sin — cosa que una condición a nivel de módulo no puede hacer
+              (mismo criterio que el :has() de icons.module).
+
+              Tiene que ir acá dentro del scope y no en el CSS base: la regla de
+              instancia que emite font_min es (1,1,0) por el #hs_cos_wrapper y
+              le ganaría a cualquier selector de clases del archivo base.
+            #}
+            {% if items_style.title.margin_bottom %}
+                .icon-list__content>.icon-list__anchor:last-child{
+                    margin-bottom: 0px;
+                }
+            {% endif %}
 
             {# description #}
             {{helper.font_min(items_style.description, 'icon-list__description')}}

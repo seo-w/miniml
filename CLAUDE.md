@@ -1003,6 +1003,96 @@ Después del cambio, **ninguna** instancia del sandbox estrenó sombras
 inesperadas, y el CSS base del theme sigue emitiendo exactamente lo mismo que
 antes.
 
+## `font_min` + elementos inline: el margen que se emite y no aplica (2026-08-13)
+
+Reporte: en `icon_list`, el campo **Estilos → item → Title → Margin bottom** no
+hacía nada.
+
+**El campo sí llegaba al CSS.** El CSS servido de Parautos mostraba las reglas de
+dos instancias reales con su `margin:0px 0px 10px 0px` / `15px`. Lo que fallaba
+es que el navegador las descartaba: el título se renderiza como `<a>` o `<span>`
+(`icon_list.module/module.html`), los dos **inline**, y en CSS **los márgenes
+verticales no aplican a elementos inline no reemplazados**. La base solo tenía
+`.icon-list__anchor{text-decoration:none;width:auto}`, sin `display` — y ese
+`width:auto` era inerte por exactamente la misma razón, señal de que quien la
+escribió ya esperaba un bloque.
+
+Arreglado con `display: block` en `modules/css/icon_list.css`. Se eligió `block`
+y no `inline-block` porque este último se sienta en la línea base y suma unos
+píxeles debajo, así que un margen de 10px se vería mayor. Contrapartida
+aceptada: cuando el título es un enlace, el área clickeable pasa a ser todo el
+ancho de la fila.
+
+**El patrón a reconocer**, porque `font_min` se llama desde los 27 módulos:
+`font_min` emite `margin:0px 0px Xpx 0px` sobre la clase que se le pase. Si esa
+clase cae sobre un elemento inline, el margen **se descarta en silencio** — no
+hay error, la regla está ahí en el HTML servido. Antes de dar por roto un campo
+de margen, mirar el `display` del elemento destino. (Los que van sobre `<p>`,
+`<div>` o encabezados no tienen el problema; por eso el `margin_bottom` de la
+*descripción* de `icon_list` sí funcionaba.)
+
+Pista de que esto ya había mordido antes: la página de Parautos traía un parche a
+mano, `#ribbon a.icon-list__anchor{display:block}`, escrito fuera de este repo
+para una sección puntual. Ahora es redundante.
+
+Verificado en vivo en los dos portales: la base servida dice
+`.icon-list__anchor{display:block;text-decoration:none;width:auto}` y las reglas
+por instancia siguen emitiendo exactamente lo mismo que antes.
+
+## `icon_list`: hueco sin descripción y separación entre ítems (2026-08-13)
+
+Dos pedidos sobre el mismo módulo, los dos resueltos con CSS y sin banderas en
+HubL.
+
+### 1. Si el ítem no tiene descripción, el margen del título no debe contar
+
+El *Margin bottom* del título existe para separar título de descripción. En un
+ítem sin descripción dejaba un hueco al final que ningún campo del editor
+explica. Se emite, **dentro del scope del módulo**:
+
+```
+.icon-list__content>.icon-list__anchor:last-child{ margin-bottom: 0px; }
+```
+
+- **`:last-child` y no una condición en HubL** porque así funciona con ítems
+  **mezclados** — unos con descripción y otros sin —, cosa que una bandera a
+  nivel de módulo no puede hacer. Mismo criterio que el `:has()` de
+  `icons.module`.
+- **Tiene que ir en el `{% scope_css %}` del módulo, no en
+  `modules/css/icon_list.css`**: la regla que emite `font_min` es
+  `#hs_cos_wrapper_<name> .icon-list__anchor`, o sea (1,1,0) por el id, y le
+  ganaría a cualquier selector de puras clases del archivo base. Dentro del
+  scope, el mismo id aplica a las dos y gana la más específica.
+- Solo se emite si el título tiene `margin_bottom` configurado.
+
+### 2. Campo nuevo: *Separación entre ítems (px)*
+
+`styles.item.space_between`. Emite:
+
+```
+.icon-list__item + .icon-list__item{ margin-top: Xpx; }
+```
+
+- **Hermano adyacente y no `gap` del `<ul>`**: no hay que cambiar el `display`
+  de `.icon-list` (hoy `block`) y el espacio nunca sobra después del último
+  ítem.
+- **No es lo mismo que el padding de `item box`**, que era la única forma que
+  había antes: ese es espacio DENTRO del ítem y hace crecer su fondo y su borde.
+  El texto de ayuda del campo lo aclara.
+- Default vacío = no emite nada, así que las instancias publicadas no cambian.
+
+### Verificado con contenido real (las dos ramas del `:last-child`)
+
+Con reglas de prueba temporales, borradas después (`grep` sin restos, local y en
+vivo). HubSpot emite los selectores intactos, sin tocar el `+` ni el
+`:last-child`. Estructura leída del HTML servido:
+
+| Instancia | Ítems | Último hijo | Efecto |
+|---|---|---|---|
+| Parautos `widget_1786450070759` | 3, todos CON descripción | descripción | la regla no toca el título, conserva sus 10px |
+| Parautos `widget_1786463171910` | 2, ninguno con descripción | título | se le anula el margen de 15px |
+| sandbox `widget_1786299705791` | 3, ninguno con descripción | título | ídem |
+
 ## Pendientes / por hacer
 
 - **Menú móvil (`header.html`) no muestra el `<button>` accesible en el
