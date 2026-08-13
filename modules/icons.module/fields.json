@@ -1079,6 +1079,16 @@
             "type": "group",
             "children": [
               {
+                "label": "Quitar la sombra",
+                "name": "disable",
+                "type": "boolean",
+                "required": false,
+                "locked": false,
+                "display": "toggle",
+                "default": false,
+                "help_text": "Emite box-shadow: none. Sirve para quitar la sombra que viene de la configuracion del theme (Iconos > Default > Shadow), que se aplica a todos los iconos del sitio. Apagado = se respeta lo que traiga el theme."
+              },
+              {
                 "label": "Color",
                 "name": "color",
                 "type": "color",
@@ -1191,6 +1201,16 @@
                 "type": "group",
                 "children": [
                   {
+                    "label": "Quitar la sombra",
+                    "name": "disable",
+                    "type": "boolean",
+                    "required": false,
+                    "locked": false,
+                    "display": "toggle",
+                    "default": false,
+                    "help_text": "Emite box-shadow: none. Sirve para quitar la sombra que viene de la configuracion del theme (Iconos > Default > Shadow), que se aplica a todos los iconos del sitio. Apagado = se respeta lo que traiga el theme."
+                  },
+                  {
                     "label": "Color",
                     "name": "color",
                     "type": "color",
@@ -1273,6 +1293,16 @@
                 "name": "shadow",
                 "type": "group",
                 "children": [
+                  {
+                    "label": "Quitar la sombra",
+                    "name": "disable",
+                    "type": "boolean",
+                    "required": false,
+                    "locked": false,
+                    "display": "toggle",
+                    "default": false,
+                    "help_text": "Emite box-shadow: none. Sirve para quitar la sombra que viene de la configuracion del theme (Iconos > Default > Shadow), que se aplica a todos los iconos del sitio. Apagado = se respeta lo que traiga el theme."
+                  },
                   {
                     "label": "Color",
                     "name": "color",

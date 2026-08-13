@@ -314,8 +314,29 @@
     {% set blur         = field.blur %}
     {% set position_y   = field.position_y %}
     {% set position_x   = field.position_x %}
-    {% if color_shadow.color or blur or position_y or position_x %}
-        box-shadow: {{position_y is truthy? position_y:10 }}px {{position_x is truthy? position_x:10 }}px {{blur is truthy? blur:10 }}px {{ color_min(color_shadow) }};
+    {#
+      'disable' es la ruta para APAGAR una sombra que viene de la configuración
+      del theme (ej. theme.icons_module.default.shadow, que pinta todos los
+      .icons__anchor del sitio). Vaciar los campos del módulo no alcanzaba: sin
+      esto no existía ninguna forma de emitir "sin sombra". Como es una regla
+      por instancia (#hs_cos_wrapper_<name>), le gana al CSS base sin !important.
+    #}
+    {% if field.disable %}
+        box-shadow: none;
+    {% elif color_shadow.color %}
+        {#
+          Se EXIGE color: sin él, color_min emitía 'rgba(, 1)', una declaración
+          inválida que el navegador descarta igual.
+
+          Orden: CSS es offset-x offset-y blur, y esto emitía la 'y' primero,
+          así que los campos Position x/y hacían lo contrario de lo que dicen.
+
+          |default(10) y no 'is truthy?': el ternario tomaba cualquier valor
+          falsy como vacío, así que un desplazamiento en 0 se convertía en 10px
+          y no había manera de pegar la sombra al elemento. |default solo
+          sustituye null/undefined, así que el 0 sobrevive.
+        #}
+        box-shadow: {{ position_x|default(10) }}px {{ position_y|default(10) }}px {{ blur|default(10) }}px {{ color_min(color_shadow) }};
     {% endif %}
 {% endmacro %}
 
@@ -386,7 +407,16 @@
     {% set shadow = field.shadow %}
 
     {# box css#}
-    {% if background_color.color or padding or border or border_radius or shadow_color.color or background_image %}
+    {#
+      Acá decía 'shadow_color.color', una variable que NO existe en ninguna parte
+      del repo (la de arriba se llama 'shadow'). En HubL un nombre indefinido es
+      null, así que ese término siempre era falso y la sombra sola nunca abría el
+      bloque: solo se emitía si además había fondo, padding, borde o radio. Ese
+      era el bug de "configuro la sombra y no pasa nada".
+      'disable' también tiene que estar acá, si no encender el toggle no abriría
+      la regla y el box-shadow:none nunca saldría.
+    #}
+    {% if background_color.color or padding or border or border_radius or background_image or shadow.color.color or shadow.blur or shadow.position_x or shadow.position_y or shadow.disable %}
         .{{class}}{
             {{ 'background-color:'+color_min(background_color)+';' if background_color.color }}
             {{ background_image if background_image}}

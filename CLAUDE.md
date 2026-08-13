@@ -902,6 +902,107 @@ para esas clases en ninguna parte del theme** (se fue con `library/slick/`).
 Verificado con `grep` sobre todo el repo: las únicas dos apariciones son las
 que las emiten. O se les escribe el CSS o se quita el campo.
 
+## `image.module`: object-fit y tamaño exacto (2026-08-12)
+
+Dos campos nuevos en **Estilos → Imagen**: `object_fit` (los 5 valores de CSS) y
+`object_position`. Ambos con default vacío, así que no emiten nada y las
+instancias publicadas se ven igual.
+
+**Por qué "anchura y altura exactas" no se respetaba**: el CSS base del módulo
+tiene `.custom-image__image{width:100%;height:auto}`
+(`modules/css/custom_image.css`), y una clase le gana a los atributos
+`width`/`height` del `<img>`. Daba igual lo que eligiera el editor: el alto
+siempre salía automático. Ahora, cuando `size_type == 'exact'`, el módulo emite
+`width`/`height` como CSS por instancia — escopado con
+`#hs_cos_wrapper_<name>`, así que gana sobre el CSS base sin `!important`.
+
+**`max-width:100%` va junto con el ancho fijo**, si no un ancho grande desborda
+en móvil. Efecto colateral honesto: cuando el ancho se achica y el alto sigue
+fijo, la imagen se deformaría — y para eso está justamente el `object-fit`.
+Por eso los dos cambios son uno solo y el texto de ayuda del campo lo dice.
+
+**Verificado en vivo, no solo compilado**: se forzaron temporalmente
+`object_fit`, `object_position` y la rama de `exact` en el template, se leyó el
+HTML servido del sandbox (emitió `width`/`max-width`/`height` y
+`object-fit`/`object-position` correctos), y se revirtió. Confirmado después con
+`grep` que no quedaron restos, local y en vivo, y que la instancia existente
+sigue renderizando sin CSS extra.
+
+## `box-shadow`: dos bugs en los macros compartidos (2026-08-12)
+
+Reporte sobre `icons.module`: la sombra configurada no se aplica, y la que no se
+quiere sí aparece. Las dos ciertas, con causas distintas, y **ninguna era del
+módulo** — las dos vivían en `modules/helpers.html`.
+
+### Bug 1: `box_min` probaba una variable que no existe
+
+La condición que decide si se emite la regla decía `shadow_color.color`.
+**`shadow_color` no existe en ninguna parte del repo** (`grep -rn` daba esa
+única línea); la variable definida tres líneas arriba se llama `shadow`. En HubL
+un nombre indefinido es null, así que ese término **siempre era falso**: la
+sombra sola nunca abría el bloque y solo se emitía de rebote, cuando además
+había fondo, padding, borde o radio. Como los campos de `icons` son todos
+`default: null`, configurar únicamente la sombra no producía absolutamente nada.
+
+Ahora se prueban los subcampos de verdad (`shadow.color.color or shadow.blur or
+shadow.position_x or shadow.position_y or shadow.disable`). Arregla los **27
+módulos** que llaman `box_min`, y solo puede *agregar* reglas que un editor ya
+había configurado y se descartaban en silencio.
+
+### Bug 2: no existía ninguna forma de emitir "sin sombra"
+
+**La sombra de los iconos no sale del módulo: sale del theme.**
+`theme.icons_module.default.shadow` (`fields.json`, ~línea 8839) trae color
+`#292929` al 20%, blur 5, x 2, y 2, y `modules/css/icons.css` llama a `box_min`
+con esos valores. Ahí sí hay `background_color` (#ffffff) y `border_radius`
+(200) no nulos, así que el bloque se abría y pintaba
+`box-shadow:2px 2px 5px rgba(41,41,41,.2)` en **todos** los `.icons__anchor` del
+sitio. Vaciar los campos del módulo no la quitaba, porque "vacío" significa
+"heredá lo del theme", no "quitala".
+
+Se agregó un booleano `disable` ("Quitar la sombra") a los tres grupos `shadow`
+de `icons.module`, que emite `box-shadow: none`. Al ser regla por instancia
+(`#hs_cos_wrapper_<name>`) le gana al CSS base **sin `!important`**. Default
+`false` = nada cambia en lo publicado. `shadow_min`/`box_min` lo soportan de
+forma genérica: dárselo a otro módulo es pegar el booleano en su `fields.json`,
+sin tocar código.
+
+**Workaround que se encontró en vivo**: una instancia real en Parautos tenía
+fondo blanco al 0% y color de sombra blanco al 0% — o sea, alguien la hizo
+invisible a mano porque no había interruptor. Funciona, pero ahora sobra.
+
+### De paso, dos defectos más en `shadow_min`
+
+- **Los ejes estaban invertidos**: emitía `position_y position_x blur` cuando CSS
+  es `offset-x offset-y blur`, así que los campos *Position x/y* hacían lo
+  contrario de lo que dicen. **No cambia nada visualmente por defecto**: se
+  revisó el `fields.json` del theme y los de los 27 módulos, y el único default
+  de sombra con valores en todo el theme es `icons_module.default.shadow`, con
+  x=2 e y=2 (simétrico). Solo se movería una instancia donde alguien haya puesto
+  x≠y a mano.
+- **Un `0` se convertía en `10px`**: el `is truthy?` trataba cualquier valor
+  falsy como vacío, así que no se podía pegar la sombra al elemento. Ahora usa
+  `|default(10)`, que solo sustituye null/undefined. Verificado: el `0` llega
+  como `0px` y el fallback de 10px se conserva cuando el campo va vacío.
+- **Ahora se exige color**: sin él, `color_min` emitía `rgba(, 1)`, una
+  declaración inválida que el navegador descartaba igual.
+
+### Verificado en vivo (las 4 rutas, leyendo el CSS servido)
+
+Con reglas de prueba temporales en el sandbox, borradas después (`grep` sin
+restos, local y en vivo):
+
+| Config | Emitido |
+|---|---|
+| solo sombra, x=20, y=0, blur=7 | `box-shadow:20px 0px 7px rgba(255,0,0,0.5)` |
+| `disable` encendido | `box-shadow:none` |
+| solo blur, sin color | regla vacía (sin `rgba(, 1)`) |
+| solo color | `box-shadow:10px 10px 10px rgba(0,255,0,1.0)` |
+
+Después del cambio, **ninguna** instancia del sandbox estrenó sombras
+inesperadas, y el CSS base del theme sigue emitiendo exactamente lo mismo que
+antes.
+
 ## Pendientes / por hacer
 
 - **Menú móvil (`header.html`) no muestra el `<button>` accesible en el

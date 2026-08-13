@@ -16,6 +16,8 @@
 {% set transform = module.styles.transform %}
 {% set sticky    = module.styles.sticky %}
 {% set box       = module.styles.box %}
+{% set object_fit      = module.styles.image.object_fit %}
+{% set object_position = module.styles.image.object_position %}
 {# --------------------------- end styles ---------------------------- #}
 
 {# add class in array #}
@@ -32,10 +34,32 @@
                 }
             {% endif %}
             {{ helper.box_min(box, 'custom-image') }}
+            {#
+              Tamaño exacto: el CSS base tiene .custom-image__image{width:100%;
+              height:auto}, que le gana a los atributos width/height del <img>,
+              así que el alto exacto que elige el editor nunca se aplicaba.
+              Acá se emiten los dos como CSS. max-width:100% queda como guarda
+              para que un ancho fijo grande no desborde en móvil; cuando eso
+              pasa el alto sigue fijo y la imagen se deformaría — para eso está
+              el object-fit de abajo.
+            #}
             {% if image.image.size_type == 'exact' %}
                 .custom-image__anchor{
                     width:{{image.image.width}}px;
+                    max-width:100%;
                     height:auto;
+                }
+                .custom-image__image{
+                    width:{{image.image.width}}px;
+                    max-width:100%;
+                    height:{{image.image.height}}px;
+                }
+            {% endif %}
+
+            {% if object_fit or object_position %}
+                .custom-image__image{
+                    {{ 'object-fit: '+object_fit+';' if object_fit }}
+                    {{ 'object-position: '+object_position+';' if object_position }}
                 }
             {% endif %}
 
