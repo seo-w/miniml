@@ -1,9 +1,21 @@
-/*
+{% import '../helpers.html' as helper %}
+
+{#
   Estilos genéricos del carrusel vanilla (reemplaza library/slick/slick.css
   + slick-theme.css). Los estilos por-instancia (color, tamaño de flechas/
   puntos, columnas por breakpoint) se generan en el macro slider_min de
   modules/helpers.html, no acá.
-*/
+
+  Los defaults vienen de Editar tema → Carousel (compartido), así que un cliente
+  puede fijar de una vez el look de las flechas y los puntos para los SEIS
+  módulos con carrusel (icon_box, counter, image_box, post, video_box y slider)
+  en vez de repetirlo instancia por instancia. Antes estaban clavados acá.
+
+  Ojo con el punto INACTIVO: el activo ya tomaba color de un campo del módulo,
+  pero el inactivo no tenía ninguno y quedaba siempre en negro al 20%.
+#}
+{% set c = theme.carousel %}
+
 .carousel{
     position: relative;
 }
@@ -27,47 +39,50 @@
     top: 50%;
     transform: translateY(-50%);
     z-index: 10;
-    background: rgba(255,255,255,0.85);
     border: none;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    font-size: 18px;
     line-height: 1;
+    {{ 'background: '+helper.color_min(c.arrows.background_color)+';' if c.arrows.background_color.color }}
+    {% if c.arrows.size %}
+        width: {{c.arrows.size}}px;
+        height: {{c.arrows.size}}px;
+    {% endif %}
+    {{ 'font-size: '+c.arrows.font_size+'px;' if c.arrows.font_size }}
 }
-.carousel__arrow--prev{ left: 10px; }
-.carousel__arrow--next{ right: 10px; }
+.carousel__arrow--prev{ left: {{c.arrows.space|default(10)}}px; }
+.carousel__arrow--next{ right: {{c.arrows.space|default(10)}}px; }
 .carousel__dots{
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
-    margin-top: 14px;
+    {{ 'gap: '+c.dots.gap+'px;' if c.dots.gap != null }}
+    {{ 'margin-top: '+c.dots.margin_top+'px;' if c.dots.margin_top != null }}
     /*
       Los dots los inyecta buildDots() en carousel.js despues del primer paint
       (la cantidad depende de cuantos slides caben, que solo se sabe midiendo).
       Sin reservar la altura, al aparecer empujan todo lo de abajo => CLS.
-      min-height = alto del dot por defecto; si el modulo configura otro tamano,
+      min-height = alto del dot; si el modulo configura otro tamano,
       slider_min emite su propio min-height con el valor real.
-      Contrapartida: cuando no hacen falta dots (todo cabe en pantalla) queda
-      este espacio vacio. Son 10px y evita el salto, que pesa mas.
+      Contrapartida: cuando no hacen falta dots queda este espacio vacio.
     */
-    min-height: 10px;
+    min-height: {{c.dots.size|default(10)}}px;
 }
 .carousel__dot{
-    width: 10px;
-    height: 10px;
     border-radius: 50%;
     border: none;
-    background: rgba(0,0,0,0.2);
     cursor: pointer;
     padding: 0;
+    {% if c.dots.size %}
+        width: {{c.dots.size}}px;
+        height: {{c.dots.size}}px;
+    {% endif %}
+    {{ 'background: '+helper.color_min(c.dots.color)+';' if c.dots.color.color }}
 }
 .carousel__dot--active{
-    background: rgba(0,0,0,0.6);
+    {{ 'background: '+helper.color_min(c.dots.color_active)+';' if c.dots.color_active.color }}
 }

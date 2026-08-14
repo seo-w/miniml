@@ -1,3 +1,6 @@
+{% import '../helpers.html' as helper %}
+{% set m = theme.modal %}
+
 .modal--body{ overflow: hidden; }
 .modal{
     position: fixed;
@@ -6,8 +9,8 @@
     display: none;
     align-items: center;
     justify-content: center;
-    background-color: rgba(0,0,0,0.50);
-    backdrop-filter: blur(4px);
+    {{ 'background-color: '+helper.color_min(m.overlay)+';' if m.overlay.color }}
+    {{ 'backdrop-filter: blur('+m.blur+'px);' if m.blur != null }}
     height: 100vh;
     width: 100%;
     z-index: 1000;
@@ -18,7 +21,7 @@
 }
 .modal__content{
     max-width: 90%;
-    width: 800px;
+    {{ 'width: '+m.content_width+'px;' if m.content_width }}
 }
 .modal__content-button{
     display: block;
@@ -27,10 +30,10 @@
 .modal__close-button{
     display: inline-block;
     cursor: pointer;
-    color: #fff;
+    {{ 'color: '+helper.color_min(m.close_color)+';' if m.close_color.color }}
 }
 .modal__close-button>svg{
     vertical-align: middle;
     display: inline-block;
-    fill: #fff;
+    {{ 'fill: '+helper.color_min(m.close_color)+';' if m.close_color.color }}
 }

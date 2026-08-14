@@ -1,10 +1,26 @@
+{% import '../helpers.html' as helper %}
+
+{#
+  Defaults del sitio para el selector de idioma, desde la configuración del theme
+  (Editar tema → Language). Antes estaban clavados acá: `font-family: Roboto`,
+  16px, `color: red` para el enlace y `#666` para el idioma activo. Ese `red`
+  literal era el color de los idiomas en cualquier sitio que usara el módulo.
+
+  Los defaults del grupo reproducen exactamente lo anterior, así que la
+  migración no cambia nada hasta que alguien los edite. El módulo sigue
+  emitiendo su override por instancia sobre estas mismas clases.
+#}
+{% set lang = theme.language %}
+
 .language{
     display: block;
     width: 100%;
 }
+{{ helper.box_min(lang.box, 'language') }}
+
 .language__items{
     display: block;
-    margin:0px;
+    margin: 0px;
     padding: 0px;
     list-style: none;
 }
@@ -14,16 +30,25 @@
 }
 
 .language__anchor{
-    font-family: Roboto;
-    font-size: 16px;
-    color: red;
-    font-weight: 400;
-    text-decoration: none;}
-.language__anchor--active{
-    font-size: 16px;
-    color: #666;
-    font-weight: 400;
+    text-decoration: none;
 }
+{{ helper.font_min(lang.language.text, 'language__anchor') }}
+{{ helper.font_min(lang.language.default, 'language__anchor') }}
+{{ helper.box_min(lang.language.default, 'language__anchor') }}
+{% if lang.language.padding.css %}
+    .language__anchor{ {{lang.language.padding.css}} }
+{% endif %}
+
+{{ helper.font_min(lang.language.hover, 'language__anchor:hover') }}
+{{ helper.box_min(lang.language.hover, 'language__anchor:hover') }}
+
+{{ helper.font_min(lang.language.active, 'language__anchor--active') }}
+{{ helper.box_min(lang.language.active, 'language__anchor--active') }}
+
 .language__separator{
     display: inline-block;
 }
+{{ helper.font_min(lang.separator, 'language__separator') }}
+{% if lang.separator.space != null %}
+    .language__separator{ margin: 0px {{lang.separator.space}}px; }
+{% endif %}

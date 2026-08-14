@@ -1093,6 +1093,100 @@ vivo). HubSpot emite los selectores intactos, sin tocar el `+` ni el
 | Parautos `widget_1786463171910` | 2, ninguno con descripción | título | se le anula el margen de 15px |
 | sandbox `widget_1786299705791` | 3, ninguno con descripción | título | ídem |
 
+## Conectar módulos al editor de temas (lotes 2 y 3 cerrados, 2026-08-13)
+
+Pedido: poder **predefinir tipografía, colores y espaciados** de todo el theme
+desde "Editar tema", en vez de configurarlos por instancia en cada página.
+
+Diagnóstico medido: de **34 módulos**, solo **14** tenían grupo en el
+`fields.json` raíz. Lo que más pesaba eran **6 `font-family` clavadas** en el CSS
+base (`search.css` con `'Source Sans Pro'` ×2, `pagination.css` con `Roboto` ×2,
+`language.css` con `Roboto`, `reference_module.css` con `Helvetica Neue`), más
+varios colores fijos incluyendo **`red` literal** en la paginación y en el
+selector de idioma.
+
+**Patrón que se sigue** (el mismo de los 14 ya conectados, sin mecanismo nuevo):
+grupo en el `fields.json` raíz espejando el grupo `styles` del módulo (menos
+`margin`/`visible`, que son por instancia) → el CSS base hace
+`{% set g = theme.<grupo> %}` y llama a `font_min`/`box_min` → el módulo sigue
+emitiendo su override por instancia, que siempre gana por el `#hs_cos_wrapper`.
+
+**Regla de los defaults: reproducir exactamente lo que se veía.** Cada campo
+nuevo arranca con el valor que estaba clavado, así que la migración no cambia
+nada hasta que alguien lo edite.
+
+### Hecho y verificado (11 grupos nuevos; el theme pasó de 17 a 28)
+
+Cada uno verificado leyendo el **CSS compilado desde el CDN** y comparándolo
+contra el original: en los 11 el resultado es **idéntico**.
+
+| Módulo | Grupo nuevo | Nota |
+|---|---|---|
+| `pagination_listing` | `theme.pagination` | tenía `red` literal en el estado activo |
+| `language` | `theme.language` | tenía `red` literal como color de enlace |
+| `tags` | `theme.tags` | — |
+| `card_grid` | `theme.card_grid` | — |
+| `testimonial` | `theme.testimonial` | — |
+| `video_box` | `theme.video_box` | — |
+| `slider` | `theme.slider` | el `color:#fff` pisaba la tipografía del theme |
+| `carousel` | `theme.carousel` | **afecta a los 6 módulos con carrusel** |
+| `modal` | `theme.modal` | `video_box` + `video_popup` |
+| `tabs` | `theme.tabs` | solo separación entre pestañas |
+| `video` | `theme.video` | alto desktop/móvil |
+
+De paso quedaron configurables espaciados que no lo eran en ningún lado:
+separación entre números de página, entre flechas y números, entre tags, entre
+pestañas, y el **punto inactivo del carrusel** (el activo ya salía de un campo).
+
+**`image` se revisó y se dejó fuera**: `custom_image.css` es puramente
+estructural (display, line-height), no hay nada que valga la pena predefinir.
+
+### Falta (queda para una siguiente implementación, por decisión del usuario)
+
+- **`search`** — es el más grande: no tiene ni grupo `styles` propio, hay que
+  crearle **las dos capas**. Su `module.html` ya traía un comentario del autor
+  original: *"Este modulo no esta completo - Le faltan las opciones de
+  perzonalizacion"*.
+- **`reference_module.css`** (compartido por `custom_section`, `download_form`,
+  `custom_pupop`) y los valores clavados de `custom_rich_text.css`.
+
+**El detalle que hay que resolver antes**: `search.css` declara
+`font-family: 'Source Sans Pro'` **sin lista de respaldo**, y esa fuente **no se
+carga en ningún portal** (verificado: HubSpot solo emite `@font-face` para
+fuentes elegidas en campos de tipo *font*, y ahí está escrita a mano). Sin un
+`sans-serif` de respaldo, el navegador que no la tenga instalada cae a **su
+fuente por defecto**, que suele ser serif. O sea que hoy no hay un "cómo se ve"
+estable que conservar: se ve distinto según el equipo del visitante. Lo mismo
+aplica a `Helvetica Neue` en `reference_module.css`. La recomendación es pasar a
+Roboto (la base del theme, sin descarga extra).
+
+### Cómo verificar sin instancia en una página
+
+`pagination.css` solo carga en un listado de blog, y no hay ninguno accesible.
+Truco que funcionó: **agregar temporalmente el CSS a los `css_assets` del
+`meta.json` de un módulo que sí esté en `/test`** (se usó `icon_list`), leer el
+asset compilado desde el CDN, y revertir. Es aditivo y no altera nada de la
+página, porque ahí no existen los elementos que ese CSS estiliza.
+
+**Ojo al revertir**: si el `meta.json` se editó con `json.dump` de Python, el
+archivo queda reescrito entero (cambia el formato inline de `css_assets` y el
+final de línea), así que `git diff` marca TODAS las líneas aunque el contenido
+sea el mismo. Lo correcto es `git checkout <archivo>` y volver a subirlo a los
+dos portales, para que local y remoto queden byte a byte como estaban.
+
+### El CLI cambió de versión a mitad de sesión (importante)
+
+Hay **dos instalaciones** de `hs` y el PATH cambió de orden:
+
+- `/usr/local/bin/hs` → **4.1.6**, vieja: no tiene `hs cms upload` y busca un
+  `hubspot.config.yml` que no existe. Falla con
+  `Unknown arguments: upload` o `A hubspot.config.yml file could not be found`.
+- `~/.nvm/versions/node/v24.14.0/bin/hs` → **8.9.1**, la buena: usa
+  `~/.hscli/config.yml` y tiene `hs cms upload`.
+
+Si `hs cms upload` empieza a fallar de golpe, no es el theme: es que se está
+tomando la 4.1.6. Llamar al binario por ruta completa.
+
 ## Pendientes / por hacer
 
 - **Menú móvil (`header.html`) no muestra el `<button>` accesible en el

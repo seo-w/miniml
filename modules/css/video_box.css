@@ -1,3 +1,13 @@
+{% import '../helpers.html' as helper %}
+
+{#
+  Defaults del sitio para el video box, desde Editar tema → Video box. Antes el
+  tamaño del título (24px) y de la descripción (19px), el alto de la imagen, el
+  del iframe y los paddings estaban clavados acá. Los defaults reproducen
+  exactamente lo anterior; el módulo sigue emitiendo su override por instancia.
+#}
+{% set vb = theme.video_box %}
+
 .video-box{
     width: 100%;
     height: 100%;
@@ -10,8 +20,8 @@
     justify-content: center;
     position: relative;
     overflow: hidden;
-    height: 160px;
     cursor: pointer;
+    {{ 'height: '+vb.image.height+'px;' if vb.image.height }}
 }
 .video-box__feature-image-img{
     position: absolute;
@@ -22,26 +32,20 @@
     z-index: 0;
 }
 .video-box__icon{
-    width: 80px;
     height: auto;
     position: relative;
     z-index: 1;
+    {{ 'width: '+vb.image.icon_size+'px;' if vb.image.icon_size }}
 }
 .video-box__data-box{
-    padding: 10px;
+    {{ vb.padding.css if vb.padding.css }}
 }
-.video-box__title{
-    font-size: 24px;
-    margin: 0px 0px 10px 0px;
-}
-.video-box__description{
-    font-size: 19px;
-    margin: 0px 0px 10px 0px;
-}
+{{ helper.font_min(vb.title, 'video-box__title') }}
+{{ helper.font_min(vb.description, 'video-box__description') }}
 .video-box__container-iframe{
     width: 100%;
 }
 .video-box__container-iframe>iframe{
     width: 100%;
-    height: 500px;
+    {{ 'height: '+vb.iframe_height+'px;' if vb.iframe_height }}
 }

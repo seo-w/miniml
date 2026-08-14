@@ -1,10 +1,11 @@
 {% import '../helpers.html' as helper %}
+{% set v = theme.video %}
 
 .video,
 .video>iframe{
     max-width: 100%;
     width:100%;
-    height:400px;
+    {{ 'height:'+v.height+'px;' if v.height }}
     overflow: hidden;
 }
 
@@ -12,7 +13,7 @@
     
     .video,
     .video>iframe{
-        height:250px;
+        {{ 'height:'+v.height_mobile+'px;' if v.height_mobile }}
     }
 
 {% endcall %}

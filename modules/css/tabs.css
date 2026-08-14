@@ -1,3 +1,5 @@
+{% set t = theme.tabs %}
+
 .tab{
     display: block;
     margin: 0px;
@@ -6,7 +8,7 @@
 }
 .tab__item{
     display: inline-block;
-    margin: 0px 4px;
+    {{ 'margin: 0px '+t.space_between+'px;' if t.space_between != null }}
     cursor: pointer;
 }
 

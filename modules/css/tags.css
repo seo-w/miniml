@@ -1,16 +1,36 @@
+{% import '../helpers.html' as helper %}
+
+{#
+  Defaults del sitio para las etiquetas, desde Editar tema → Tags. Antes el
+  fondo (#fff), el borde (#33333313), el padding y el tamaño de letra estaban
+  clavados acá. Los defaults del grupo reproducen exactamente lo anterior.
+#}
+{% set item = theme.tags.item %}
+
 .tags{
     display: block;
     text-align: left;
     width: 100%;
 }
 .tags__anchor{
-    padding: 10px 20px;
-    background-color: #fff;
-    border: solid 1px #33333313;
     display: inline-block;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    line-height: 130%;
-    font-size: 13px;
+    {{ item.padding.css if item.padding.css }}
+    {{ 'background-color:'+helper.color_min(item.background_color)+';' if item.background_color.color }}
+    {{ item.border.css if item.border.css }}
+    {{ 'border-radius:'+item.border_radius+'px;' if item.border_radius }}
 }
+{#
+  El borde por defecto no es un campo `border` sino la declaración original
+  `solid 1px #33333313`: el campo tipo border de HubSpot no admite un alfa de 8
+  dígitos, así que se emite tal cual cuando el editor no configuró uno propio.
+#}
+{% if not item.border.css %}
+    .tags__anchor{ border: solid 1px #33333313; }
+{% endif %}
+{{ helper.font_min(item.font, 'tags__anchor') }}
+{% if item.space_between != null %}
+    .tags__anchor + .tags__anchor{ margin-left: {{item.space_between}}px; }
+{% endif %}

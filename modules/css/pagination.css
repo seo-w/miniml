@@ -1,3 +1,20 @@
+{% import '../helpers.html' as helper %}
+
+{#
+  Defaults del sitio para la paginación, tomados de la configuración del theme
+  (Editar tema → Pagination). Antes estaban clavados acá: familia Roboto,
+  #292929, #ffffff, #000 y hasta un `red` literal para el estado activo, así que
+  un cliente no podía cambiar ni la fuente ni los colores sin editar el theme.
+
+  Los valores por defecto del grupo reproducen exactamente lo que había, así que
+  esta migración no cambia nada visualmente hasta que alguien los edite.
+
+  El módulo sigue emitiendo su propio override por instancia — la regla con
+  #hs_cos_wrapper_<name> siempre le gana a este archivo.
+#}
+{% set p         = theme.pagination %}
+{% set index     = p.index_buttons %}
+{% set prev_next = p.previous_and_next %}
 
 /* container */
 .pagination{
@@ -6,33 +23,38 @@
     justify-content: center;
     margin: 0px;
 }
+{{ helper.box_min(p.box, 'pagination') }}
 
 /* navigation index */
 .pagination__link{
-    margin-right: 5px;
-    width: 35px;
-    height: 35px;
-    background-color: #ffffff;
     vertical-align: middle;
     display: flex;
     justify-content: center;
     align-items: center;
     text-decoration: none;
+    {% if index.space_between != null %}
+        margin-right: {{index.space_between}}px;
+    {% endif %}
+    {% if index.content_size %}
+        width: {{index.content_size}}px;
+        height: {{index.content_size}}px;
+    {% endif %}
+}
+{{ helper.font_min(index.font, 'pagination__link') }}
+{{ helper.box_min(index.default, 'pagination__link') }}
+{% if index.default.text_color.color %}
+    .pagination__link{ color: {{ helper.color_min(index.default.text_color) }}; }
+{% endif %}
 
-    color: #292929;
-    font-size: 15px;
-    font-weight: 300;
-    font-family: Roboto;
-}
-.pagination__link:hover{
-    background-color: #000;
-    color: #ffffff;
-}
-.pagination__link--active{
-    background-color: red;
-    color: #ffffff;
-}
+{{ helper.box_min(index.hover, 'pagination__link:hover') }}
+{% if index.hover.text_color.color %}
+    .pagination__link:hover{ color: {{ helper.color_min(index.hover.text_color) }}; }
+{% endif %}
 
+{{ helper.box_min(index.active, 'pagination__link--active') }}
+{% if index.active.text_color.color %}
+    .pagination__link--active{ color: {{ helper.color_min(index.active.text_color) }}; }
+{% endif %}
 
 /* arrows container */
 .pagination__next-link,
@@ -43,45 +65,35 @@
     align-items: center;
     text-decoration: none;
     width: auto;
-    
 }
-.pagination__next-link{
-    margin-left: 10px;
-}
-.pagination__prev-link{
-    margin-right: 10px;
-}
+{% if prev_next.space_between != null %}
+    .pagination__next-link{ margin-left: {{prev_next.space_between}}px; }
+    .pagination__prev-link{ margin-right: {{prev_next.space_between}}px; }
+{% endif %}
 .pagination__next-link:hover,
 .pagination__prev-link:hover{
-    background-color: rgba(0,0,0,0) ;
+    background-color: rgba(0,0,0,0);
 }
-
 
 /* arrows text */
-.pagination_navigation-text{
-    color: #292929;
-    font-size: 15px;
-    font-weight: 300;
-    font-family: Roboto;
-}
-.pagination__next-link:hover>.pagination_navigation-text,
-.pagination__prev-link:hover>.pagination_navigation-text{
-    color:red;
-}
+{{ helper.font_min(prev_next.default, 'pagination_navigation-text') }}
+{{ helper.font_min(prev_next.hover, 'pagination__next-link:hover>.pagination_navigation-text,
+.pagination__prev-link:hover>.pagination_navigation-text') }}
 
-/* arrows icon */
-.pagination__next-link>svg,
-.pagination__prev-link>svg{
-    fill:#292929;
-}
-.pagination__next-link>svg{
-    margin: 0px 0px 0px 10px;
-}
-.pagination__prev-link>svg{
-    margin: 0px 10px 0px 0px;
-}
-
-.pagination__next-link:hover>svg,
-.pagination__prev-link:hover>svg{
-    fill:red;
-}
+/*
+  El color del icono sale del mismo campo de fuente que el texto de la flecha
+  (font.color), igual que ya lo hace el módulo por instancia: son una sola cosa
+  visual y separarlos daría dos campos que casi siempre se ponen iguales.
+*/
+{% if prev_next.default.font.color %}
+    .pagination__next-link>svg,
+    .pagination__prev-link>svg{ fill: {{prev_next.default.font.color}}; }
+{% endif %}
+{% if prev_next.space != null %}
+    .pagination__next-link>svg{ margin: 0px 0px 0px {{prev_next.space}}px; }
+    .pagination__prev-link>svg{ margin: 0px {{prev_next.space}}px 0px 0px; }
+{% endif %}
+{% if prev_next.hover.font.color %}
+    .pagination__next-link:hover>svg,
+    .pagination__prev-link:hover>svg{ fill: {{prev_next.hover.font.color}}; }
+{% endif %}

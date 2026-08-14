@@ -1,4 +1,6 @@
-/*
+{% import '../helpers.html' as helper %}
+
+{#
   Tarjeta de testimonio + el comportamiento de "flechas al pasar el mouse".
 
   El carrusel en sí NO está acá: el módulo usa el macro slider_min de
@@ -6,10 +8,11 @@
   modules/css/carousel.css) que ya usan icon_box, counter, image_box, post,
   video_box y slider. Este archivo solo trae lo propio del testimonio.
 
-  Los valores de acá son los DEFAULTS; casi todos los pisa el módulo por
-  instancia desde los campos del editor (tamaño del avatar, colores de la
-  calificación, tipografías, radio de la tarjeta).
-*/
+  Los valores vienen de Editar tema → Testimonial; el módulo los pisa por
+  instancia. Antes estaban clavados acá.
+#}
+{% set t = theme.testimonial %}
+
 .testimonial{
     height: 100%;
     /*
@@ -21,12 +24,14 @@
 }
 .testimonial__avatar{
     display: block;
-    width: 72px;
-    height: 72px;
     /* recorta en vez de deformar cuando la foto subida no es cuadrada */
     object-fit: cover;
-    border-radius: 50%;
-    margin-bottom: 24px;
+    border-radius: {{ t.avatar.border_radius|string+'px' if t.avatar.border_radius else '50%' }};
+    {% if t.avatar.size %}
+        width: {{t.avatar.size}}px;
+        height: {{t.avatar.size}}px;
+    {% endif %}
+    {{ 'margin-bottom: '+t.avatar.margin_bottom+'px;' if t.avatar.margin_bottom != null }}
 }
 .testimonial__quote{
     /*
@@ -37,12 +42,13 @@
     */
     margin: 0px;
 }
+{{ helper.font_min(t.quote, 'testimonial__quote') }}
 .testimonial__rating{
     display: flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 24px;
-    margin-bottom: 24px;
+    {{ 'gap: '+t.rating.gap+'px;' if t.rating.gap != null }}
+    {{ 'margin-top: '+t.rating.margin_top+'px;' if t.rating.margin_top != null }}
+    {{ 'margin-bottom: '+t.rating.margin_bottom+'px;' if t.rating.margin_bottom != null }}
 }
 .testimonial__star{
     display: inline-flex;
@@ -53,26 +59,28 @@
     line-height: 0;
 }
 .testimonial__star svg{
-    width: 24px;
     height: auto;
     fill: currentColor;
+    {{ 'width: '+t.rating.size+'px;' if t.rating.size }}
 }
-.testimonial__star--empty svg{
-    fill: rgba(0,0,0,0.15);
-}
+{% if t.rating.color.color %}
+    .testimonial__star--full svg{ fill: {{ helper.color_min(t.rating.color) }}; }
+{% endif %}
+{% if t.rating.color_empty.color %}
+    .testimonial__star--empty svg{ fill: {{ helper.color_min(t.rating.color_empty) }}; }
+{% endif %}
 .testimonial__signature{
     margin: 0px;
 }
-.testimonial__author{
-    font-weight: 700;
-}
+{{ helper.font_min(t.author, 'testimonial__author') }}
+{{ helper.font_min(t.company, 'testimonial__company') }}
 .testimonial__separator{
     /*
       El espacio a los lados va acá y no como &nbsp; en el HTML: así, cuando
       el editor deja el separador vacío, el módulo no emite el <span> y
       tampoco queda el espacio suelto.
     */
-    margin: 0px 6px;
+    {{ 'margin: 0px '+t.separator_space+'px;' if t.separator_space != null }}
 }
 
 /*

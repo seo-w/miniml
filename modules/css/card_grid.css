@@ -1,3 +1,6 @@
+{% import '../helpers.html' as helper %}
+{% set cg = theme.card_grid %}
+
 /*
   Mosaico de tarjetas con imagen, overlay y título.
 
@@ -51,8 +54,8 @@
       border-box la caja no puede ser más baja que la suma de sus paddings.
       En modo columnas el módulo emite el padding-top que hace de alto.
     */
-    padding: 20px;
-    border-radius: 20px;
+    {{ cg.card.padding.css if cg.card.padding.css }}
+    {{ 'border-radius: '+cg.card.border_radius+'px;' if cg.card.border_radius }}
     text-decoration: none;
     /* el título va al fondo por defecto */
     align-items: flex-end;
@@ -79,7 +82,7 @@
     right: 0px;
     bottom: 0px;
     left: 0px;
-    background: rgba(0,0,0,0.5);
+    {{ 'background: '+helper.color_min(cg.card.overlay)+';' if cg.card.overlay.color }}
     z-index: 1;
 }
 .card-grid__title{
@@ -88,3 +91,4 @@
     margin: 0px;
     width: 100%;
 }
+{{ helper.font_min(cg.title, 'card-grid__title') }}

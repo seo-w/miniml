@@ -1,20 +1,29 @@
 {% import '../helpers.html' as helper %}
 
+{#
+  Defaults del sitio para el slider, desde Editar tema → Slider. La tipografía
+  del título y la descripción ya salían del theme (title_module.h2 y
+  rich_text_module), pero el `color:#fff` que va después las pisaba, así que el
+  color del texto del slider no se podía cambiar desde ningún lado. Ahora es un
+  campo, igual que el ancho/alto del contenido y los colores de flechas y
+  puntos.
+#}
 {% set title       = theme.title_module %}
 {% set description = theme.rich_text_module %}
+{% set s           = theme.slider %}
 
 .slider .carousel__dots{
     position: absolute;
-    bottom: 25px;
     left: 0;
     right: 0;
     margin-top: 0px;
+    {{ 'bottom: '+s.navigation.dots_bottom+'px;' if s.navigation.dots_bottom != null }}
 }
 .slider .carousel__arrow--next{
-    right: 30px;
+    right: {{s.navigation.arrow_space|default(30)}}px;
 }
 .slider .carousel__arrow--prev{
-    left: 30px;
+    left: {{s.navigation.arrow_space|default(30)}}px;
     z-index: 10;
 }
 .slider .carousel__arrow{
@@ -25,23 +34,24 @@
 
 {% call helper.media_min() %}
     .slider .carousel__arrow--next{
-        right: 10px;
+        right: {{s.navigation.arrow_space_mobile|default(10)}}px;
     }
     .slider .carousel__arrow--prev{
-        left: 10px;
+        left: {{s.navigation.arrow_space_mobile|default(10)}}px;
     }
 {% endcall %}
 
-.slider .carousel__arrow,
-.slider .carousel__dot{
-    color:#fff;
-}
-.slider .carousel__dot{
-    background: rgba(255,255,255,0.4);
-}
-.slider .carousel__dot--active{
-    background: #fff;
-}
+{% if s.navigation.arrow_color.color %}
+    .slider .carousel__arrow{ color: {{ helper.color_min(s.navigation.arrow_color) }}; }
+{% endif %}
+{% if s.navigation.dot_color.color %}
+    {# solo background: el dot es un <button> sin texto, un `color` propio no
+       pinta nada y crearía una diferencia sin explicación con el original #}
+    .slider .carousel__dot{ background: {{ helper.color_min(s.navigation.dot_color) }}; }
+{% endif %}
+{% if s.navigation.dot_color_active.color %}
+    .slider .carousel__dot--active{ background: {{ helper.color_min(s.navigation.dot_color_active) }}; }
+{% endif %}
 
 .slider{
     margin-bottom:0px !important;
@@ -53,19 +63,18 @@
     max-width: 100%;
 }
 .slider__content{
-    max-width: 1250px;
     margin: auto;
-    padding: 30px;
-    min-height:500px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    {{ 'max-width: '+s.content.max_width+'px;' if s.content.max_width }}
+    {{ 'min-height: '+s.content.min_height+'px;' if s.content.min_height }}
+    {{ s.content.padding.css if s.content.padding.css }}
 }
 .slider__content-content{
     display: flex;
     flex-direction: column;
-    max-width: 600px;
-
+    {{ 'max-width: '+s.content.text_max_width+'px;' if s.content.text_max_width }}
 }
 
 .slider__title{
@@ -75,15 +84,20 @@
 {{ helper.font_min(title.h2,'slider__title') }}
 {{ helper.font_min(description,'slider__description') }}
 
+{#
+  Va DESPUÉS de los font_min a propósito: es el color propio del slider, que
+  pisa el del theme de títulos porque el slider suele ir sobre una imagen de
+  fondo oscura. Antes era un `#fff` fijo.
+#}
 .slider__title,
 .slider__description{
-    color:#fff;
-    margin:0px 0px 20px 0px;
+    {{ 'color:'+helper.color_min(s.text.color)+';' if s.text.color.color }}
+    {{ 'margin:0px 0px '+s.text.margin_bottom+'px 0px;' if s.text.margin_bottom != null }}
 }
 
 .slider__buttons{
     vertical-align: middle;
 }
 .slider__buttons>.button{
-    margin-top:10px;
+    {{ 'margin-top:'+s.buttons_space+'px;' if s.buttons_space != null }}
 }
