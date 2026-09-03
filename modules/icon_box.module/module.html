@@ -1,5 +1,52 @@
 {% import '../helpers.html' as helper %}
 
+{#
+  La tarjeta estaba duplicada palabra por palabra entre la rama de slider y la
+  de grilla, así que cualquier arreglo había que hacerlo dos veces. Ahora es un
+  macro local (mismo criterio que image_box_card).
+
+  El <div class="icon-box__content"> que envuelve el texto SOLO se emite cuando
+  la imagen no va arriba. Es deliberado: el CSS base tiene
+  `.icon-box>*:last-child{margin:0}`, un selector de hijo directo, así que
+  envolver siempre haría que esa regla dejara de alcanzar al último elemento
+  real y aparecería un margen que hoy no está. Con el envoltorio condicional,
+  todo lo publicado (que usa el default 'top') se sigue renderizando byte a byte
+  igual, y la regla equivalente para el envoltorio se emite por instancia.
+#}
+{% macro icon_box_card(item, button_classes, position) %}
+    {% set icon             = item.icon %}
+    {% set title_text       = item.title.text %}
+    {% set title_tag        = item.title.tag %}
+    {% set description_text = item.description %}
+    {% set button_text      = item.button.text %}
+    {% set button_anchor    = item.button.anchor %}
+    {% set wrap             = position and position != 'top' %}
+    <div class="icon-box">
+        {% if icon.src %}
+            <div class="icon-box__content-icon">
+                {{ helper.image_min(icon, ['icon-box__icon']) }}
+            </div>
+        {% endif %}
+        {% if wrap %}<div class="icon-box__content">{% endif %}
+            {% if title_text %}
+                <{{title_tag}} class="icon-box__title">
+                    {{title_text}}
+                </{{title_tag}}>
+            {% endif %}
+            {% if description_text %}
+                <p class="icon-box__description">
+                    {{description_text}}
+                </p>
+            {% endif %}
+            {% if button_anchor.url.href %}
+                <div class="button-group">
+                    {% call helper.anchor_min(button_anchor, button_text, button_classes) %}{% endcall %}
+                </div>
+            {% endif %}
+        {% if wrap %}</div>{% endif %}
+    </div>
+{% endmacro %}
+
 {# -------------------------------- content ------------------------------- #}
 {# grid #}
 {% set grid         = module.grid %}
@@ -23,6 +70,7 @@
 {% set box                = module.styles.box %}
 {% set icon_height        = module.styles.icon.height %}
 {% set icon_margin_bottom = module.styles.icon.margin_bottom %}
+{% set icon_position      = module.styles.icon.image_position %}
 {% set title              = module.styles.title %}
 {% set description        = module.styles.description %}
 {% set button             = ['button', 'button--'+module.styles.button.style_button, 'button--'+module.styles.button.size_button] %}
@@ -44,6 +92,48 @@
                     max-height: {{icon_height}}px !important; 
                 }
             {% endif %}
+
+            {#
+              Posición de la imagen. 'top' es el default histórico y NO emite
+              nada, así que las instancias publicadas se ven igual.
+
+              El icono se mueve con `order`, no con `flex-direction:row-reverse`:
+              row-reverse obligaría a tocar `justify-content`, que ya lo controla
+              el text-align del box. Y el espacio icono↔texto pasa a `gap`, que
+              con un solo valor sirve para las cuatro direcciones — el
+              margin-bottom solo servía para 'arriba'.
+            #}
+            {% if icon_position and icon_position != 'top' %}
+                .icon-box{
+                    display: flex;
+                    {{ 'flex-direction: column;' if icon_position == 'bottom' }}
+                    {{ 'gap: '+icon_margin_bottom+'px;' if icon_margin_bottom }}
+                }
+                .icon-box__content-icon{
+                    margin-bottom: 0px;
+                    {#
+                      align-self en vez de align-items en .icon-box: así el icono
+                      se queda arriba pero .icon-box__content sí se estira al alto
+                      de la fila (default align-items:stretch), que es lo que le
+                      da espacio de sobra para empujar el botón al fondo.
+                    #}
+                    {{ 'align-self: flex-start;' if icon_position in ['left','right'] }}
+                    {{ 'order: 1;' if icon_position in ['right','bottom'] }}
+                }
+                .icon-box__content{
+                    display: flex;
+                    flex-direction: column;
+                    flex: 1;
+                }
+                {# el CSS base pone margin:0 al ULTIMO hijo directo de .icon-box;
+                   con el envoltorio ese último pasa a ser el wrapper, así que la
+                   misma regla hay que darla adentro #}
+                .icon-box__content>*:last-child{ margin: 0px; }
+                {# mismo empuje del botón al fondo que en el caso 'top', pero acá
+                   el que tiene que estirarse es .icon-box__content, no .icon-box.
+                   Tiene que ir DESPUÉS del reset de arriba para ganarle. #}
+                .icon-box__content .button-group{ margin-top: auto; }
+            {% endif %}
             {# end icon css #}
 
             {{ helper.box_min(box, 'icon-box') }}
@@ -59,36 +149,15 @@
 {% if show_as_slider %}
     {% call helper.slider_min(slider_options, slider_style, classes_module, id_module) %}
         {% for item in items %}
-            {% set icon             = item.icon %}
-            {% set title_text       = item.title.text %}
-            {% set title_tag        = item.title.tag %}
-            {% set description_text = item.description %}
-            {% set button_text      = item.button.text %}
-            {% set button_anchor    = item.button.anchor %}
             <div>
-                <div class="p-{{spacing_grid}}">
-                    <div class="icon-box">
-                        {% if icon.src %}
-                            <div class="icon-box__content-icon">
-                                {{ helper.image_min(icon, ['icon-box__icon']) }}
-                            </div>
-                        {% endif %}
-                        {% if title_text %}
-                            <{{title_tag}} class="icon-box__title">
-                                {{title_text}}
-                            </{{title_tag}}>
-                        {% endif %}
-                        {% if description_text %}
-                            <p class="icon-box__description">
-                                {{description_text}}
-                            </p>
-                        {% endif %}
-                        {% if button_anchor.url.href %}
-                            <div class="button-group">
-                                {% call helper.anchor_min(button_anchor, button_text, button) %}{% endcall %}
-                            </div>
-                        {% endif %}
-                    </div>
+                {#
+                  h-100 (utilidad de Bootstrap ya presente en el theme): sin esto
+                  el alto 100% de .icon-box no tiene contra qué resolverse, porque
+                  este div intermedio no es el flex item que estira el carrusel
+                  (ese es el <div> de afuera) y su alto por defecto es auto.
+                #}
+                <div class="p-{{spacing_grid}} h-100">
+                    {{ icon_box_card(item, button, icon_position) }}
                 </div>
             </div>
         {% endfor %}
@@ -96,35 +165,8 @@
 {% else %}
     {% call helper.grid_min(grid, classes_module, id_module) %}
         {% for item in items %}
-            {% set icon             = item.icon %}
-            {% set title_text       = item.title.text %}
-            {% set title_tag        = item.title.tag %}
-            {% set description_text = item.description %}
-            {% set button_text      = item.button.text %}
-            {% set button_anchor    = item.button.anchor %}
             <div class="col p-{{spacing_grid}}">
-                <div class="icon-box">
-                    {% if icon.src %}
-                        <div class="icon-box__content-icon">
-                            {{ helper.image_min(icon, ['icon-box__icon']) }}
-                        </div>
-                    {% endif %}
-                    {% if title_text %}
-                        <{{title_tag}} class="icon-box__title">
-                            {{title_text}}
-                        </{{title_tag}}>
-                    {% endif %}
-                    {% if description_text %}
-                        <p class="icon-box__description">
-                            {{description_text}}
-                        </p>
-                    {% endif %}
-                    {% if button_anchor.url.href %}
-                        <div class="button-group">
-                            {% call helper.anchor_min(button_anchor, button_text, button) %}{% endcall %}
-                        </div>
-                    {% endif %}
-                </div>
+                {{ icon_box_card(item, button, icon_position) }}
             </div>
         {% endfor %}
     {% endcall %}

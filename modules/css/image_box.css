@@ -6,7 +6,8 @@
 {% set description = theme.image_box.description %}
 
 .image-box{
-    display: block;
+    display: flex;
+    flex-direction: column;
     height: 100%;
     overflow: hidden;
 }
@@ -18,8 +19,22 @@
 }
 
 {{ helper.box_min(data_box, 'image-box__data-content') }}
+{#
+  flex column + flex:1: el contenido crece para llenar lo que sobra debajo de
+  la imagen, y eso es lo que le da espacio a .button-group para empujarse al
+  fondo con margin-top:auto. Así todas las tarjetas quedan con el botón a la
+  misma altura aunque el título/descripción tengan distinto largo.
+#}
+.image-box__data-content{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
 .image-box__data-content>*{
     text-align:{{data_box.text_align}};
+}
+.image-box__data-content .button-group{
+    margin-top: auto;
 }
 
 {{ helper.font_min(title, 'image-box__title') }}
