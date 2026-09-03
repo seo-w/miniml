@@ -157,29 +157,6 @@
                     {{ 'background-color: '+helper.color_min(image_style.background_color)+';' if image_style.background_color.color }}
                 }
             {% endif %}
-
-            {#
-              Posición de la imagen. 'top' es el default histórico y NO emite
-              nada, así que lo publicado no cambia.
-
-              Acá no hace falta tocar el HTML: .image-box__data-content ya
-              envuelve título, descripción y botones, así que la tarjeta tiene
-              exactamente dos hijos y basta con hacerla flex. El
-              `flex: 1` del contenido evita que la imagen lo aplaste cuando van
-              en fila, y el `width: auto` quita el 100% que el CSS base le pone
-              a la imagen para el modo apilado.
-            #}
-            {% if image_style.image_position and image_style.image_position != 'top' %}
-                .image-box{
-                    display: flex;
-                    {{ 'flex-direction: column;' if image_style.image_position == 'bottom' }}
-                }
-                {# flex:1 de .image-box__data-content ya sale del CSS base #}
-                {% if image_style.image_position in ['left','right'] %}
-                    .image-box__image{ width: auto; max-width: 50%; }
-                {% endif %}
-                {{ '.image-box__image{ order: 1; }' if image_style.image_position in ['right','bottom'] }}
-            {% endif %}
             {% if image_style.height_mobile %}
                 {% call helper.media_min() %}
                     .image-box__image{ height: {{image_style.height_mobile}}px; }
@@ -228,8 +205,7 @@
     {% call helper.slider_min(slider_options, slider_style, classes_module, id_module) %}
         {% for item in items %}
             <div>
-                {# h-100: ver el mismo comentario en icon_box.module #}
-                <div class="p-{{spacing_grid}} h-100">
+                <div class="p-{{spacing_grid}}">
                     {{ image_box_card(item, button_style.style_button, button_style.size_button, button_style.icon_size|default(15, true)) }}
                 </div>
             </div>

@@ -7,8 +7,7 @@
 
 {# box #}
 .icon-box{
-    display: flex;
-    flex-direction: column;
+    display: block;
     width: 100%;
     height: 100%;
 }
@@ -39,10 +38,4 @@
 }
 .icon-box__actions{
     display: block;
-}
-{# empuja el botón al fondo de la tarjeta, así todas quedan alineadas
-   aunque el título/descripción tengan distinto largo. Va DESPUÉS del
-   reset de arriba para ganarle solo al margin-top. #}
-.icon-box .button-group{
-    margin-top: auto;
 }
