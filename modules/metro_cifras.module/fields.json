@@ -1,0 +1,119 @@
+[
+  {
+    "label": "Contadores",
+    "name": "contadores",
+    "type": "group",
+    "occurrence": {
+      "min": 1,
+      "max": 12,
+      "default": 9,
+      "sorting_label_field": null
+    },
+    "children": [
+      {
+        "label": "Prefijo",
+        "name": "prefijo",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "help_text": "Símbolo antes del número, ej: $",
+        "default": ""
+      },
+      {
+        "label": "Número",
+        "name": "numero",
+        "type": "text",
+        "required": true,
+        "locked": false,
+        "allow_new_line": false,
+        "help_text": "El valor a mostrar. Solo dígitos activan el count-up (ej: 5174). Valores como '2:20' se muestran tal cual.",
+        "default": "0"
+      },
+      {
+        "label": "Sufijo",
+        "name": "sufijo",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "help_text": "Texto después del número, ej: %, millones",
+        "default": ""
+      },
+      {
+        "label": "Título",
+        "name": "titulo_cnt",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      },
+      {
+        "label": "Descripción",
+        "name": "desc_cnt",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": true,
+        "default": ""
+      },
+      {
+        "label": "Formato colombiano (separador de miles)",
+        "name": "formato_co",
+        "type": "boolean",
+        "required": false,
+        "locked": false,
+        "help_text": "Activa cuando el número tiene miles, ej: 50.563",
+        "default": false
+      }
+    ],
+    "default": [
+      { "prefijo": "",  "numero": "20",     "sufijo": "%",                "titulo_cnt": "Más capacidad de transporte",         "desc_cnt": "Es el aumento de capacidad del sistema cuando entren en operación los 13 trenes.",                              "formato_co": false },
+      { "prefijo": "",  "numero": "2:20",   "sufijo": "minutos",          "titulo_cnt": "Intervalo entre trenes",               "desc_cnt": "El tiempo de espera en el andén baja a dos minutos y veinte segundos.",                                       "formato_co": false },
+      { "prefijo": "",  "numero": "5174",   "sufijo": "viajeros",         "titulo_cnt": "Capacidad adicional por hora-sentido", "desc_cnt": "Pasajeros que la línea podrá mover de más en cada hora y cada sentido.",                                    "formato_co": true  },
+      { "prefijo": "",  "numero": "57",     "sufijo": "millones",         "titulo_cnt": "Viajeros adicionales al año",          "desc_cnt": "Viajes que el sistema suma cada año con la flota ampliada.",                                                "formato_co": false },
+      { "prefijo": "",  "numero": "21",     "sufijo": "millones de horas","titulo_cnt": "Tiempo que gana la ciudad",            "desc_cnt": "Horas que los usuarios dejan de gastar en sus desplazamientos cada año.",                                   "formato_co": false },
+      { "prefijo": "",  "numero": "50563",  "sufijo": "toneladas",        "titulo_cnt": "CO₂ que se deja de emitir",            "desc_cnt": "Emisiones evitadas al año gracias a la operación de los nuevos trenes.",                                    "formato_co": true  },
+      { "prefijo": "$", "numero": "554879", "sufijo": "millones",         "titulo_cnt": "Inversión total del proyecto",         "desc_cnt": "Recursos comprometidos entre el Metro, la Alcaldía de Medellín y la Gobernación de Antioquia.",              "formato_co": true  },
+      { "prefijo": "$", "numero": "217059", "sufijo": "millones al año",  "titulo_cnt": "Externalidades positivas",             "desc_cnt": "Valor que el proyecto devuelve a la región por fuera del recaudo.",                                         "formato_co": true  },
+      { "prefijo": "",  "numero": "72",     "sufijo": "empresas",         "titulo_cnt": "Proveedores locales vinculados",       "desc_cnt": "Compañías de la región que participan en el proceso de ensamblaje.",                                        "formato_co": false }
+    ]
+  },
+  {
+    "label": "Color del número",
+    "name": "color_num",
+    "type": "color",
+    "required": false,
+    "locked": false,
+    "help_text": "Color del número grande y del prefijo/sufijo",
+    "default": { "color": "#ffffff", "opacity": 100 }
+  },
+  {
+    "label": "Color del texto",
+    "name": "color_txt",
+    "type": "color",
+    "required": false,
+    "locked": false,
+    "help_text": "Color del título y la descripción de cada contador",
+    "default": { "color": "#ffffff", "opacity": 100 }
+  },
+  {
+    "label": "Color de los dots",
+    "name": "color_dot",
+    "type": "color",
+    "required": false,
+    "locked": false,
+    "help_text": "Color de los indicadores de página (dot activo lleno, inactivo al 40%)",
+    "default": { "color": "#ffffff", "opacity": 100 }
+  },
+  {
+    "label": "ID de anclaje",
+    "name": "anchor_id",
+    "type": "text",
+    "required": false,
+    "locked": false,
+    "allow_new_line": false,
+    "default": "cifras"
+  }
+]

@@ -43,19 +43,36 @@
                 }
             {% endif %}
 
-            {% if items_style.item_box.alignment.horizontal_align or items_style.item_box.alignment.vertical_align %}
+            {#
+              Alineación del contenido dentro de cada ítem.
+
+              Los ejes de flexbox dependen de la dirección, y este módulo cambia
+              la dirección con el campo Text position: con el icono arriba o
+              abajo, .icon-list__item pasa a `flex-direction: column`, y ahí
+              `justify-content` controla el eje VERTICAL y `align-items` el
+              horizontal — o sea, al revés. Sin esto el campo hacía lo contrario
+              de lo que dice justo en esas dos posiciones.
+
+              Por eso el valor no cambia (flex-start/center/flex-end sirve para
+              las dos propiedades); lo que se intercambia es a QUÉ propiedad va
+              cada eje.
+            #}
+            {% set h_align = items_style.item_box.alignment.horizontal_align %}
+            {% set v_align = items_style.item_box.alignment.vertical_align %}
+            {% set is_column = items_style.icon.text_position in ['top', 'bottom'] %}
+            {% if h_align or v_align %}
                 .icon-list__item{
-                    {% if items_style.item_box.alignment.horizontal_align %}
-                        justify-content:
-                        {{ 'flex-start' if items_style.item_box.alignment.horizontal_align == 'LEFT'}}
-                        {{ 'center' if items_style.item_box.alignment.horizontal_align == 'CENTER'}}
-                        {{ 'flex-end' if items_style.item_box.alignment.horizontal_align == 'RIGHT'}};
+                    {% if h_align %}
+                        {{ 'align-items' if is_column else 'justify-content' }}:
+                        {{ 'flex-start' if h_align == 'LEFT'}}
+                        {{ 'center'     if h_align == 'CENTER'}}
+                        {{ 'flex-end'   if h_align == 'RIGHT'}};
                     {% endif %}
-                    {% if items_style.item_box.alignment.vertical_align %}
-                        align-items: 
-                        {{ 'flex-end' if items_style.item_box.alignment.vertical_align == 'BOTTOM'}}
-                        {{ 'center' if items_style.item_box.alignment.vertical_align == 'MIDDLE'}}
-                        {{ 'flex-start' if items_style.item_box.alignment.vertical_align == 'TOP'}};
+                    {% if v_align %}
+                        {{ 'justify-content' if is_column else 'align-items' }}:
+                        {{ 'flex-start' if v_align == 'TOP'}}
+                        {{ 'center'     if v_align == 'MIDDLE'}}
+                        {{ 'flex-end'   if v_align == 'BOTTOM'}};
                     {% endif %}
                 }
             {% endif %}

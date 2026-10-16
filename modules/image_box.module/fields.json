@@ -171,7 +171,8 @@
               "CONTENT",
               "FILE",
               "EMAIL_ADDRESS",
-              "BLOG"
+              "BLOG",
+              "PHONE_NUMBER"
             ],
             "default": {
               "url": {
@@ -1583,6 +1584,34 @@
         "required": false,
         "locked": false,
         "children": [
+          {
+            "label": "Posicion de la imagen",
+            "name": "image_position",
+            "type": "choice",
+            "display": "select",
+            "required": false,
+            "locked": false,
+            "choices": [
+              [
+                "top",
+                "Arriba (por defecto)"
+              ],
+              [
+                "bottom",
+                "Abajo"
+              ],
+              [
+                "left",
+                "A la izquierda"
+              ],
+              [
+                "right",
+                "A la derecha"
+              ]
+            ],
+            "default": "top",
+            "help_text": "Donde va la imagen respecto al texto. 'Arriba' es el comportamiento historico y no emite CSS, asi que las instancias ya publicadas no cambian."
+          },
           {
             "label": "Ajuste (object-fit)",
             "name": "fit",

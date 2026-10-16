@@ -1,0 +1,20 @@
+{
+  "label": "Gallery",
+  "icon": "../icons-modules/image.svg",
+  "css_assets": [
+    {"path":"../css/gallery.css"}
+  ],
+  "external_js": [],
+  "global": false,
+  "help_text": "Galeria de imagenes en masonry. Sin JavaScript: las columnas y el alto de cada foto los resuelve el navegador, asi que no hay saltos de layout ni trabajo en el hilo principal.",
+  "host_template_types": [
+    "PAGE",
+    "BLOG_POST",
+    "BLOG_LISTING"
+  ],
+  "js_assets": [],
+  "other_assets": [],
+  "smart_type": "NOT_SMART",
+  "tags": [],
+  "is_available_for_new_content": true
+}

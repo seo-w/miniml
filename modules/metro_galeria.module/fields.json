@@ -1,0 +1,87 @@
+[
+  {
+    "label": "Filas de imágenes",
+    "name": "filas",
+    "type": "group",
+    "occurrence": {
+      "min": 1,
+      "max": 6,
+      "default": 3,
+      "sorting_label_field": null
+    },
+    "children": [
+      {
+        "label": "Centrar fila",
+        "name": "centrar",
+        "type": "boolean",
+        "required": false,
+        "locked": false,
+        "default": false
+      },
+      {
+        "label": "Imágenes de la fila",
+        "name": "imagenes",
+        "type": "group",
+        "occurrence": {
+          "min": 1,
+          "max": 8,
+          "default": 4,
+          "sorting_label_field": null
+        },
+        "children": [
+          {
+            "label": "Imagen",
+            "name": "imagen",
+            "type": "image",
+            "required": false,
+            "locked": false,
+            "default": { "src": "", "alt": "", "width": 0, "height": 0 }
+          },
+          {
+            "label": "Descripción / caption",
+            "name": "caption",
+            "type": "text",
+            "required": false,
+            "locked": false,
+            "allow_new_line": false,
+            "default": ""
+          }
+        ],
+        "default": [
+          { "imagen": { "src": "", "alt": "" }, "caption": "" },
+          { "imagen": { "src": "", "alt": "" }, "caption": "" },
+          { "imagen": { "src": "", "alt": "" }, "caption": "" },
+          { "imagen": { "src": "", "alt": "" }, "caption": "" }
+        ]
+      }
+    ],
+    "default": [
+      { "centrar": false, "imagenes": [
+        { "imagen": { "src": "", "alt": "" }, "caption": "" },
+        { "imagen": { "src": "", "alt": "" }, "caption": "" },
+        { "imagen": { "src": "", "alt": "" }, "caption": "" },
+        { "imagen": { "src": "", "alt": "" }, "caption": "" }
+      ]},
+      { "centrar": false, "imagenes": [
+        { "imagen": { "src": "", "alt": "" }, "caption": "" },
+        { "imagen": { "src": "", "alt": "" }, "caption": "" },
+        { "imagen": { "src": "", "alt": "" }, "caption": "" },
+        { "imagen": { "src": "", "alt": "" }, "caption": "" }
+      ]},
+      { "centrar": true, "imagenes": [
+        { "imagen": { "src": "", "alt": "" }, "caption": "" },
+        { "imagen": { "src": "", "alt": "" }, "caption": "" },
+        { "imagen": { "src": "", "alt": "" }, "caption": "" }
+      ]}
+    ]
+  },
+  {
+    "label": "ID de anclaje",
+    "name": "anchor_id",
+    "type": "text",
+    "required": false,
+    "locked": false,
+    "allow_new_line": false,
+    "default": "gal"
+  }
+]

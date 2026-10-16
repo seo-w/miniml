@@ -1,0 +1,9 @@
+{
+  "label": "Trenes metro galería",
+  "icon": "../icons-modules/image.svg",
+  "css_assets": [],
+  "js_assets": [],
+  "global": false,
+  "host_template_types": ["PAGE"],
+  "is_available_for_new_content": true
+}

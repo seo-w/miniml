@@ -1,0 +1,267 @@
+{% set videos         = module.videos %}
+{% set hint_texto     = module.hint_texto | default('Clic a las flechas para pasar los videos') %}
+{% set c_hint_fondo   = module.color_hint_fondo.color  | default('#ffffff') %}
+{% set c_hint_texto   = module.color_hint_texto.color  | default('#696969') %}
+{% set anchor_id      = module.anchor_id | default('voces') %}
+
+{% require_css %}
+<style>
+{% scope_css %}
+
+  .vc-wrap {
+    font-family: var(--metro-font, 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif);
+  }
+
+  /* ---- hint ---- */
+  .vid-hint {
+    display: block;
+    width: max-content;
+    max-width: 90%;
+    margin: 0 auto 22px;
+    background: {{ c_hint_fondo }};
+    color: {{ c_hint_texto }};
+    border-radius: 30px;
+    padding: 12px 28px;
+    font-size: .95rem;
+    font-weight: 500;
+  }
+
+  /* ---- carousel ---- */
+  .carousel {
+    position: relative;
+    max-width: 1120px;
+    margin: 0 auto;
+    overflow: hidden;
+    padding: 10px 0;
+  }
+
+  .carousel .track {
+    display: flex;
+    gap: 24px;
+    transition: transform .45s cubic-bezier(.4, 0, .2, 1);
+  }
+
+  .carousel .slide {
+    flex: 0 0 62%;
+    max-width: 62%;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 14px 34px rgba(0,0,0,.2);
+    transform: scale(.86);
+    opacity: .45;
+    transition: transform .45s, opacity .45s;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+  }
+
+  .carousel .slide.active {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .carousel .slide .thumb {
+    aspect-ratio: 16/9;
+    background: #0f0f0f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    color: #fff;
+    overflow: hidden;
+  }
+
+  .carousel .slide .thumb img {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: .62;
+  }
+
+  .carousel .slide .thumb .tag {
+    position: absolute;
+    left: 16px; bottom: 16px;
+    font-size: .8rem;
+    opacity: .9;
+    z-index: 2;
+    text-shadow: 0 1px 3px rgba(0,0,0,.6);
+    color: #fff;
+  }
+
+  .carousel .slide .thumb .ttl {
+    position: absolute;
+    left: 16px; right: 16px; top: 16px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.25;
+    z-index: 2;
+    text-shadow: 0 1px 3px rgba(0,0,0,.6);
+    color: #fff;
+  }
+
+  .carousel .slide .play {
+    width: 66px; height: 66px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--metro-green-text, #3a7a0a);
+    font-size: 1.6rem;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+  }
+
+  .carousel .arrow {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: var(--metro-ink-900, #111716);
+    color: #fff;
+    border: none;
+    font-size: 1.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    transition: background .2s;
+  }
+
+  .carousel .arrow:hover { background: var(--metro-green-500, #69BE28); }
+  .carousel .arrow:disabled { opacity: .3; cursor: default; }
+  .carousel .arrow.prev { left: 8px; }
+  .carousel .arrow.next { right: 8px; }
+
+  /* ---- dots ---- */
+  .vid-dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 26px;
+  }
+
+  .vid-dots button {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    border: none;
+    background: var(--metro-border-gray, #d0d8d4);
+    cursor: pointer;
+    transition: width .2s, border-radius .2s;
+    padding: 0;
+  }
+
+  .vid-dots button.on {
+    background: var(--metro-green-500, #69BE28);
+    width: 26px;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 768px) {
+    .carousel .slide { flex: 0 0 86%; max-width: 86%; }
+    .carousel .arrow { width: 46px; height: 46px; font-size: 1.4rem; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel .track, .carousel .slide { transition: none; }
+    .vid-dots button { transition: none; }
+  }
+
+{% end_scope_css %}
+</style>
+{% end_require_css %}
+
+<div class="vc-wrap" id="{{ anchor_id }}">
+
+  {% if hint_texto %}
+  <span class="vid-hint">{{ hint_texto }}</span>
+  {% endif %}
+
+  <div class="carousel">
+    <button class="arrow prev" id="vc-prev-{{ anchor_id }}" aria-label="Anterior">&#8249;</button>
+
+    <div class="track" id="vc-track-{{ anchor_id }}">
+      {% for v in videos %}
+      {% set href = v.enlace.url.href %}
+      {% if href %}
+        <a class="slide" href="{{ href }}"{% if v.enlace.open_in_new_tab %} target="_blank" rel="noopener"{% endif %} data-i="{{ loop.index0 }}">
+      {% else %}
+        <div class="slide" data-i="{{ loop.index0 }}">
+      {% endif %}
+          <div class="thumb">
+            {% if v.imagen.src %}
+              <img src="{{ v.imagen.src }}" alt="{{ v.titulo }}" loading="lazy" width="{{ v.imagen.width }}" height="{{ v.imagen.height }}">
+            {% endif %}
+            <span class="ttl">{{ v.titulo }}</span>
+            <div class="play" aria-hidden="true">&#9654;</div>
+            <span class="tag">{{ v.etiqueta }}</span>
+          </div>
+      {% if href %}
+        </a>
+      {% else %}
+        </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+
+    <button class="arrow next" id="vc-next-{{ anchor_id }}" aria-label="Siguiente">&#8250;</button>
+  </div>
+
+  <div class="vid-dots" id="vc-dots-{{ anchor_id }}" role="tablist" aria-label="Videos"></div>
+
+</div>
+
+{% require_js position="footer" %}
+<script>
+(function () {
+  var track = document.getElementById('vc-track-{{ anchor_id }}');
+  if (!track) return;
+  var dotsWrap = document.getElementById('vc-dots-{{ anchor_id }}');
+  var prev     = document.getElementById('vc-prev-{{ anchor_id }}');
+  var next     = document.getElementById('vc-next-{{ anchor_id }}');
+  var slides   = Array.prototype.slice.call(track.querySelectorAll('.slide'));
+  var active   = 0;
+
+  /* construir dots */
+  slides.forEach(function (s, i) {
+    var d = document.createElement('button');
+    d.type = 'button';
+    d.setAttribute('aria-label', 'Ver: ' + (s.querySelector('.ttl') ? s.querySelector('.ttl').textContent : i + 1));
+    d.addEventListener('click', function () { setActive(i); });
+    dotsWrap.appendChild(d);
+  });
+
+  var dots = dotsWrap.querySelectorAll('button');
+
+  function setActive(i) {
+    active = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach(function (s, j) { s.classList.toggle('active', j === active); });
+    Array.prototype.forEach.call(dots, function (d, j) {
+      d.classList.toggle('on', j === active);
+      d.setAttribute('aria-current', j === active ? 'true' : 'false');
+    });
+    var el = slides[active];
+    track.style.transform = 'translateX(' + (track.parentElement.clientWidth / 2 - (el.offsetLeft + el.offsetWidth / 2)) + 'px)';
+    if (prev) prev.disabled = active === 0;
+    if (next) next.disabled = active === slides.length - 1;
+  }
+
+  /* click en slide no-activo → activar sin seguir el enlace */
+  slides.forEach(function (s, i) {
+    s.addEventListener('click', function (e) {
+      if (i !== active) { e.preventDefault(); setActive(i); }
+    });
+  });
+
+  if (prev) prev.addEventListener('click', function () { setActive(active - 1); });
+  if (next) next.addEventListener('click', function () { setActive(active + 1); });
+  window.addEventListener('resize', function () { setActive(active); });
+
+  setActive(0);
+})();
+</script>
+{% end_require_js %}

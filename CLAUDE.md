@@ -928,6 +928,247 @@ HTML servido del sandbox (emitió `width`/`max-width`/`height` y
 `grep` que no quedaron restos, local y en vivo, y que la instancia existente
 sigue renderizando sin CSS extra.
 
+## Enlaces de teléfono en todo el theme (2026-08-13)
+
+Pregunta: si el campo de enlace permite un teléfono. **No lo permitía**, y
+habilitarlo solo en el `fields.json` no habría bastado.
+
+Dos cambios:
+
+1. **`PHONE_NUMBER` agregado a `supported_types`** en los **11** campos de
+   enlace del theme (`button`, `card_grid`, `counter`, `gallery`, `icon_box`,
+   `icon_list`, `icons`, `image`, `image_box`, `slider`, `title`). Es puramente
+   aditivo: solo suma una opción al selector, no cambia nada publicado.
+   HubSpot acepta ese tipo — verificado subiéndolo antes de escribir el resto.
+2. **`anchor_min` (`modules/helpers.html`) ahora antepone `tel:`.** Esto era lo
+   imprescindible: el macro solo trataba de forma especial `EMAIL_ADDRESS` (le
+   pone `mailto:`), y un teléfono caía en el `else` saliendo como
+   `href="5512345678"`, un enlace que no marca nada. El macro lo usan **11
+   módulos**, así que el arreglo sirve para todos.
+
+**La guarda es `'tel:' in url` y no `startswith`**, por el límite ya documentado
+de HubL sobre Java. Cubre que el editor escriba el `tel:` a mano o que HubSpot
+lo devuelva ya prefijado.
+
+Verificado en vivo pasándole valores literales al macro:
+
+| Entrada | Emitido |
+|---|---|
+| `5512345678` | `href="tel:5512345678"` |
+| `tel:+525512345678` | `href="tel:+525512345678"` (sin doble prefijo) |
+| correo | `href="mailto:hola@triario.com"` (intacto) |
+
+Prueba revertida, sin restos local ni en vivo, y los enlaces existentes siguen
+renderizando (3 de icon_list, 12 botones).
+
+**Workaround que ya no hace falta**: antes se podía poner tipo *External* y
+escribir la URL completa `tel:+52...` a mano. Sigue funcionando, pero ahora hay
+opción propia.
+
+## `icon_list`: el campo *Alignment* y los ejes de flexbox (2026-08-13)
+
+Pregunta del usuario: si el campo para centrar el box funciona o tiene bug.
+
+**Sí funciona**, y el contrato de valores es el correcto. Verificado poniendo un
+default temporal para que aplicara a la instancia real de `/test`: con
+`horizontal_align: CENTER` / `vertical_align: MIDDLE` emite
+`justify-content:center; align-items:center`. Vale la pena anotarlo porque
+`icon_list` es el **único** módulo del theme que usa un campo de tipo
+`alignment`, así que no había con qué comparar el mapeo — HubSpot devuelve
+`LEFT/CENTER/RIGHT` y `TOP/MIDDLE/BOTTOM` en mayúsculas, como asumía el código.
+
+**Pero tenía un bug real en la interacción con *Text position*.** Con el icono
+arriba o abajo el módulo emite `flex-direction: column` sobre
+`.icon-list__item`, y en flexbox los ejes dependen de la dirección: en columna
+`justify-content` controla el eje VERTICAL y `align-items` el horizontal. O sea
+que en esas dos posiciones el campo hacía exactamente lo contrario de su
+etiqueta.
+
+Arreglado intercambiando **a qué propiedad va cada eje** cuando la dirección es
+columna. Los valores no cambian (`flex-start`/`center`/`flex-end` sirven para
+las dos propiedades), solo el nombre de la propiedad.
+
+| Dirección | Horizontal del campo | Vertical del campo |
+|---|---|---|
+| fila (default) | `justify-content` | `align-items` |
+| columna (icono arriba/abajo) | `align-items` | `justify-content` |
+
+Verificado en vivo las dos direcciones con la misma configuración
+(`CENTER` + `TOP`): en columna sale `align-items:center; justify-content:flex-start`,
+en fila `justify-content:center; align-items:flex-start`. Defaults revertidos a
+`null` después, y confirmado que sin configurar no se emite ninguna regla.
+
+**Ojo si algún día se toca `icon_box` o `image_box`**: les acabo de agregar
+`image_position`, que también cambia `flex-direction`. Hoy no tienen campo de
+alineación, pero si se les agrega, hay que aplicar este mismo intercambio.
+
+## Posición de la imagen en `icon_box` e `image_box` (2026-08-13)
+
+Pedido: poder elegir si la imagen va arriba, abajo, a la izquierda o a la
+derecha, con **arriba** por defecto. Campo `image_position` en
+`styles.icon` (icon_box) y `styles.image` (image_box).
+
+**El nombre del campo diverge a propósito de `icon_list`.** Ahí el campo se
+llama `text_position` y dice dónde va el TEXTO respecto al icono, así que
+"Left of icon" significa icono a la derecha — el usuario se topó justo con esa
+confusión. Acá es `image_position` y dice dónde va la imagen, que es como se
+pidió. No unificar sin pensarlo: cambiar `icon_list` rompería instancias.
+
+**`'top'` no emite absolutamente nada**, así que todo lo publicado sigue igual.
+Verificado en vivo: con el default, cero reglas nuevas y las 10 instancias de
+`/test` renderizan idéntico.
+
+### `image_box` no necesitó tocar el HTML
+
+Ya tenía `.image-box__data-content` envolviendo título, descripción y botones,
+así que la tarjeta tiene exactamente dos hijos y basta con hacerla flex. Se
+emite además `flex:1` en el contenido (para que la imagen no lo aplaste en fila)
+y `width:auto; max-width:50%` en la imagen, que anula el `width:100%` del CSS
+base pensado para el modo apilado.
+
+### `icon_box` sí, y el envoltorio es CONDICIONAL
+
+Ahí el título, la descripción y el botón son **hijos directos** de `.icon-box`,
+y el CSS base tiene `.icon-box>*:last-child{margin:0}` — un selector de hijo
+directo. Envolver siempre haría que esa regla dejara de alcanzar al último
+elemento real y aparecería un margen que hoy no está.
+
+Por eso `<div class="icon-box__content">` **solo se emite cuando la posición no
+es 'top'**, y en ese caso se emite también por instancia la regla equivalente
+`.icon-box__content>*:last-child{margin:0px}`.
+
+De paso, la tarjeta de `icon_box` estaba **duplicada palabra por palabra** entre
+la rama de slider y la de grilla. Ahora es un macro local `icon_box_card`, mismo
+criterio que `image_box_card`.
+
+### Detalles de implementación (los mismos criterios que `icon_list`)
+
+- El icono se mueve con **`order`**, no con `flex-direction: row-reverse`:
+  row-reverse obligaría a tocar `justify-content`, que ya lo controla el
+  text-align del box.
+- El espacio icono↔texto pasa de `margin-bottom` a **`gap`** cuando la posición
+  no es 'top': un solo valor cubre las cuatro direcciones, mientras que
+  `margin-bottom` solo servía para "arriba". Reusa el campo que ya existía.
+
+### Verificado en vivo, las cuatro ramas
+
+| Posición | Emitido |
+|---|---|
+| `top` (default) | nada — instancias intactas, sin envoltorio |
+| `left` | `display:flex; align-items:flex-start` + envoltorio en las 5 instancias + `:last-child` compensatorio |
+| `bottom` | `display:flex; flex-direction:column` + `order:1` en el icono |
+| `right` | igual que left más `order:1` |
+
+Pruebas revertidas y confirmado que el default vuelve a emitir cero.
+
+## Módulo nuevo: `gallery.module` (masonry de imágenes, 2026-08-13)
+
+Pedido: una galería de imágenes en masonry, **optimizada para PageSpeed**.
+
+### Por qué NO se reusó `card_grid`
+
+`card_grid` ya hace masonry, pero con `grid-row: span N`, y ese span solo se
+puede calcular **en el servidor** si el alto es un valor explícito — por eso ese
+módulo obliga a escribir una altura por tarjeta. En una galería de fotos el alto
+lo tiene que dar la proporción real de cada imagen, y HubL no la conoce al
+renderizar. Además `card_grid` trae overlay y título, que acá sobran.
+
+### Layout: multicolumna, sin JavaScript
+
+`columns` de CSS. El navegador resuelve el reparto y cada foto conserva su forma
+sin recortes. **Cero bytes de JS**: ni para el layout ni para el diferido.
+
+Contrapartida aceptada (la misma que ya está documentada para el modo `columns`
+de `card_grid`): multicolumna llena cada columna hasta una altura objetivo en vez
+de repartir en round-robin, así que 7 fotos en 3 columnas pueden dar 3+3+1, y el
+orden de lectura es por columna. En una galería eso pesa mucho menos que en un
+grid de tarjetas con texto. `grid-template-rows: masonry` lo resolvería en una
+línea pero todavía no tiene soporte; marcado con `ponytail:` en el código.
+
+### Las decisiones de rendimiento, y por qué
+
+- **Campo *Ancho máximo de las imágenes* (default 800px) con `resize_image_url`.**
+  Es el ajuste que más pesa y sale de una medición de este mismo theme: tres
+  imágenes servidas con su ancho original (4096, 3396 y 2048 px) sumaban
+  **984 KB, el 85% del peso de la página** — todo el CSS del sitio son 25 KB.
+  El texto de ayuda del campo explica que el `sizes` de HubSpot no se puede
+  sobreescribir, así que hay que poner el ancho REAL en pantalla.
+- **`width` y `height` en cada `<img>`**, con el alto calculado desde la
+  proporción del archivo. Es lo que reserva el espacio antes de descargar (CLS
+  en cero) y además lo único que activa el `srcset` automático de HubSpot.
+- **Campo *Imágenes con carga inmediata* (default 1).** Las primeras N van sin
+  `loading="lazy"`, porque una imagen lazy la descubre el navegador más tarde
+  que el preload scanner y eso retrasa el LCP si la galería está arriba. El
+  resto sí es lazy.
+- **`decoding="async"`** para sacar la decodificación del hilo principal.
+- **`<img>` y no `background-image`** — un background de CSS no recibe srcset,
+  WebP automático, `width`/`height` ni `loading`.
+- **NO se usó `content-visibility: auto`**, que a primera vista encajaba: en un
+  contenedor multicolumna el navegador necesita el alto real de cada ítem para
+  balancear las columnas, y con el `contain-intrinsic-size` estimado el reparto
+  cambiaría al hacer scroll — o sea, justo el CLS que se quiere evitar.
+- El radio va sobre la `<img>` y el `<a>`, no sobre un contenedor (mismo
+  criterio que el fix de `image.module` del mismo día).
+
+### Verificado
+
+El CSS compilado se leyó desde el CDN. **Y las expresiones riesgosas se probaron
+con datos reales**, que era obligatorio acá: los 6 ítems por defecto traen la
+imagen vacía, así que el `{% if item.image.src %}` salta el cuerpo del loop y la
+validación de subida **no lo ejecuta** (es el aprendizaje ya documentado de que
+un `for` sobre una lista vacía pasa la validación igual). Se forzaron
+temporalmente en `image.module`, que sí tiene una imagen real en `/test`:
+
+```
+origw=3396 origh=2264 -> w=800 h=533 | resize_image_url -> ...?width=800
+```
+
+La proporción sale exacta y `resize_image_url` entrega el ancho pedido. Pruebas
+revertidas, `grep` sin restos local y en vivo.
+
+### Sin verificar a ojo
+
+No hay ninguna instancia en una página todavía, así que el render final del
+masonry no se ha visto. Hay que agregarlo a `/test` desde el editor.
+
+## `image.module`: el border radius que se emitía y no se veía (2026-08-13)
+
+Reporte del usuario, con el diagnóstico ya correcto: el campo *Border radius*
+no hacía nada.
+
+`box_min(box, 'custom-image')` aplica el radio a **`.custom-image`**, que es el
+`<div>` envolvente, y ese div **no tiene `overflow`**
+(`modules/css/custom_image.css`). El `<img>` de adentro no recibía radio y
+pintaba sus esquinas cuadradas encima. Pasaba en las **tres** ramas del
+template: imagen sola, con enlace (`a.custom-image__anchor`) y con lightbox
+(`figure.custom-image__figure`).
+
+**La regla de fondo**, que conviene tener presente para cualquier módulo:
+`border-radius` en un **contenedor** solo recorta a sus hijos si hay
+`overflow:hidden` (o `clip-path`); aplicado a un **`<img>`** funciona solo,
+porque es un elemento reemplazado y el radio recorta su propio contenido.
+
+Arreglado emitiendo el radio sobre `.custom-image__image`,
+`.custom-image__anchor` y `.custom-image__figure`, no sobre el div.
+
+**Por qué NO se usó `overflow:hidden` en `.custom-image`**, que era la salida
+obvia: el grupo *Transform* (escala, traslación, rotación) se aplica a
+`.custom-image__anchor` o a `.custom-image__image` según haya enlace o no, así
+que recortar en el contenedor habría **cortado** las instancias publicadas que
+hoy se desbordan a propósito. Redondear el `<img>` no tiene ese efecto
+colateral. De rebote, el `<a>` ya trae `overflow:hidden` en el CSS base, así que
+darle el radio a él además resuelve bien el caso "enlace + zoom en hover".
+
+Es el mismo tipo de trampa que el `margin-bottom` sobre elementos inline de
+`icon_list`: la regla se emite, está en el HTML servido, y el navegador la
+ignora o la tapa.
+
+**Aviso de método**: al verificar, un `grep` con `[^\n]*...{...}` sobre el HTML
+servido **solo captura reglas de una línea**, así que en una lista de selectores
+separados por coma parece que solo se emitió el último. El bloque crudo estaba
+bien; el defectuoso era el chequeo. Verificado que `{% scope_css %}` prefija con
+`#hs_cos_wrapper_<name>` **cada** selector de la lista, no solo el primero.
+
 ## `box-shadow`: dos bugs en los macros compartidos (2026-08-12)
 
 Reporte sobre `icons.module`: la sombra configurada no se aplica, y la que no se

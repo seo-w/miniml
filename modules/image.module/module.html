@@ -34,6 +34,31 @@
                 }
             {% endif %}
             {{ helper.box_min(box, 'custom-image') }}
+
+            {#
+              El border-radius de box_min cae sobre .custom-image, que es el
+              <div> envolvente — y ese div NO tiene overflow, así que el <img>
+              de adentro pintaba sus esquinas cuadradas encima y el radio no se
+              veía nunca. Pasaba en las tres ramas del template: imagen sola,
+              con enlace y con lightbox.
+
+              Se emite sobre los elementos que muestran la imagen. Un <img> es
+              un elemento reemplazado: el radio recorta su propio contenido sin
+              necesidad de overflow.
+
+              NO se resuelve con overflow:hidden en .custom-image, que sería lo
+              obvio: el grupo Transform (escala/traslación/rotación) se aplica a
+              .custom-image__anchor o a .custom-image__image, así que recortar
+              en el contenedor cortaría las instancias publicadas que hoy se
+              desbordan a propósito.
+            #}
+            {% if box.border_radius %}
+                .custom-image__image,
+                .custom-image__anchor,
+                .custom-image__figure{
+                    border-radius: {{box.border_radius}}px;
+                }
+            {% endif %}
             {#
               Tamaño exacto: el CSS base tiene .custom-image__image{width:100%;
               height:auto}, que le gana a los atributos width/height del <img>,

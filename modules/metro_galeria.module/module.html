@@ -1,0 +1,216 @@
+{% set filas     = module.filas %}
+{% set anchor_id = module.anchor_id | default('gal') %}
+
+{% require_css %}
+<style>
+{% scope_css %}
+
+  .gal {
+    --h: 190px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .gal__fila {
+    display: flex;
+    gap: 10px;
+  }
+
+  .gal__fila--centro {
+    justify-content: center;
+  }
+
+  .gal__f {
+    position: relative;
+    margin: 0;
+    height: var(--h);
+    overflow: hidden;
+    border-radius: 12px;
+    flex: var(--ar) 1 0;
+  }
+
+  .gal__fila--centro .gal__f {
+    flex: 0 0 calc(var(--ar) * var(--h));
+  }
+
+  .gal__f img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gal__btn {
+    position: absolute; inset: 0;
+    width: 100%; border: 0; padding: 0;
+    cursor: zoom-in;
+    background: linear-gradient(180deg, rgba(11,21,8,0) 35%, rgba(11,21,8,.85) 100%);
+    opacity: 0;
+    transition: opacity .28s ease;
+    display: flex; align-items: flex-end; text-align: left;
+  }
+
+  .gal__f:hover .gal__btn,
+  .gal__btn:focus-visible { opacity: 1; }
+
+  .gal__cap {
+    color: #fff;
+    font-size: 13px; line-height: 1.35;
+    padding: 12px 14px;
+    transform: translateY(8px);
+    transition: transform .28s ease;
+  }
+
+  .gal__f:hover .gal__cap,
+  .gal__btn:focus-visible .gal__cap { transform: none; }
+
+  @media (hover: none) {
+    .gal__btn { opacity: 1; background: linear-gradient(180deg, rgba(11,21,8,0) 45%, rgba(11,21,8,.8) 100%); }
+    .gal__cap { transform: none; }
+  }
+
+  @media (max-width: 1200px) { .gal { --h: 150px; } }
+
+  @media (max-width: 768px) {
+    .gal { --h: auto; }
+    .gal__fila,
+    .gal__fila--centro { display: grid; grid-template-columns: 1fr 1fr; }
+    .gal__f,
+    .gal__fila--centro .gal__f { flex: none; height: auto; aspect-ratio: 4/3; }
+  }
+
+  /* ---- lightbox ---- */
+  .gal-lb {
+    border: 0; padding: 0; background: transparent;
+    max-width: min(94vw, 1100px); max-height: 94vh;
+    color: #fff;
+  }
+
+  .gal-lb::backdrop { background: rgba(7,12,6,.92); }
+
+  .gal-lb__fig {
+    margin: 0; display: grid; gap: 12px; justify-items: center;
+  }
+
+  .gal-lb__fig img {
+    max-width: 100%; max-height: 74vh; width: auto;
+    border-radius: 12px; object-fit: contain;
+  }
+
+  .gal-lb__cap {
+    font-size: 15px; line-height: 1.35;
+    color: #E6EDE1; text-align: center; max-width: 70ch;
+  }
+
+  .gal-lb__n {
+    font-size: 12px; line-height: 1.8;
+    color: #9AA891; text-align: center;
+  }
+
+  .gal-lb__cerrar, .gal-lb__flecha {
+    position: absolute; border: 0; cursor: pointer; border-radius: 50%;
+    background: var(--metro-green-500, #69BE28); color: #fff;
+    width: 44px; height: 44px;
+    display: grid; place-items: center;
+    font-size: 20px; line-height: 1;
+  }
+
+  .gal-lb__cerrar { top: -6px; right: -6px; font-size: 22px; }
+  .gal-lb__flecha { top: 50%; transform: translateY(-50%); }
+  .gal-lb__flecha--prev { left: -56px; }
+  .gal-lb__flecha--next { right: -56px; }
+  .gal-lb__cerrar:hover,
+  .gal-lb__flecha:hover { background: var(--metro-green-600, #5aaa1c); }
+
+  @media (max-width: 992px) {
+    .gal-lb__flecha--prev { left: 4px; }
+    .gal-lb__flecha--next { right: 4px; }
+    .gal-lb__cerrar { top: 4px; right: 4px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gal__btn, .gal__cap { transition: none; }
+  }
+
+{% end_scope_css %}
+</style>
+{% end_require_css %}
+
+{% set idx = namespace(val=0) %}
+<div class="gal" id="{{ anchor_id }}">
+  {% for fila in filas %}
+  <div class="gal__fila{% if fila.centrar %} gal__fila--centro{% endif %}">
+    {% for img in fila.imagenes %}
+    {% if img.imagen.width and img.imagen.height and img.imagen.height > 0 %}
+      {% set ar = img.imagen.width / img.imagen.height %}
+    {% else %}
+      {% set ar = 1.5 %}
+    {% endif %}
+    <figure class="gal__f" style="--ar:{{ ar }}">
+      {% if img.imagen.src %}
+      <img src="{{ img.imagen.src }}" alt="{{ img.imagen.alt | default(img.caption) }}" loading="lazy"{% if img.imagen.width %} width="{{ img.imagen.width }}"{% endif %}{% if img.imagen.height %} height="{{ img.imagen.height }}"{% endif %}>
+      {% endif %}
+      <button class="gal__btn" type="button" data-i="{{ idx.val }}" aria-label="Ampliar{% if img.caption %}: {{ img.caption }}{% endif %}">
+        {% if img.caption %}<span class="gal__cap">{{ img.caption }}</span>{% endif %}
+      </button>
+    </figure>
+    {% set idx.val = idx.val + 1 %}
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+
+<dialog class="gal-lb" id="gal-lb-{{ anchor_id }}" aria-label="Imagen ampliada">
+  <button class="gal-lb__cerrar" type="button" id="gal-lb-x-{{ anchor_id }}" aria-label="Cerrar">&#215;</button>
+  <button class="gal-lb__flecha gal-lb__flecha--prev" type="button" id="gal-lb-prev-{{ anchor_id }}" aria-label="Imagen anterior">&#8249;</button>
+  <button class="gal-lb__flecha gal-lb__flecha--next" type="button" id="gal-lb-next-{{ anchor_id }}" aria-label="Imagen siguiente">&#8250;</button>
+  <figure class="gal-lb__fig">
+    <img id="gal-lb-img-{{ anchor_id }}" src="" alt="">
+    <figcaption>
+      <p class="gal-lb__cap" id="gal-lb-cap-{{ anchor_id }}"></p>
+      <p class="gal-lb__n"   id="gal-lb-n-{{ anchor_id }}"></p>
+    </figcaption>
+  </figure>
+</dialog>
+
+{% require_js position="footer" %}
+<script>
+(function () {
+  var wrap = document.getElementById('{{ anchor_id }}');
+  if (!wrap) return;
+  var lb    = document.getElementById('gal-lb-{{ anchor_id }}');
+  var img   = document.getElementById('gal-lb-img-{{ anchor_id }}');
+  var cap   = document.getElementById('gal-lb-cap-{{ anchor_id }}');
+  var num   = document.getElementById('gal-lb-n-{{ anchor_id }}');
+  var figs  = Array.prototype.slice.call(wrap.querySelectorAll('.gal__f'));
+  var i     = 0;
+  var origen = null;
+
+  function pintar(k) {
+    i = (k + figs.length) % figs.length;
+    var f = figs[i].querySelector('img');
+    if (f) { img.src = f.currentSrc || f.src; img.alt = f.alt; }
+    var c = figs[i].querySelector('.gal__cap');
+    cap.textContent = c ? c.textContent : '';
+    num.textContent = 'Imagen ' + (i + 1) + ' de ' + figs.length;
+  }
+
+  function abrir(k, btn) { origen = btn; pintar(k); lb.showModal(); }
+
+  figs.forEach(function (f, k) {
+    var b = f.querySelector('.gal__btn');
+    b.addEventListener('click', function () { abrir(k, b); });
+  });
+
+  document.getElementById('gal-lb-prev-{{ anchor_id }}').addEventListener('click', function () { pintar(i - 1); });
+  document.getElementById('gal-lb-next-{{ anchor_id }}').addEventListener('click', function () { pintar(i + 1); });
+  document.getElementById('gal-lb-x-{{ anchor_id }}').addEventListener('click', function () { lb.close(); });
+
+  lb.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { e.preventDefault(); pintar(i + 1); }
+    else if (e.key === 'ArrowLeft') { e.preventDefault(); pintar(i - 1); }
+  });
+  lb.addEventListener('click', function (e) { if (e.target === lb) lb.close(); });
+  lb.addEventListener('close', function () { if (origen) origen.focus(); });
+})();
+</script>
+{% end_require_js %}

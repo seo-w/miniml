@@ -1,0 +1,66 @@
+[
+  {
+    "label": "Paneles",
+    "name": "paneles",
+    "type": "group",
+    "occurrence": {
+      "min": 1,
+      "max": 10,
+      "default": 5,
+      "sorting_label_field": null
+    },
+    "children": [
+      {
+        "label": "Kicker (ej: Etapa 1)",
+        "name": "kicker",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      },
+      {
+        "label": "Título",
+        "name": "titulo",
+        "type": "text",
+        "required": true,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      },
+      {
+        "label": "Descripción",
+        "name": "desc",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": true,
+        "default": ""
+      },
+      {
+        "label": "Imagen de fondo",
+        "name": "imagen",
+        "type": "image",
+        "required": false,
+        "locked": false,
+        "default": { "src": "", "alt": "", "width": 0, "height": 0 }
+      }
+    ],
+    "default": [
+      { "kicker": "Etapa 1", "titulo": "Estructura",  "desc": "La caja llega desde la planta de origen, se verifica y se alista antes de entrar a la línea de montaje.",                 "imagen": { "src": "", "alt": "Operarios trabajando sobre una estructura de aluminio",         "width": 1200, "height": 900 } },
+      { "kicker": "Etapa 2", "titulo": "Bastidores",  "desc": "Se montan los conjuntos rodantes sobre los que se apoya el tren y se ajusta la geometría del bogie.",                    "imagen": { "src": "", "alt": "Línea de estructuras y utillajes en la nave de ensamblaje",   "width": 1200, "height": 900 } },
+      { "kicker": "Etapa 3", "titulo": "Pintura",     "desc": "La caja recibe el tratamiento superficial y la imagen institucional del Metro de Medellín.",                              "imagen": { "src": "", "alt": "Caja de tren dentro de la cabina de pintura",                 "width": 1200, "height": 900 } },
+      { "kicker": "Etapa 4", "titulo": "Sistemas",    "desc": "Cableado, control y electrónica se integran y se prueban circuito por circuito.",                                        "imagen": { "src": "", "alt": "Operario preparando arneses eléctricos",                       "width": 1200, "height": 900 } },
+      { "kicker": "Etapa 5", "titulo": "Interiores",  "desc": "Se instala el interior del coche y se valida el conjunto antes de entregarlo a pruebas.",                               "imagen": { "src": "", "alt": "Interior terminado de un coche de tren",                      "width": 1200, "height": 900 } }
+    ]
+  },
+  {
+    "label": "ID de anclaje",
+    "name": "anchor_id",
+    "type": "text",
+    "required": false,
+    "locked": false,
+    "allow_new_line": false,
+    "default": "etapas"
+  }
+]

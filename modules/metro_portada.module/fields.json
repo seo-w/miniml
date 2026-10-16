@@ -1,0 +1,172 @@
+[
+  {
+    "label": "Imagen de portada",
+    "name": "image",
+    "type": "image",
+    "required": false,
+    "locked": false,
+    "responsive": false,
+    "resizable": false,
+    "show_loading": true,
+    "default": {
+      "size_type": "auto",
+      "src": "",
+      "alt": "",
+      "loading": "disabled"
+    }
+  },
+  {
+    "label": "Imagen móvil (opcional)",
+    "name": "image_mobile",
+    "type": "image",
+    "required": false,
+    "locked": false,
+    "responsive": false,
+    "resizable": false,
+    "show_loading": true,
+    "help_text": "Si se sube una imagen aquí, se usará en pantallas ≤768 px. Si no, se usa la imagen principal.",
+    "default": {
+      "size_type": "auto",
+      "src": "",
+      "alt": "",
+      "loading": "eager"
+    }
+  },
+  {
+    "label": "Posición imagen (desktop)",
+    "name": "image_position",
+    "type": "choice",
+    "display": "select",
+    "required": false,
+    "locked": false,
+    "choices": [
+      ["58% 50%", "Centro izquierda (default)"],
+      ["50% 50%", "Centro"],
+      ["66% 50%", "Centro derecha"],
+      ["50% 20%", "Arriba centro"],
+      ["50% 80%", "Abajo centro"]
+    ],
+    "default": "58% 50%"
+  },
+  {
+    "label": "Posición imagen (móvil)",
+    "name": "image_position_mobile",
+    "type": "choice",
+    "display": "select",
+    "required": false,
+    "locked": false,
+    "choices": [
+      ["66% 50%", "Centro derecha (default)"],
+      ["50% 50%", "Centro"],
+      ["58% 50%", "Centro izquierda"],
+      ["50% 20%", "Arriba centro"],
+      ["50% 80%", "Abajo centro"]
+    ],
+    "default": "66% 50%"
+  },
+  {
+    "label": "Eyebrow",
+    "name": "eyebrow",
+    "type": "text",
+    "required": false,
+    "locked": false,
+    "allow_new_line": false,
+    "show_emoji_picker": false,
+    "default": "Ensamblaje local · Patios de Bello"
+  },
+  {
+    "label": "Título",
+    "name": "title",
+    "type": "richtext",
+    "required": false,
+    "locked": false,
+    "default": "13 nuevos trenes para ampliar <em>nuestra capacidad</em>"
+  },
+  {
+    "label": "Lead",
+    "name": "lead",
+    "type": "richtext",
+    "required": false,
+    "locked": false,
+    "default": "Por primera vez, los trenes del Metro de Medellín se ensamblan aquí. Es el resultado de un proceso de más de veinte años."
+  },
+  {
+    "label": "Cifras",
+    "name": "stats",
+    "type": "group",
+    "occurrence": {
+      "min": 0,
+      "max": 3,
+      "default": 3
+    },
+    "children": [
+      {
+        "label": "Valor",
+        "name": "value",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      },
+      {
+        "label": "Etiqueta",
+        "name": "etiqueta",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      }
+    ],
+    "default": [
+      { "value": "13",   "etiqueta": "trenes ensamblados en Bello" },
+      { "value": "+20%", "etiqueta": "de capacidad del sistema" },
+      { "value": "2:20", "etiqueta": "minutos de intervalo" }
+    ]
+  },
+  {
+    "label": "CTA",
+    "name": "cta",
+    "type": "group",
+    "expanded": true,
+    "children": [
+      {
+        "label": "Texto",
+        "name": "text",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "default": "Conoce el proceso"
+      },
+      {
+        "label": "Enlace",
+        "name": "link",
+        "type": "link",
+        "required": false,
+        "locked": false,
+        "supported_types": ["EXTERNAL", "CONTENT"],
+        "default": {
+          "url": {
+            "content_id": null,
+            "type": "EXTERNAL",
+            "href": "#ensamble"
+          },
+          "open_in_new_tab": false,
+          "no_follow": false
+        }
+      }
+    ]
+  },
+  {
+    "label": "ID de anclaje",
+    "name": "anchor_id",
+    "type": "text",
+    "required": false,
+    "locked": false,
+    "help_text": "Valor del atributo id de la sección (para anclas como #inicio)",
+    "allow_new_line": false,
+    "default": "inicio"
+  }
+]

@@ -1,0 +1,199 @@
+{% set mostrar    = module.mostrar %}
+{% set titulo     = module.titulo %}
+{% set subtitulo  = module.subtitulo %}
+{% set trenes     = module.trenes %}
+{% set nota       = module.nota %}
+{% set anchor_id  = module.anchor_id | default('estado') %}
+
+{% require_css %}
+<style>
+{% scope_css %}
+
+  .est-wrap {
+    font-family: var(--metro-font, 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif);
+  }
+
+  .est-inner {
+    max-width: 1250px;
+    margin-inline: auto;
+  }
+
+  .est {
+    background: #111716;
+    border-radius: 24px;
+    padding: clamp(25px, 3.2vw, 45px);
+    display: grid;
+    gap: 30px;
+  }
+
+  /* ---- bloque de texto ---- */
+  .est__tit {
+    color: #fff;
+    font-size: 25px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 0;
+  }
+
+  .est__sub {
+    color: #9AA891;
+    font-size: 15px;
+    line-height: 1.35;
+    margin-top: 10px;
+    max-width: 34ch;
+  }
+
+  /* ---- leyenda (colores alineados a los badges) ---- */
+  .est__leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    margin-top: 20px;
+    font-size: 12px;
+    line-height: 1.15;
+    color: #C1D4D3;
+    list-style: none;
+    padding: 0;
+  }
+
+  .est__leyenda li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .est__leyenda i {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: block;
+    flex: none;
+  }
+
+  .est__leyenda .dot--ok     { background: #69BE28; }
+  .est__leyenda .dot--curso  { background: #FABB00; }
+  .est__leyenda .dot--inicio { background: #6C7A74; }
+
+  /* ---- lista de vagones ---- */
+  .est__vagones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .est__vagon {
+    width: 46px;
+    height: 58px;
+    border-radius: 8px;
+    background: #2B322F;
+    color: #9AA891;
+    display: grid;
+    place-items: end center;
+    padding-bottom: 9px;
+    font-size: 15px;
+    font-weight: 700;
+    position: relative;
+  }
+
+  .est__vagon::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 9px;
+    right: 9px;
+    height: 11px;
+    border-radius: 3px;
+    background: rgba(255,255,255,.14);
+  }
+
+  .est__vagon--ok {
+    background: #69BE28;
+    color: #111716;
+  }
+
+  .est__vagon--ok::before { background: rgba(17,23,22,.28); }
+
+  .est__vagon--curso {
+    background: #FABB00;
+    color: #111716;
+  }
+
+  .est__vagon--curso::before { background: rgba(17,23,22,.24); }
+
+  /* ---- pie ---- */
+  .est__pie {
+    color: #9AA891;
+    font-size: 12px;
+    line-height: 1.8;
+    margin: 0;
+    border-top: 1px solid rgba(255,255,255,.12);
+    padding-top: 20px;
+  }
+
+  /* ---- desktop: dos columnas ---- */
+  @media (min-width: 992px) {
+    .est {
+      grid-template-columns: minmax(260px, 320px) 1fr;
+      align-items: center;
+      column-gap: 30px;
+      row-gap: 40px;
+    }
+    .est__pie { grid-column: 1 / -1; }
+    .est__vagones {
+      justify-content: flex-end;
+      flex-wrap: nowrap;
+    }
+  }
+
+{% end_scope_css %}
+</style>
+{% end_require_css %}
+
+{% if mostrar %}
+<section class="est-wrap" id="{{ anchor_id }}">
+  <div class="est-inner">
+    <div class="est">
+
+      <div>
+        {% if titulo %}<h2 class="est__tit">{{ titulo }}</h2>{% endif %}
+        {% if subtitulo %}<p class="est__sub">{{ subtitulo }}</p>{% endif %}
+
+        <ul class="est__leyenda" aria-label="Leyenda de estados">
+          <li><i class="dot--ok" aria-hidden="true"></i> Entregado</li>
+          <li><i class="dot--curso" aria-hidden="true"></i> En ensamblaje</li>
+          <li><i class="dot--inicio" aria-hidden="true"></i> Por iniciar</li>
+        </ul>
+      </div>
+
+      <ul class="est__vagones" aria-label="Estado de los 13 trenes">
+        {% for tren in trenes %}
+          {% set num = loop.index %}
+          {% set cls = '' %}
+          {% set texto_estado = 'por iniciar' %}
+
+          {% if tren.estado == 'entregado' %}
+            {% set cls = 'est__vagon--ok' %}
+            {% set texto_estado = 'entregado' %}
+          {% elif tren.estado == 'en_ensamblaje' %}
+            {% set cls = 'est__vagon--curso' %}
+            {% set texto_estado = 'en ensamblaje' %}
+          {% endif %}
+
+          <li class="est__vagon {{ cls }}">
+            {{ num }}
+            <span class="hs-screen-reader-text">Tren {{ num }}, {{ texto_estado }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+
+      {% if nota %}
+        <p class="est__pie">{{ nota }}</p>
+      {% endif %}
+
+    </div>
+  </div>
+</section>
+{% endif %}

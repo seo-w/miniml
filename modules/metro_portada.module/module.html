@@ -1,0 +1,233 @@
+{% set img              = module.image %}
+{% set img_mob          = module.image_mobile %}
+{% set img_pos          = module.image_position | default('58% 50%') %}
+{% set img_pos_mob      = module.image_position_mobile | default('66% 50%') %}
+{% set eyebrow          = module.eyebrow %}
+{% set title            = module.title %}
+{% set lead             = module.lead %}
+{% set stats            = module.stats %}
+{% set cta              = module.cta %}
+{% set cta_href         = cta.link.url.href %}
+{% set cta_new_tab      = cta.link.open_in_new_tab %}
+{% set anchor_id        = module.anchor_id | default('inicio') %}
+
+{% require_css %}
+<style>
+{% scope_css %}
+
+  .prt {
+    position: relative;
+    min-height: min(86vh, 780px);
+    min-height: min(86svh, 780px);
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    background: #111716;
+    font-family: var(--metro-font, 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif);
+  }
+
+  .prt picture {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .prt__img {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    object-fit: cover;
+    object-position: {{ img_pos }};
+  }
+
+  .prt__velo {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(0deg, rgba(8,14,7,.94) 0%, rgba(8,14,7,.74) 30%, rgba(8,14,7,.20) 64%, rgba(8,14,7,.06) 100%),
+      linear-gradient(90deg, rgba(8,14,7,.6) 0%, rgba(8,14,7,0) 58%);
+  }
+
+  .prt__in {
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    padding-block: clamp(40px, 7vw, 70px);
+    width: 100%;
+    max-width: 1250px;
+    margin-inline: auto;
+    padding-inline: clamp(16px, 4vw, 30px);
+  }
+
+  .prt__eyebrow {
+    display: block;
+    font-size: 12px;
+    line-height: 1.15;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: #69BE28;
+    margin-bottom: 20px;
+  }
+
+  .prt__t {
+    font-size: clamp(2.2rem, 6.4vw, 4.4rem);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -.015em;
+    max-width: 15ch;
+    color: #fff;
+    margin: 0;
+  }
+
+  .prt__t em { font-style: normal; color: #69BE28; }
+
+  .prt__lead {
+    margin-top: 20px;
+    max-width: 46ch;
+    font-size: clamp(1rem, 1.7vw, 1.15rem);
+    line-height: 1.35;
+    color: rgba(255,255,255,.9);
+  }
+
+  .prt__lead p { margin: 0; }
+
+  /* ---- cifras: entrada escalonada ---- */
+  @keyframes prt-up {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .prt__cifras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 0;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,.28);
+  }
+
+  .prt__cifra {
+    padding-right: clamp(20px, 3vw, 40px);
+    margin-right: clamp(20px, 3vw, 40px);
+    border-right: 1px solid rgba(255,255,255,.22);
+    animation: prt-up .55s cubic-bezier(.22,1,.36,1) both;
+  }
+
+  .prt__cifra:nth-child(1) { animation-delay: .15s; }
+  .prt__cifra:nth-child(2) { animation-delay: .30s; }
+  .prt__cifra:nth-child(3) { animation-delay: .45s; }
+
+  .prt__cifra:last-child { border-right: 0; margin-right: 0; padding-right: 0; }
+
+  .prt__cifra b {
+    display: block;
+    font-size: clamp(1.9rem, 3.6vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prt__cifra span {
+    display: block;
+    margin-top: 8px;
+    font-size: .9rem;
+    line-height: 1.3;
+    color: rgba(255,255,255,.82);
+    max-width: 20ch;
+  }
+
+  /* ---- CTA ---- */
+  .prt__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    background: #69BE28;
+    color: #111716;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 16px 32px;
+    border-radius: 50px;
+    margin-top: 40px;
+    transition: background .2s;
+  }
+
+  .prt__cta:hover { background: #fff; color: #111716; }
+
+  /* ---- responsive ---- */
+  @media (max-width: 768px) {
+    .prt { min-height: min(78vh, 640px); min-height: min(78svh, 640px); }
+    .prt__img { object-position: {{ img_pos_mob }}; }
+    .prt__cifra { padding-right: 18px; margin-right: 18px; }
+  }
+
+  /* ---- motion ---- */
+  @media (prefers-reduced-motion: reduce) {
+    .prt__cifra { animation: none; }
+    .prt__cta   { transition: none; }
+  }
+
+{% end_scope_css %}
+</style>
+{% end_require_css %}
+
+<section class="prt" id="{{ anchor_id }}">
+
+  {% if img.src %}
+    <picture>
+      {% if img_mob.src %}
+        <source media="(max-width: 768px)" srcset="{{ img_mob.src }}">
+      {% endif %}
+      <img class="prt__img"
+           src="{{ img.src }}"
+           alt="{{ img.alt | default('') }}"
+           {% if img.width %}width="{{ img.width }}"{% endif %}
+           {% if img.height %}height="{{ img.height }}"{% endif %}
+           loading="eager"
+           fetchpriority="high"
+           decoding="async">
+    </picture>
+  {% endif %}
+
+  <div class="prt__velo" aria-hidden="true"></div>
+
+  <div class="prt__in">
+
+    {% if eyebrow %}
+      <span class="prt__eyebrow">{{ eyebrow }}</span>
+    {% endif %}
+
+    {% if title %}
+      <h1 class="prt__t">{{ title }}</h1>
+    {% endif %}
+
+    {% if lead %}
+      <div class="prt__lead">{{ lead }}</div>
+    {% endif %}
+
+    {% if stats %}
+      <div class="prt__cifras">
+        {% for stat in stats %}
+          {% if stat.value %}
+            <div class="prt__cifra">
+              <b>{{ stat.value }}</b>
+              <span>{{ stat.etiqueta }}</span>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if cta.text and cta_href %}
+      <a class="prt__cta"
+         href="{{ cta_href }}"
+         {% if cta_new_tab %}target="_blank" rel="noopener"{% endif %}>
+        {{ cta.text }} &rarr;
+      </a>
+    {% endif %}
+
+  </div>
+</section>

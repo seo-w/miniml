@@ -90,7 +90,8 @@
           "CONTENT",
           "FILE",
           "EMAIL_ADDRESS",
-          "BLOG"
+          "BLOG",
+          "PHONE_NUMBER"
         ],
         "default": {
           "url": {

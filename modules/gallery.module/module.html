@@ -1,0 +1,140 @@
+{% import '../helpers.html' as helper %}
+
+{# -------------------------------- content ------------------------------- #}
+{% set items = module.items %}
+{% set grid  = module.grid %}
+{% set perf  = module.performance %}
+{% set id_module      = module.advance.id_module %}
+{% set classes_module = module.advance.classes is truthy? module.advance.classes:[''] %}
+{# ---------------------------- end content ------------------------------- #}
+
+{# --------------------------------- styles -------------------------------- #}
+{% set margin        = module.styles.margin.css %}
+{% set z_index       = module.styles.z_index %}
+{% set visible       = module.styles.visible %}
+{% set box           = module.styles.box %}
+{% set border_radius = module.styles.border_radius %}
+{% set caption       = module.styles.caption %}
+{# ------------------------------ end styles ------------------------------- #}
+
+{% do classes_module.insert(0, 'gallery') %}
+
+{% require_css %}
+    <style>
+        {{ helper.wrapper_min(margin, visible, z_index) }}
+        {% scope_css %}
+
+            {{ helper.box_min(box, 'gallery') }}
+
+            {#
+              LAYOUT: multicolumna, no grid con row spans.
+
+              Es la diferencia de fondo con card_grid. Un masonry con
+              `grid-row: span N` necesita saber el alto de cada ítem EN EL
+              SERVIDOR, y por eso card_grid obliga a que el editor escriba una
+              altura por tarjeta. En una galería de fotos el alto lo tiene que
+              dar la proporción real de cada imagen, y eso HubL no lo sabe al
+              renderizar. Con `columns` lo resuelve el navegador solo: cada foto
+              conserva su forma y no hay que recortar nada.
+
+              Contrapartida conocida y aceptada: multicolumna llena cada columna
+              hasta una altura objetivo en vez de repartir en round-robin, así
+              que con 7 fotos en 3 columnas puede dar 3+3+1, y el orden de
+              lectura es por columna, no de lado a lado. En una galería eso
+              importa mucho menos que en un grid de tarjetas con texto.
+
+              `grid-template-rows: masonry` daría reparto parejo Y proporción
+              natural en una línea, pero todavía no tiene soporte en
+              navegadores.
+              ponytail: multicol hasta que masonry nativo sea usable.
+            #}
+            .gallery{
+                columns: {{grid.desktop}};
+                {% if grid.gap != null %}
+                    column-gap: {{grid.gap}}px;
+                {% endif %}
+            }
+            @media(max-width: 992px){
+                .gallery{ columns: {{grid.tablet}}; }
+            }
+            {% call helper.media_min() %}
+                .gallery{ columns: {{grid.phone}}; }
+            {% endcall %}
+
+            {% if grid.gap != null %}
+                .gallery__item{ margin-bottom: {{grid.gap}}px; }
+            {% endif %}
+
+            {% if border_radius %}
+                {# el radio va sobre la <img> y el <a>, no sobre un contenedor:
+                   un contenedor necesitaría overflow:hidden para recortar,
+                   mientras que un <img> es elemento reemplazado y se recorta
+                   solo (mismo criterio que el fix de image.module) #}
+                .gallery__image,
+                .gallery__anchor{ border-radius: {{border_radius}}px; }
+            {% endif %}
+
+            {{ helper.font_min(caption, 'gallery__caption') }}
+
+        {% end_scope_css %}
+    </style>
+{% end_require_css %}
+
+<div {{ helper.advance_min(id_module, classes_module) }}>
+    {% for item in items %}
+        {% if item.image.src %}
+            {#
+              ANCHO DE ENTREGA — el ajuste que más pesa en PageSpeed.
+
+              Se pasa por resize_image_url con el ancho configurado en vez de
+              servir el archivo original. Medido en este mismo theme: tres
+              imágenes servidas con su ancho original (4096, 3396 y 2048 px)
+              sumaban 984 KB, el 85% del peso de la página; todo el CSS del
+              sitio son 25 KB. Es donde está la ganancia real.
+
+              resize_image_url con solo el ancho preserva la proporción (nunca
+              deforma) y es compatible con el WebP automático de HubSpot.
+            #}
+            {% set src = resize_image_url(item.image.src, perf.max_width) if perf.max_width else item.image.src %}
+            {% set w   = perf.max_width if perf.max_width else (item.image.width|int if item.image.width else null) %}
+            {#
+              El alto se calcula a partir del ancho de entrega y la proporción
+              del archivo. Emitir width Y height es lo que le permite al
+              navegador reservar el espacio antes de descargar (cero CLS) y es
+              además lo que activa el srcset automático de HubSpot — sin esos
+              atributos, HubSpot no genera variantes responsive.
+            #}
+            {% set h = (w * item.image.height / item.image.width)|round|int
+                       if (w and item.image.width and item.image.height) else null %}
+            {#
+              Las primeras N van sin lazy: una imagen con loading="lazy" la
+              descubre el navegador más tarde que el preload scanner, y si la
+              galería es lo primero que se ve eso retrasa el LCP. El resto sí,
+              que es lo que evita descargar 30 fotos de golpe.
+              decoding="async" saca la decodificación del hilo principal.
+            #}
+            {% set is_eager = loop.index <= (perf.eager_count|default(0)) %}
+            {% set img %}
+                <img class="gallery__image"
+                    src="{{ src }}"
+                    alt="{{ item.image.alt|default('', true) }}"
+                    {% if w %}width="{{w}}"{% endif %}
+                    {% if h %}height="{{h}}"{% endif %}
+                    decoding="async"
+                    {{ 'loading="lazy"' if not is_eager }}
+                />
+            {% endset %}
+
+            <figure class="gallery__item">
+                {% if item.anchor.url.href %}
+                    {% call helper.anchor_min(item.anchor, '', ['gallery__anchor']) %}{{ img }}{% endcall %}
+                {% else %}
+                    {{ img }}
+                {% endif %}
+                {% if item.caption %}
+                    <figcaption class="gallery__caption">{{ item.caption }}</figcaption>
+                {% endif %}
+            </figure>
+        {% endif %}
+    {% endfor %}
+</div>

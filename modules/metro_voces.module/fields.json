@@ -1,0 +1,92 @@
+[
+  {
+    "label": "Texto del hint",
+    "name": "hint_texto",
+    "type": "text",
+    "required": false,
+    "locked": false,
+    "allow_new_line": false,
+    "default": "Clic a las flechas para pasar los videos"
+  },
+  {
+    "label": "Color de fondo del hint",
+    "name": "color_hint_fondo",
+    "type": "color",
+    "required": false,
+    "locked": false,
+    "help_text": "Color de la píldora de instrucción (default: blanco)",
+    "default": { "color": "#ffffff", "opacity": 100 }
+  },
+  {
+    "label": "Color de texto del hint",
+    "name": "color_hint_texto",
+    "type": "color",
+    "required": false,
+    "locked": false,
+    "help_text": "Color del texto dentro de la píldora (default: gris medio)",
+    "default": { "color": "#696969", "opacity": 100 }
+  },
+  {
+    "label": "Videos",
+    "name": "videos",
+    "type": "group",
+    "occurrence": {
+      "min": 1,
+      "max": 12,
+      "default": 4,
+      "sorting_label_field": null
+    },
+    "children": [
+      {
+        "label": "Título / Nombre",
+        "name": "titulo",
+        "type": "text",
+        "required": true,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      },
+      {
+        "label": "Etiqueta (rol o descripción)",
+        "name": "etiqueta",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      },
+      {
+        "label": "Imagen de portada",
+        "name": "imagen",
+        "type": "image",
+        "required": false,
+        "locked": false,
+        "default": { "src": "", "alt": "", "width": 0, "height": 0 }
+      },
+      {
+        "label": "URL del video",
+        "name": "enlace",
+        "type": "link",
+        "required": false,
+        "locked": false,
+        "supported_types": ["EXTERNAL", "CONTENT"],
+        "default": { "url": { "content_id": null, "type": "EXTERNAL", "href": "" }, "open_in_new_tab": true }
+      }
+    ],
+    "default": [
+      { "titulo": "Edison Narváez",               "etiqueta": "Líder del proceso de ensamblaje",    "imagen": { "src": "", "alt": "" }, "enlace": { "url": { "href": "" }, "open_in_new_tab": true } },
+      { "titulo": "Tomás Elejalde",               "etiqueta": "Gerente del Metro de Medellín",      "imagen": { "src": "", "alt": "" }, "enlace": { "url": { "href": "" }, "open_in_new_tab": true } },
+      { "titulo": "Servidores Metro",             "etiqueta": "Las manos del ensamblaje en Bello",  "imagen": { "src": "", "alt": "" }, "enlace": { "url": { "href": "" }, "open_in_new_tab": true } },
+      { "titulo": "Contratistas e industria local","etiqueta": "Proveedores vinculados",             "imagen": { "src": "", "alt": "" }, "enlace": { "url": { "href": "" }, "open_in_new_tab": true } }
+    ]
+  },
+  {
+    "label": "ID de anclaje",
+    "name": "anchor_id",
+    "type": "text",
+    "required": false,
+    "locked": false,
+    "allow_new_line": false,
+    "default": "voces"
+  }
+]

@@ -1,0 +1,225 @@
+{% set contadores = module.contadores %}
+{% set anchor_id  = module.anchor_id | default('cifras') %}
+{% set c_num      = module.color_num.color | default('#ffffff') %}
+{% set c_txt      = module.color_txt.color | default('#ffffff') %}
+{% set c_dot      = module.color_dot.color | default('#ffffff') %}
+
+{% require_css %}
+<style>
+{% scope_css %}
+
+  .cslider {
+    --per: 3;
+    --cnum: {{ c_num }};
+    --ctxt: {{ c_txt }};
+    --cdot: {{ c_dot }};
+    position: relative;
+    font-family: var(--metro-font, 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif);
+  }
+
+  .cslider__vp {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .cslider__vp::-webkit-scrollbar { display: none; }
+
+  .cslider__pista {
+    display: flex;
+    gap: 0;
+  }
+
+  .counter {
+    flex: 0 0 calc(100% / var(--per));
+    scroll-snap-align: start;
+    padding: 0 22px;
+    text-align: center;
+  }
+
+  .cline {
+    color: var(--cnum);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .pre,
+  .suf {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--cnum);
+    opacity: .88;
+  }
+
+  .cnum {
+    font-size: 3.1rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--cnum);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .counter h4 {
+    font-size: 1.4rem;
+    line-height: 1.15;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--ctxt);
+  }
+
+  .counter p {
+    font-size: .95rem;
+    line-height: 1.35;
+    color: var(--ctxt);
+    opacity: .9;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .cslider__dots {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 38px;
+  }
+
+  .cslider__dots button {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: none;
+    padding: 0;
+    background: var(--cdot);
+    opacity: .4;
+    cursor: pointer;
+    transition: width .2s, border-radius .2s, opacity .2s;
+  }
+
+  .cslider__dots button.on {
+    opacity: 1;
+    width: 26px;
+    border-radius: 6px;
+  }
+
+  @media (max-width: 992px) { .cslider { --per: 2; } }
+  @media (max-width: 576px) {
+    .cslider { --per: 1; }
+    .counter { padding: 0 10px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cslider__vp { scroll-behavior: auto; }
+    .cslider__dots button { transition: none; }
+  }
+
+{% end_scope_css %}
+</style>
+{% end_require_css %}
+
+<div class="cslider" id="{{ anchor_id }}">
+  <div class="cslider__vp" id="cslider-vp-{{ anchor_id }}" tabindex="0" role="group" aria-label="Cifras del proyecto, desplazable">
+    <div class="cslider__pista">
+      {% for cnt in contadores %}
+      <div class="counter">
+        <div class="cline">
+          {% if cnt.prefijo %}<span class="pre">{{ cnt.prefijo }}</span>{% endif %}
+          {% if ':' not in cnt.numero %}
+            <span class="cnum" data-count="{{ cnt.numero }}"{% if cnt.formato_co %} data-format="es"{% endif %}>0</span>
+          {% else %}
+            <span class="cnum">{{ cnt.numero }}</span>
+          {% endif %}
+          {% if cnt.sufijo %}<span class="suf">{{ cnt.sufijo }}</span>{% endif %}
+        </div>
+        {% if cnt.titulo_cnt %}<h4>{{ cnt.titulo_cnt }}</h4>{% endif %}
+        {% if cnt.desc_cnt %}<p>{{ cnt.desc_cnt }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="cslider__dots" id="cslider-dots-{{ anchor_id }}"></div>
+</div>
+
+{% require_js position="footer" %}
+<script>
+(function () {
+  /* ---- Slider: dots ---- */
+  var vp    = document.getElementById('cslider-vp-{{ anchor_id }}');
+  var dots  = document.getElementById('cslider-dots-{{ anchor_id }}');
+  var wrap  = document.getElementById('{{ anchor_id }}');
+  var lento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!vp || !dots || !wrap) return;
+
+  function paginas() { return Math.max(1, Math.round(vp.scrollWidth / vp.clientWidth)); }
+  function pagina()  { return Math.round(vp.scrollLeft / vp.clientWidth); }
+
+  function pintar() {
+    var n = paginas();
+    if (dots.children.length !== n) {
+      dots.innerHTML = '';
+      for (var k = 0; k < n; k++) {
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.setAttribute('aria-label', 'Página ' + (k + 1) + ' de ' + n);
+        (function (idx) {
+          b.addEventListener('click', function () {
+            vp.scrollTo({ left: idx * vp.clientWidth, behavior: lento ? 'auto' : 'smooth' });
+          });
+        })(k);
+        dots.appendChild(b);
+      }
+    }
+    var act = pagina();
+    Array.prototype.forEach.call(dots.children, function (d, k) {
+      d.classList.toggle('on', k === act);
+      d.setAttribute('aria-current', k === act ? 'true' : 'false');
+    });
+  }
+
+  var t;
+  vp.addEventListener('scroll', function () { clearTimeout(t); t = setTimeout(pintar, 90); });
+  window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(pintar, 150); });
+  pintar();
+
+  /* ---- Count-up (fiel al prototipo) ---- */
+  var fmt = new Intl.NumberFormat('es-CO');
+
+  function run(el) {
+    var raw   = el.getAttribute('data-count').replace(/\./g, '');
+    if (!/^\d+$/.test(raw)) return;
+    var end = parseInt(raw, 10);
+    var es  = el.getAttribute('data-format') === 'es';
+    var t0  = null, dur = 1400;
+    if (lento) { el.textContent = es ? fmt.format(end) : end; return; }
+    function step(ts) {
+      if (!t0) t0 = ts;
+      var pr  = Math.min((ts - t0) / dur, 1);
+      var val = Math.floor((0.5 - Math.cos(Math.PI * pr) / 2) * end);
+      el.textContent = es ? fmt.format(val) : val;
+      if (pr < 1) requestAnimationFrame(step);
+      else el.textContent = es ? fmt.format(end) : end;
+    }
+    requestAnimationFrame(step);
+  }
+
+  var nums = wrap.querySelectorAll('.cnum[data-count]');
+  if (!('IntersectionObserver' in window)) {
+    Array.prototype.forEach.call(nums, run);
+  } else {
+    var vistos = new WeakSet();
+    var ioNum = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting && !vistos.has(e.target)) { vistos.add(e.target); run(e.target); }
+      });
+    }, { threshold: 0.5 });
+    Array.prototype.forEach.call(nums, function (el) { ioNum.observe(el); });
+  }
+
+})();
+</script>
+{% end_require_js %}

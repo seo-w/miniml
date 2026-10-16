@@ -1,0 +1,109 @@
+[
+  {
+    "label": "Hitos",
+    "name": "hitos",
+    "type": "group",
+    "occurrence": {
+      "min": 1,
+      "max": 20,
+      "default": 11,
+      "sorting_label_field": null
+    },
+    "children": [
+      {
+        "label": "Año",
+        "name": "anio",
+        "type": "text",
+        "required": true,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      },
+      {
+        "label": "Texto",
+        "name": "texto",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": true,
+        "default": ""
+      },
+      {
+        "label": "Imagen",
+        "name": "imagen",
+        "type": "image",
+        "required": false,
+        "locked": false,
+        "default": { "src": "", "alt": "", "width": 0, "height": 0 }
+      },
+      {
+        "label": "Alt de la imagen",
+        "name": "imagen_alt",
+        "type": "text",
+        "required": false,
+        "locked": false,
+        "allow_new_line": false,
+        "default": ""
+      },
+      {
+        "label": "Hito futuro (punto punteado en el riel)",
+        "name": "futuro",
+        "type": "boolean",
+        "required": false,
+        "locked": false,
+        "default": false
+      },
+      {
+        "label": "Mostrar etiqueta 'Proyectado'",
+        "name": "proyectado",
+        "type": "boolean",
+        "required": false,
+        "locked": false,
+        "default": false
+      },
+      {
+        "label": "Ícono",
+        "name": "icono",
+        "type": "choice",
+        "display": "select",
+        "required": false,
+        "locked": false,
+        "choices": [
+          ["circulo",    "Círculo / rueda"],
+          ["tren",       "Tren / vagón"],
+          ["lupa",       "Lupa / búsqueda"],
+          ["llave",      "Llave / herramienta"],
+          ["patente",    "Documento con sello"],
+          ["exito",      "Check / éxito"],
+          ["contrato",   "Documento con pluma"],
+          ["planta",     "Edificio / planta"],
+          ["llegada",    "Camión / llegada"],
+          ["bandera",    "Bandera"]
+        ],
+        "default": "circulo"
+      }
+    ],
+    "default": [
+      { "anio": "1999", "texto": "Primer cambio de ruedas en los talleres de Bello, en lugar de enviarlas a Alemania.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "Ruedas de tren apiladas en los talleres de Bello", "futuro": false, "proyectado": false, "icono": "circulo" },
+      { "anio": "2011", "texto": "Empiezan a rodar 13 trenes CAF de segunda generación para la extensión de la línea A.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "tren" },
+      { "anio": "2015", "texto": "Servidores Metro diagnostican sistema por sistema toda la flota MAN.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "lupa" },
+      { "anio": "2015", "texto": "Con EAFIT y Colciencias se comprueba que la viga pivote se puede reparar.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "llave" },
+      { "anio": "2018", "texto": "La SIC otorga a EAFIT y al Metro la patente de la traviesa pivote rediseñada.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "patente" },
+      { "anio": "2020", "texto": "En plena pandemia arranca la modernización de la flota original MAN.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "llave" },
+      { "anio": "2023", "texto": "Termina la modernización, con proveedores locales ya formados.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "exito" },
+      { "anio": "2024", "texto": "Se firman el convenio con la ciudad y el departamento y el contrato con CAF.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "contrato" },
+      { "anio": "2025", "texto": "Se fabrica el tren prototipo en la casa matriz de CAF.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "planta" },
+      { "anio": "2026", "texto": "Llega el prototipo y empieza el ensamblaje local en los patios de Bello.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": false, "proyectado": false, "icono": "llegada" },
+      { "anio": "2027", "texto": "Pruebas del tren piloto, serie y entrada en operación.", "imagen": { "src": "", "alt": "" }, "imagen_alt": "", "futuro": true, "proyectado": true, "icono": "bandera" }
+    ]
+  },
+  {
+    "label": "ID de anclaje",
+    "name": "anchor_id",
+    "type": "text",
+    "required": false,
+    "locked": false,
+    "allow_new_line": false,
+    "default": "cronologia"
+  }
+]

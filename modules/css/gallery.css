@@ -1,0 +1,58 @@
+/*
+  Galería de imágenes en masonry.
+
+  Este archivo solo trae lo estructural: las columnas, el gap, el radio y la
+  tipografía del pie los emite el módulo por instancia.
+
+  DECISIONES DE RENDIMIENTO (el módulo se pidió optimizado para PageSpeed):
+
+  - SIN JavaScript. Ni para el layout ni para el lazy loading: las columnas las
+    resuelve `columns` de CSS y el diferido es `loading="lazy"` nativo. Cero
+    bytes de JS, cero trabajo en el hilo principal, y nada que pueda provocar
+    un salto de layout después del primer pintado.
+
+  - La imagen va como <img>, NUNCA como background-image. Un background de CSS
+    no recibe nada del pipeline de HubSpot: sin srcset, sin WebP automático, sin
+    width/height y sin poder diferirse.
+
+  - `height: auto` con los atributos width/height del <img> deja que el
+    navegador reserve el alto exacto antes de descargar. Eso es lo que mantiene
+    el CLS en cero.
+
+  - NO se usa `content-visibility: auto`, que a primera vista encajaría para
+    saltarse el render de lo que está fuera de pantalla. En un contenedor
+    multicolumna el navegador necesita el alto real de cada ítem para balancear
+    las columnas; con content-visibility usaría el `contain-intrinsic-size`
+    estimado y el reparto cambiaría al hacer scroll — o sea, justo el CLS que
+    se quiere evitar.
+*/
+.gallery{
+    /* la altura de cada columna la calcula el navegador con las fotos reales */
+    display: block;
+}
+.gallery__item{
+    /* que una foto no se parta entre dos columnas */
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    /* <figure> trae margen del navegador */
+    margin: 0px;
+    /* sin esto el <figure> deja un hueco bajo la imagen por la línea base */
+    line-height: 0px;
+}
+.gallery__anchor{
+    display: block;
+    line-height: 0px;
+    text-decoration: none;
+}
+.gallery__image{
+    display: block;
+    width: 100%;
+    /* el alto lo da la proporción del archivo, no un valor fijo: es lo que
+       hace que la galería sea masonry sin que nadie escriba alturas */
+    height: auto;
+}
+.gallery__caption{
+    margin: 0px;
+    /* se restaura el line-height que el item pone en 0 para el <img> */
+    line-height: normal;
+}

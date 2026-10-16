@@ -8,6 +8,17 @@
         <a class="{% for class in anchor_class %} {{class}} {% endfor %}" 
         {% if url_type == "EMAIL_ADDRESS" %}
             href="mailto:{{url_anchor}}" 
+        {% elif url_type == "PHONE_NUMBER" %}
+            {#
+              El campo de teléfono devuelve el número pelado, igual que el de
+              correo devuelve el correo sin `mailto:`. Sin el prefijo el <a>
+              sale con href="5512345678", que no marca nada.
+              La guarda es `'tel:' in ...` y no startswith porque HubL corre
+              sobre Java y no tiene ese método (da "Cannot find method
+              startswith"). Cubre el caso de que el editor escriba el tel:
+              a mano o de que HubSpot lo devuelva ya prefijado.
+            #}
+            href="{{ url_anchor if 'tel:' in url_anchor else 'tel:'+url_anchor }}" 
         {% else %}
             href="{{url_anchor}}" 
         {% endif %} 
